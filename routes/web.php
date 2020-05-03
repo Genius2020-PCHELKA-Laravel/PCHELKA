@@ -17,3 +17,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 // Updated from maher
+//updted from github
