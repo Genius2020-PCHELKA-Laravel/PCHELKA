@@ -20,10 +20,10 @@ class CreateBookingsTable extends Migration
             $table->double('discount');
             $table->double('totalAmount');
             $table->enum('status',['Pending','Confirm','Canceled']);
-            $table->bigInteger('clientId')->unsigned();
+            $table->bigInteger('userId')->unsigned();
             $table->bigInteger('serviceId')->unsigned();
-            $table->bigInteger('couponId')->unsigned();
-            $table->foreign('clientId')->references('id')->on('clients');
+            $table->bigInteger('couponId')->unsigned()->nullable();
+            $table->foreign('userId')->references('id')->on('users');
             $table->foreign('serviceId')->references('id')->on('services');
             $table->foreign('couponId')->references('id')->on('coupons');
             $table->timestamps();

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateClientLocationsTable extends Migration
+class CreateUserLocationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateClientLocationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('client_locations', function (Blueprint $table) {
+        Schema::create('user_locations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('address');
             $table->double('lat');
@@ -23,8 +23,9 @@ class CreateClientLocationsTable extends Migration
             $table->string('street');
             $table->integer('buildingNumber');
             $table->string('apartment');
-            $table->bigInteger('clientId')->unsigned();
-            $table->foreign('clientId')->references('id')->on('clients');
+            $table->bigInteger('userId')->unsigned();
+            $table->foreign('userId')->references('id')->on('users');
+
             $table->timestamps();
         });
     }
@@ -36,6 +37,6 @@ class CreateClientLocationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('client_locations');
+        Schema::dropIfExists('user_locations');
     }
 }

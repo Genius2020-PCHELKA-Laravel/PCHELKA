@@ -16,10 +16,10 @@ class CreateEvaluationsTable extends Migration
         Schema::create('evaluations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('starCount');
-            $table->bigInteger('clientId')->unsigned();
+            $table->bigInteger('userId')->unsigned();
             $table->bigInteger('serviceProviderId')->unsigned();
             $table->bigInteger('bookingId')->unsigned();
-            $table->foreign('clientId')->references('id')->on('clients');
+            $table->foreign('userId')->references('id')->on('users');
             $table->foreign('serviceProviderId')->references('id')->on('service_providers');
             $table->foreign('bookingId')->references('id')->on('bookings');
             $table->timestamps();

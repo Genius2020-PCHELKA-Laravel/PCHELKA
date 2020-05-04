@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ClientLocations;
+use App\Models\UserLocation;
 use Illuminate\Http\Request;
 
-class ClientLocationsController extends Controller
+class UserLocationController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -41,10 +41,10 @@ class ClientLocationsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\ClientLocations  $clientLocations
+     * @param  \App\Models\UserLocation  $userLocation
      * @return \Illuminate\Http\Response
      */
-    public function show(ClientLocations $clientLocations)
+    public function show(UserLocation $userLocation)
     {
         //
     }
@@ -52,10 +52,10 @@ class ClientLocationsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\ClientLocations  $clientLocations
+     * @param  \App\Models\UserLocation  $userLocation
      * @return \Illuminate\Http\Response
      */
-    public function edit(ClientLocations $clientLocations)
+    public function edit(UserLocation $userLocation)
     {
         //
     }
@@ -64,10 +64,10 @@ class ClientLocationsController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ClientLocations  $clientLocations
+     * @param  \App\Models\UserLocation  $userLocation
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, ClientLocations $clientLocations)
+    public function update(Request $request, UserLocation $userLocation)
     {
         //
     }
@@ -75,10 +75,10 @@ class ClientLocationsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\ClientLocations  $clientLocations
+     * @param  \App\Models\UserLocation  $userLocation
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ClientLocations $clientLocations)
+    public function destroy(UserLocation $userLocation)
     {
         //
     }

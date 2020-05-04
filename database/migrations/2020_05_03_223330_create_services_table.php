@@ -18,7 +18,7 @@ class CreateServicesTable extends Migration
             $table->string('name');
             $table->string('details');
             $table->string('imgPath');
-            $table->bigInteger('couponId')->unsigned();
+            $table->bigInteger('couponId')->unsigned()->nullable();
             $table->foreign('couponId')->references('id')->on('coupons');
             $table->timestamps();
 
