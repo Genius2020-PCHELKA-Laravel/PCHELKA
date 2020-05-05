@@ -6,12 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Service extends Model
 {
-    protected $table='services';
-    public $fillable=['id','name','details','imgPath','couponId'];
+    protected $table = 'services';
+    public $fillable = ['id', 'name', 'details', 'imgPath', 'couponId'];
 
-    public function Coupon (){
-        return $this->belongsTo('App\Models\Coupon','id');
+    public function Coupon()
+    {
+        return $this->belongsTo('App\Models\Coupon', 'id');
     }
 
+    public function Bookings()
+    {
+        return $this->hasMany('App\Models\Booking', 'serviceId');
+    }
+
+    public function ServicesQuestions()
+    {
+        return $this->hasMany('App\Models\ServicesQuestions', 'serviceId');
+    }
 
 }
