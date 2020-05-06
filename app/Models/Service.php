@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Service extends Model
 {
     protected $table = 'services';
-    public $fillable = ['id', 'name', 'details', 'imgPath', 'couponId'];
+    public $fillable = ['name', 'details', 'imgPath', 'couponId'];
 
     public function Coupon()
     {

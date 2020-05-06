@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('service', 'ServiceController@getServices');
-Route::get('service/{id}', 'ServiceController@getServiceById');
+Route::get('service/{id}', 'ServiceController@show');
+Route::get('service', 'ServiceController@index');
+Route::post('service', 'ServiceController@store');
+Route::post('service/{id}', 'ServiceController@update');
+Route::get('service/delete/{id}', 'ServiceController@delete');
 
