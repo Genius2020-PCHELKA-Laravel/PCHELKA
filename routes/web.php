@@ -18,3 +18,7 @@ Route::get('/', function () {
 });
 // Updated from maher
 //updted from github
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
