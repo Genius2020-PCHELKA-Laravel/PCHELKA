@@ -21,10 +21,12 @@ class ServiceController extends Controller
     public function getServiceById($id)
     {
         $service = new ServiceResource(Service::find($id));
-        if ($service) {
+        dd($service);
+        if ($service->resource!=null) {
             return $this->apiResponse($service);
         } else {
             return $this->apiResponse(null, "Can't Find Item", 404);
         }
+
     }
 }
