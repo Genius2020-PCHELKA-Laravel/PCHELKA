@@ -43,6 +43,12 @@ trait ApiResponseTrait
     public function deleteResponse()
     {
         return $this->apiResponse(true, null, 200);
+
+    }
+
+    public function unAuthoriseResponse()
+    {
+        return $this->apiResponse('Unauthorised !', null, 401);
     }
 
     public function notFoundMassage()

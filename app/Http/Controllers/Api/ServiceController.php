@@ -25,8 +25,8 @@ class ServiceController extends Controller
     {
         $service = Service::find($id);
         if ($service) {
-            return $this->apiResponse(new ServiceResource($service));
-        }
+        return $this->apiResponse(new ServiceResource($service));
+    }
         return $this->notFoundMassage();
     }
 

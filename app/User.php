@@ -4,6 +4,7 @@ namespace App;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models;
 
 class User extends Authenticatable
 {
@@ -49,5 +50,9 @@ class User extends Authenticatable
     public function Evaluations()
     {
         return $this->hasMany('App\Models\Evaluation', 'userId');
+    }
+
+    public function AauthAccessToken(){
+        return $this->hasMany('App\Models\OauthAccessToken');
     }
 }

@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
-use http\Env\Response;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Support\Facades\Auth;
-use mysql_xdevapi\Exception;
 use Validator;
 
 
 class UserController extends Controller
 {
+    use apiResponseTrait;
     public $successStatus = 200;
 
     /**
@@ -25,9 +24,10 @@ class UserController extends Controller
         if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
             $user = Auth::user();
             $success['token'] = $user->createToken('PCHELKA-Backend')->accessToken;
-            return response()->json(['success' => $success], $this->successStatus);
-        } else {
-            return response()->json(['error' => 'Unauthorised'], 401);
+            return $this->apiResponse($success);
+        }
+        else {
+            return  $this->unAuthoriseResponse();
         }
     }
 
@@ -54,8 +54,8 @@ class UserController extends Controller
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
         $success['token'] = $user->createToken('PCHELKA-Backend')->accessToken;
-        $success['name'] = $user->name;
-        return response()->json(['success' => $success], $this->successStatus);
+        $success['name'] = $user->fullName;
+        return $this->apiResponse($success);
     }
 
     /**
@@ -66,6 +66,16 @@ class UserController extends Controller
     public function details()
     {
         $user = Auth::user();
-        return response()->json(['success' => $user], $this->successStatus);
+        return $this->apiResponse($user);
+    }
+
+    public function logout()
+    {
+        if (Auth::check()) {
+            Auth::user()->AauthAccessToken()->delete();
+            return $this->apiResponse('Success', null, 200);
+        } else {
+            return $this->generalError();
+        }
     }
 }
