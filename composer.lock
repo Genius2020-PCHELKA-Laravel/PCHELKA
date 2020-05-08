@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c7d17fe35a06a179d43c9a968affe9db",
+    "content-hash": "68d9e05fb36e84cf0f05e479d059055a",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2831,6 +2831,51 @@
                 }
             ],
             "time": "2020-03-29T20:13:32+00:00"
+        },
+        {
+            "name": "sendpulse/rest-api",
+            "version": "1.0.16",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sendpulse/sendpulse-rest-api-php.git",
+                "reference": "ed3105e1e3aa190d32c11459cf6415e1a8503ba7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sendpulse/sendpulse-rest-api-php/zipball/ed3105e1e3aa190d32c11459cf6415e1a8503ba7",
+                "reference": "ed3105e1e3aa190d32c11459cf6415e1a8503ba7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Sendpulse\\RestApi\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Maksym Ustymenko",
+                    "email": "m.ustymenko@sendpulse.com"
+                },
+                {
+                    "name": "Alexey Moroz",
+                    "email": "a.moroz@sendpulse.com"
+                }
+            ],
+            "description": "Sendpulse REST API client library",
+            "keywords": [
+                "api",
+                "rest",
+                "sendpulse"
+            ],
+            "time": "2020-05-07T14:07:09+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",

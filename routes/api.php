@@ -20,6 +20,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('logout','UserController@logout');
 });
 
+Route::post('sendsms', 'SMSController@sendSMS');
+Route::post('verifysmscode', 'SMSController@verifySMSCode');
+
 Route::post('login', 'UserController@login');
 Route::post('register', 'UserController@register');
 
