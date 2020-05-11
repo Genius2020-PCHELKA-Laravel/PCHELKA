@@ -13,14 +13,14 @@ class DatabaseSeeder extends Seeder
     {
         // $this->call(UserSeeder::class);
         DB::table('users')->insert([
-            'id'     => '1',
-            'fullname'     => 'maher',
-            'email'    => 'maher_se84@hotmail.com',
+            'id' => '1',
+            'fullname' => 'maher',
+            'email' => 'maher_se84@hotmail.com',
             'password' => bcrypt('maher'),
-            'mobile'=>'971554090055',
-            'isVerified'=>0,
-            'dateOfBirth'=> now()
-        ]); 
+            'mobile' => '971554090055',
+            'isVerified' => 0,
+            'dateOfBirth' => now()
+        ]);
         $this->call(ServicesSeeder::class);
     }
 }

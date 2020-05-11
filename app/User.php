@@ -6,9 +6,11 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Models;
 
+
 class User extends Authenticatable
 {
     use HasApiTokens, Notifiable;
+
 
     /**
      * The attributes that are mass assignable.
@@ -54,5 +56,9 @@ class User extends Authenticatable
 
     public function AauthAccessToken(){
         return $this->hasMany('App\Models\OauthAccessToken');
+    }
+    public function validateForPassportPasswordGrant($password)
+    {
+        return true;
     }
 }

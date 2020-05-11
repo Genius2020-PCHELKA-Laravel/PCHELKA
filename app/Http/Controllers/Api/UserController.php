@@ -9,11 +9,15 @@ use Illuminate\Support\Facades\Auth;
 use Validator;
 
 
+
 class UserController extends Controller
 {
     use apiResponseTrait;
     public $successStatus = 200;
-
+    public function validateForPassportPasswordGrant($password)
+    {
+        return true;
+    }
     /**
      * login api
      *
@@ -25,9 +29,8 @@ class UserController extends Controller
             $user = Auth::user();
             $success['token'] = $user->createToken('PCHELKA-Backend')->accessToken;
             return $this->apiResponse($success);
-        }
-        else {
-            return  $this->unAuthoriseResponse();
+        } else {
+            return $this->unAuthoriseResponse();
         }
     }
 
