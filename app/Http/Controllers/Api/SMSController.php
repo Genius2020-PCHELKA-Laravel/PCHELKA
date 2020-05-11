@@ -92,12 +92,12 @@ class SMSController extends Controller
 
             $user = User::where('mobile', $mobile)->first();
             $user->update(['isVerified' => 1]);
-            $s = Auth::login($user, true);
+            Auth::login($user, true);
 
             // Creating a token without scopes...
             $token = $user->createToken('PCHELKA-Backend')->accessToken;
             $response['isVerified'] = 1;
-            $response['token']=$token;
+            $response['token'] = $token;
             $response['message'] = "Your Number is Verified.";
             return $this->apiResponse($response);
         } else {

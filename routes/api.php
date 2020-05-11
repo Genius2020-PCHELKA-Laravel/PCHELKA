@@ -18,13 +18,13 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => 'auth:api'], function () {
     Route::post('details', 'UserController@details');
     Route::post('logout','UserController@logout');
+    Route::post('register', 'UserController@register');
 });
 
 Route::post('sendsms', 'SMSController@sendSMS');
 Route::post('verifysmscode', 'SMSController@verifySMSCode');
 
 Route::post('login', 'UserController@login');
-Route::post('register', 'UserController@register');
 
 Route::get('service/{id}', 'ServiceController@show');
 Route::get('service', 'ServiceController@index');

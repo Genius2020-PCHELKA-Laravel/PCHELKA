@@ -9,15 +9,16 @@ use Illuminate\Support\Facades\Auth;
 use Validator;
 
 
-
 class UserController extends Controller
 {
     use apiResponseTrait;
     public $successStatus = 200;
+
     public function validateForPassportPasswordGrant($password)
     {
         return true;
     }
+
     /**
      * login api
      *
@@ -40,24 +41,31 @@ class UserController extends Controller
      */
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'fullName' => 'required',
-            'email' => 'required|email',
-            'password' => 'required',
-            'dateOfBirth' => 'required',
-            'gender' => 'required',
-            'language' => 'required',
-            'c_password' => 'required|same:password',
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
+        try {
+            $response = array();
+            $input = $request->all();
+
+            $validator = Validator::make($request->all(), [
+                'fullName' => 'required',
+                'email' => 'required|email',
+                'gender' => 'required',
+                'language' => 'required',
+                'mobile' => 'required|digits:12'
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()], 401);
+            }
+            $mobile = $input['mobile'];
+            $user = User::where('mobile', '=', $mobile)->first();
+            if ($user) {
+                $user->update($request->all());
+                return $this->apiResponse('Your registration has been successful', null, 200);
+            } else {
+                return $this->notFoundMassage();
+            }
+        } catch (\Exception $exception) {
+            return $this->generalError();
         }
-        $input = $request->all();
-        $input['password'] = bcrypt($input['password']);
-        $user = User::create($input);
-        $success['token'] = $user->createToken('PCHELKA-Backend')->accessToken;
-        $success['name'] = $user->fullName;
-        return $this->apiResponse($success);
     }
 
     /**
@@ -67,15 +75,22 @@ class UserController extends Controller
      */
     public function details()
     {
-        $user = Auth::user();
-        return $this->apiResponse($user);
+        try {
+            $user = Auth::user();
+            if ($user)
+                return $this->apiResponse($user);
+            else
+                return $this->notFoundMassage();
+        } catch (\Exception $exception) {
+            return $this->generalError();
+        }
     }
 
     public function logout()
     {
         if (Auth::check()) {
             Auth::user()->AauthAccessToken()->delete();
-            return $this->apiResponse('Success', null, 200);
+            return $this->apiResponse('Success Logout', null, 200);
         } else {
             return $this->generalError();
         }
