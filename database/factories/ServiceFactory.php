@@ -17,11 +17,11 @@ use Illuminate\Support\Str;
 |
 */
 
-$factory->define(App\Models\Service::class, function (Faker $faker) {
-    return [
-        'name' => $faker->word,
-        'details' =>$faker-> text,
-        'imgPath' => $faker->word,
-
-    ];
-});
+//$factory->define(App\Models\Service::class, function (Faker $faker) {
+//    return [
+//        'name' => $faker->word,
+//        'details' =>$faker-> text,
+//        'imgPath' => $faker->word,
+//
+//    ];
+//});

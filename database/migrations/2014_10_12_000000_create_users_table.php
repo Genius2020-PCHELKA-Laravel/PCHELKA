@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique()->nullable();
             $table->bigInteger('mobile')->unique();
             $table->timestamp('mobile_verified_at')->nullable();
-            $table->integer('isVerified'); 
+            $table->boolean('isVerified')->default(false);
             $table->string('password')->nullable();
             $table->date('dateOfBirth')->nullable();
             $table->enum('gender',['Male','Female'])->nullable();

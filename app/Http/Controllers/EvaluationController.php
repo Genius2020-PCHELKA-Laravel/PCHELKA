@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Evaluation;
+use App\User;
 use Illuminate\Http\Request;
 
 class EvaluationController extends Controller
@@ -16,7 +17,12 @@ class EvaluationController extends Controller
     {
         //
     }
+    public function test(){
+        $ev = Evaluation::with('User')->get();
 
+        $user = User::with('Evaluations')->get();
+        dd($user);
+    }
     /**
      * Show the form for creating a new resource.
      *

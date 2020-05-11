@@ -16,10 +16,10 @@ class CreateQuestionDetailsTable extends Migration
         Schema::create('question_details', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->boolean('hasCount');
+            $table->boolean('hasCount')->default(false);
             $table->double('price');
             $table->bigInteger('questionId')->unsigned();
-            $table->foreign('questionId')->references('id')->on('questions');
+            $table->foreign('questionId')->references('id')->on('questions')->onDelete('cascade');
             $table->timestamps();
         });
     }
