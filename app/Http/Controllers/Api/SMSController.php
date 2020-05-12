@@ -45,14 +45,17 @@ class SMSController extends Controller
             $user->mobile = $input['mobile'];
             $user->isVerified = 0;
             $user->save();
-            Auth::login($user, true);
+            $response['usercreated']=1;
+           // Auth::login($user, true);
+           return $this->apiResponse($response); 
+
         }
 
         if (Auth::user()) {
             return $this->apiResponse($response, "User is logged in", 422);
         } else {
             #region SendSms
-            $SPApiClient = new ApiClient(API_USER_ID, API_SECRET, new FileStorage());
+ /*            $SPApiClient = new ApiClient(API_USER_ID, API_SECRET, new FileStorage());
             $phones = [$mobile];
             $params = [
                 'sender' => 'Pchelka',
@@ -62,7 +65,7 @@ class SMSController extends Controller
                 'transliterate' => 0
             ];
             $response = $SPApiClient->sendSmsByList($phones, $params, $additionalParams);
-            return $this->apiResponse($response);
+            return $this->apiResponse($response); */
             #endregion
         }
 
@@ -91,7 +94,8 @@ class SMSController extends Controller
             //if(Auth::user() && !Auth::user()->isVerified)
 
             $user = User::where('mobile', $mobile)->first();
-            $user->update(['isVerified' => 1]);
+            $user->isVerified=1;
+            $user->save();
             Auth::login($user, true);
 
             // Creating a token without scopes...
