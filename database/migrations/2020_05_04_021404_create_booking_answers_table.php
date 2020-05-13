@@ -24,7 +24,8 @@ class CreateBookingAnswersTable extends Migration
             $table->bigInteger('bookingId')->unsigned();
             $table->foreign('answerId')->references('id')->on('question_details');
             $table->foreign('questionId')->references('id')->on('questions');
-            $table->foreign('bookingId')->references('id')->on('bookings');
+            $table->foreign('bookingId')->references('id')->on('bookings')
+            ->onDelete('cascade');
             $table->timestamps();
         });
     }

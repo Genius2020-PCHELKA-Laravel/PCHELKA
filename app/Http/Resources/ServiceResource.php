@@ -20,7 +20,8 @@ class ServiceResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'details' => $this->details,
-            'imgPath' => $this->imgPath
+            'imgPath' => $this->imgPath,
+            'orderNumber'=>$this->orderNumber
         ];
     }
 }

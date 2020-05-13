@@ -2,17 +2,23 @@
 
 namespace App\Http\Controllers\Api;
 
+use BenSampo\Enum\Rules\Enum;
+use BenSampo\Enum\Rules\EnumKey;
+use BenSampo\Enum\Rules\EnumValue;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\Enums\LanguageEnum;
 
 
 class UserController extends Controller
 {
     use apiResponseTrait;
+
     public $successStatus = 200;
+
 
     public function validateForPassportPasswordGrant($password)
     {
@@ -86,6 +92,11 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * Logout api
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function logout()
     {
         if (Auth::check()) {
@@ -94,5 +105,40 @@ class UserController extends Controller
         } else {
             return $this->generalError();
         }
+    }
+
+    public function getUserLanguage()
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+            $language = $user->language;
+            return $this->apiResponse($language, null, 200);
+        }
+        return $this->unAuthoriseResponse();
+    }
+
+    public function updateUserLanguage(Request $request)
+    {
+        $response = array();
+        $input = $request->all();
+        #region UserInputValidate
+        $validator = Validator::make($request->all(), [
+            'language' => ['required', new EnumKey(LanguageEnum::class)]
+        ]);
+        if ($validator->fails()) {
+            return $this->apiResponse(null,  $validator->errors(), 520);
+        }
+        #endregion
+
+        $language = $input['language'];
+        if (Auth::check()) {
+            $user = Auth::user();
+            $user['language'] = LanguageEnum::coerce($language);
+            $user->save();
+            return $this->apiResponse('Language update successfully ', null, 200);
+        }
+
+
+        return $this->unAuthoriseResponse();
     }
 }

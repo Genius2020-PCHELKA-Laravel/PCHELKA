@@ -20,6 +20,7 @@ define('PATH_TO_ATTACH_FILE', __FILE__);
 class SMSController extends Controller
 {
     use apiResponseTrait;
+
     public $successStatus = 200;
 
     public function sendSMS(Request $request)
@@ -88,22 +89,25 @@ class SMSController extends Controller
 
 
         if ($OTP === $enteredOtp) {
-            //if(Auth::user() && !Auth::user()->isVerified)
-
             $user = User::where('mobile', $mobile)->first();
-            $user->update(['isVerified' => 1]);
-            Auth::login($user, true);
+            if (!$user) {
+                return $this->notFoundMassage();
+            } else {
+                $user['isVerified'] = 1;
+                $user->save();
+                Auth::login($user, true);
 
-            // Creating a token without scopes...
-            $token = $user->createToken('PCHELKA-Backend')->accessToken;
-            $response['isVerified'] = 1;
-            $response['token'] = $token;
-            $response['message'] = "Your Number is Verified.";
-            return $this->apiResponse($response);
+                // Creating a token without scopes...
+                $token = $user->createToken('PCHELKA-Backend')->accessToken;
+                $response['isVerified'] = 1;
+                $response['token'] = $token;
+                $response['message'] = "Your Number is Verified.";
+                return $this->apiResponse($response);
+            }
         } else {
             $response['isVerified'] = 0;
             $response['OTP'] = $OTP;
-            return $this->apiResponse(null, "OTP does not match.", 422);
+            return $this->apiResponse(null, "Verify code does not match.", 422);
         }
 
 

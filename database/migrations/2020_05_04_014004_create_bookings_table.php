@@ -19,7 +19,9 @@ class CreateBookingsTable extends Migration
             $table->double('price');
             $table->double('discount');
             $table->double('totalAmount');
-            $table->enum('status',['Pending','Confirm','Canceled']);
+            $table->tinyInteger('paidStatus')->unsigned()->nullable();
+            $table->tinyInteger('status')->unsigned()->nullable();
+            $table->tinyInteger('serviceType')->unsigned()->nullable();
             $table->bigInteger('userId')->unsigned();
             $table->bigInteger('serviceId')->unsigned();
             $table->bigInteger('couponId')->unsigned()->nullable();

@@ -26,6 +26,24 @@ class QuestionsSeeder extends Seeder
                 'type' => 1,
                 'price' => 0
             ],
+            [
+                'id' => 3,
+                'name' => 'How many Cleaners do you need',
+                'type' => 1,
+                'price' => 0
+            ],
+            [
+                'id' => 4,
+                'name' => 'Do you require cleaning materials',
+                'type' => 1,
+                'price' => 0
+            ],
+            [
+                'id' => 5,
+                'name' => 'More request',
+                'type' => 1,
+                'price' => 0
+            ],
         ]);
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Validator;
 
 trait ApiResponseTrait
 {
-    public $paginateNumber = 10;
+    public $paginateNumber = 15;
 
 
     /*

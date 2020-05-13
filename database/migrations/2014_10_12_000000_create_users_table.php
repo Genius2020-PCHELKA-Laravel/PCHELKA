@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Enums\LanguageEnum;
 
 class CreateUsersTable extends Migration
 {
@@ -23,7 +24,7 @@ class CreateUsersTable extends Migration
             $table->string('password')->nullable();
             $table->date('dateOfBirth')->nullable();
             $table->enum('gender',['Male','Female'])->nullable();
-            $table->enum('language',['Ar','En'])->nullable();
+            $table->tinyInteger('language')->unsigned()->default(LanguageEnum::En);
             $table->rememberToken();
             $table->timestamps();
         });

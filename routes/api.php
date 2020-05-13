@@ -19,6 +19,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('details', 'UserController@details');
     Route::post('logout','UserController@logout');
     Route::post('register', 'UserController@register');
+
+    Route::get('userLanguage', 'UserController@getUserLanguage');
+    Route::post('userLanguage', 'UserController@updateUserLanguage');
 });
 
 Route::post('sendsms', 'SMSController@sendSMS');
@@ -32,3 +35,4 @@ Route::post('service', 'ServiceController@store');
 Route::post('service/{id}', 'ServiceController@update');
 Route::get('service/delete/{id}', 'ServiceController@delete');
 
+Route::post('booking', 'BookingController@BookService');

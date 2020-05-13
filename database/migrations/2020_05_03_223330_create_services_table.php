@@ -16,9 +16,10 @@ class CreateServicesTable extends Migration
         Schema::create('services', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->string('details');
+            $table->string('details')->nullable();
             $table->string('imgPath');
             $table->bigInteger('couponId')->unsigned()->nullable();
+            $table->integer('orderNumber');
             $table->foreign('couponId')->references('id')->on('coupons');
             $table->timestamps();
 
