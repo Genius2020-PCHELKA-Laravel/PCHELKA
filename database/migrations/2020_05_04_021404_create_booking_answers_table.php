@@ -16,9 +16,9 @@ class CreateBookingAnswersTable extends Migration
         Schema::create('booking_answers', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('answerValue')->nullable();
-            $table->integer('count');
-            $table->double('itemPrice');
-            $table->double('totalAmount');
+            $table->integer('count')->nullable();
+            $table->double('itemPrice')->nullable();
+            $table->double('totalAmount')->nullable();
             $table->bigInteger('answerId')->nullable()->unsigned();
             $table->bigInteger('questionId')->unsigned();
             $table->bigInteger('bookingId')->unsigned();

@@ -32,12 +32,16 @@ class UserController extends Controller
      */
     public function login()
     {
-        if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
-            $user = Auth::user();
-            $success['token'] = $user->createToken('PCHELKA-Backend')->accessToken;
-            return $this->apiResponse($success);
-        } else {
-            return $this->unAuthoriseResponse();
+        try {
+            if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
+                $user = Auth::user();
+                $success['token'] = $user->createToken('PCHELKA-Backend')->accessToken;
+                return $this->apiResponse($success);
+            } else {
+                return $this->unAuthoriseResponse();
+            }
+        } catch (\Exception $exception) {
+            return $this->generalError();
         }
     }
 
@@ -99,34 +103,42 @@ class UserController extends Controller
      */
     public function logout()
     {
-        if (Auth::check()) {
-            Auth::user()->AauthAccessToken()->delete();
-            return $this->apiResponse('Success Logout', null, 200);
-        } else {
+        try {
+            if (Auth::check()) {
+                Auth::user()->AauthAccessToken()->delete();
+                return $this->apiResponse('Success Logout', null, 200);
+            } else {
+                return $this->generalError();
+            }
+        } catch (\Exception $exception) {
             return $this->generalError();
         }
     }
 
     public function getUserLanguage()
     {
-        if (Auth::check()) {
-            $user = Auth::user();
-            $language = $user->language;
-            return $this->apiResponse($language, null, 200);
+        try {
+            if (Auth::check()) {
+                $user = Auth::user();
+                $language = $user->language;
+                return $this->apiResponse($language, null, 200);
+            }
+            return $this->unAuthoriseResponse();
+        } catch (\Exception $exception) {
+            return $this->generalError();
         }
-        return $this->unAuthoriseResponse();
     }
 
     public function updateUserLanguage(Request $request)
     {
-        $response = array();
+        try {
         $input = $request->all();
         #region UserInputValidate
         $validator = Validator::make($request->all(), [
             'language' => ['required', new EnumKey(LanguageEnum::class)]
         ]);
         if ($validator->fails()) {
-            return $this->apiResponse(null,  $validator->errors(), 520);
+            return $this->apiResponse(null, $validator->errors(), 520);
         }
         #endregion
 
@@ -140,5 +152,8 @@ class UserController extends Controller
 
 
         return $this->unAuthoriseResponse();
+        } catch (\Exception $exception) {
+            return $this->generalError();
+        }
     }
 }

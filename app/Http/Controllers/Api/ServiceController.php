@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ServiceResource;
 use App\Models\Service;
 use Dotenv\Validator;
+
 //use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -17,69 +18,71 @@ class ServiceController extends Controller
 
     public function index()
     {
-        $service = ServiceResource::collection(Service::paginate($this->paginateNumber));
-        return $this->apiResponse($service);
+        try {
+            $service = ServiceResource::collection(Service::paginate($this->paginateNumber));
+            return $this->apiResponse($service);
+        } catch (\Exception $exception) {
+            return $this->generalError();
+        }
     }
 
     public function show($id)
     {
-        $service = Service::find($id);
-        if ($service) {
-        return $this->apiResponse(new ServiceResource($service));
-    }
-        return $this->notFoundMassage();
+        try {
+            $service = Service::find($id);
+            if ($service) {
+                return $this->apiResponse(new ServiceResource($service));
+            }
+            return $this->notFoundMassage();
+        } catch (\Exception $exception) {
+            return $this->generalError();
+        }
     }
 
     public function store(Request $request)
     {
-//        $validation = $this->validation($request);
-//        if ($validation instanceof Response) {
-//            return $validation;
-//        }
-
-        $service = Service::create($request->all());
-        if ($service) {
-            return $this->createdResponse(new ServiceResource($service));
+        try {
+            $service = Service::create($request->all());
+            if ($service) {
+                return $this->createdResponse(new ServiceResource($service));
+            }
+            return $this->generalError();
+        } catch (\Exception $exception) {
+            return $this->generalError();
         }
-        return $this->generalError();
     }
 
     public function update($id, Request $request)
     {
-//        $validation = $this->validation($request);
-//        if ($validation instanceof Response) {
-//            return $validation;
-//        }
+        try {
+            $service = Service::find($id);
 
-        $service = Service::find($id);
+            if (!$service) {
+                return $this->notFoundMassage();
+            }
+            $service->update($request->all());
 
-        if (!$service) {
-            return $this->notFoundMassage();
+            if ($service) {
+                return $this->apiResponse(new ServiceResource($service));
+            }
+            return $this->generalError();
+        } catch (\Exception $exception) {
+            return $this->generalError();
         }
-
-        $service->update($request->all());
-        if ($service) {
-            return $this->apiResponse(new ServiceResource($service));
-        }
-        return $this->generalError();
     }
 
     public function delete($id, Request $request)
     {
-        $service = Service::find($id);
-        if ($service) {
-            $service->delete();
-            return $this->deleteResponse();
+        try {
+            $service = Service::find($id);
+            if ($service) {
+                $service->delete();
+                return $this->deleteResponse();
+            }
+            return $this->notFoundMassage();
+        } catch (\Exception $exception) {
+            return $this->generalError();
         }
-        return $this->notFoundMassage();
     }
 
-    public function validation($request)
-    {
-        return $this->apiValidation($request, [
-            'name' => 'required',
-            'details' => 'required',
-            'imgPath' => 'required',
-        ]);
-    }
 }
