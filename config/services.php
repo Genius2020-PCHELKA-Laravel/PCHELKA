@@ -30,4 +30,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'liqpay' => [
+        'public_key' => env('LIQPAY_PUBLIC_KEY'),
+        'private_key' => env('LIQPAY_PRIVATE_KEY'),
+        'default_currency' => env('LIQPAY_DEFAULT_CURRENCY'),
+    ],    
 ];
