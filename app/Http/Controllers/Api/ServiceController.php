@@ -14,7 +14,7 @@ use Illuminate\Http\Response;
 
 class ServiceController extends Controller
 {
-    use apiResponseTrait;
+    use ApiResponseTrait;
 
     public function index()
     {

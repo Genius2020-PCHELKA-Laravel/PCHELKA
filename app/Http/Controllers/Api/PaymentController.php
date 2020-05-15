@@ -12,7 +12,7 @@ use LiqPay;
 class PaymentController extends Controller
 {
     //
-    use apiResponseTrait;
+    use ApiResponseTrait;
 
     public $successStatus = 200;
     public function payment_widget_params(){

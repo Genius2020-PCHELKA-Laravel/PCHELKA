@@ -15,7 +15,7 @@ use App\Enums\LanguageEnum;
 
 class UserController extends Controller
 {
-    use apiResponseTrait;
+    use ApiResponseTrait;
 
     public $successStatus = 200;
 

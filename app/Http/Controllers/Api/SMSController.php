@@ -19,7 +19,7 @@ define('PATH_TO_ATTACH_FILE', __FILE__);
 
 class SMSController extends Controller
 {
-    use apiResponseTrait;
+    use ApiResponseTrait;
 
     public function sendSMS(Request $request)
     {
