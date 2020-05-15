@@ -28,6 +28,7 @@ class BookingController extends Controller
             $validator = Validator::make($request->all(), [
                 'serviceType' => ['required', new EnumKey(ServicesEnum::class)],
                 'dueDate' => ['required', 'date_format:Y-m-d H:i:s'],
+                'frequency' => ['integer','min:1','max:3'],
                 'answers' => [
                     'questionId' => ['required', 'integer'],
                 ],
@@ -62,10 +63,29 @@ class BookingController extends Controller
                 $booking->serviceType = ServicesEnum::coerce($request->serviceType);
                 $booking->userId = $bookingUserId;
                 $booking->serviceId = $bookingServiceId;
+                $booking->parentId = null;
                 $booking->save();
                 $lastId = intval($booking->id);
                 #endregion
-
+                $serviceFreq = Service::where('type', ServicesEnum::coerce($request->serviceType))->first()->hasFrequency;
+                if ($serviceFreq == 1) {
+                    $frequency = intval($request->frequency);
+                    $duoDate = $booking->duoDate;
+                    for ($i = 0; $i <= $frequency - 1; $i++) {
+                        $bookingChild = new Booking();
+                        $bookingChild->duoDate = $duoDate;
+                        $bookingChild->price = $price;
+                        $bookingChild->discount = $bookingDiscount;
+                        $bookingChild->totalAmount = $bookingTotalAmount;
+                        $bookingChild->paidStatus = PaymentStatusEnum::NotPaid;
+                        $bookingChild->status = BookingStatusEnum::Created;
+                        $bookingChild->serviceType = ServicesEnum::coerce($request->serviceType);
+                        $bookingChild->userId = $bookingUserId;
+                        $bookingChild->serviceId = $bookingServiceId;
+                        $bookingChild->parentId = $lastId;
+                        $bookingChild->save();
+                    }
+                }
                 #region AddBookingAnswers
                 foreach ($answers as $answer) {
                     $bookingAnswers = new BookingAnswers();
@@ -95,16 +115,17 @@ class BookingController extends Controller
         try {
             #region UserInputValidate
             $validator = Validator::make($request->all(), [
-                'id' => ['required', 'integer','min:1'],
-                'operator' => ['required', 'integer','min:1','max:4'],
+                'id' => ['required', 'integer', 'min:1'],
+                'operator' => ['required', 'integer', 'min:1', 'max:4'],
             ]);
             if ($validator->fails()) {
                 return $this->apiResponse(null, $validator->errors(), 520);
             }
             #endregion
             $booking = Booking::find($request->id);
-            if (!$booking['id'])
-            { return $this->notFoundMassage();}
+            if (!$booking['id']) {
+                return $this->notFoundMassage();
+            }
 
             switch ($request->operator) {
                 case 1: // Payment status

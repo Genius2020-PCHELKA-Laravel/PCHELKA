@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Booking extends Model
 {
     protected $table = 'bookings';
-    protected $fillable = ['id', 'duoDate', 'price', 'discount', 'totalAmount', 'paidStatus','status', 'serviceType', 'userId', 'serviceId', 'couponId'];
+    protected $fillable = ['id', 'duoDate', 'price', 'discount', 'totalAmount', 'paidStatus', 'status', 'serviceType', 'userId', 'serviceId', 'couponId', 'parentId'];
 
     public function Coupon()
     {

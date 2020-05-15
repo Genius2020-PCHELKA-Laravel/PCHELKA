@@ -26,9 +26,11 @@ class CreateBookingsTable extends Migration
             $table->bigInteger('userId')->unsigned();
             $table->bigInteger('serviceId')->unsigned();
             $table->bigInteger('couponId')->unsigned()->nullable();
+            $table->bigInteger('parentId')->unsigned()->nullable()->nullable();
             $table->foreign('userId')->references('id')->on('users');
             $table->foreign('serviceId')->references('id')->on('services');
             $table->foreign('couponId')->references('id')->on('coupons');
+            $table->foreign('parentId')->references('id')->on('bookings');
             $table->timestamps();
         });
     }

@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
         $this->call(QuestionDetailsSeeder::class);
         $this->call(ServiceProvidersSeeder::class);
         //$this->call(BookingsSeeder::class);
-        $this->call(EvaluationsSeeder::class);
+        //   $this->call(EvaluationsSeeder::class);
         $this->call(ServicesQuestionsSeeder::class);
         $this->call(OAuthSeeder::class);
     }

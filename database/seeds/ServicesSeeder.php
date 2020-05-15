@@ -17,6 +17,7 @@ class ServicesSeeder extends Seeder
                 'details' => 'Your trusted maid service',
                 'orderNumber' => 1,
                 'type' => 1,
+                'hasFrequency' => 1,
             ],
             [
                 'id' => 2,
@@ -25,6 +26,7 @@ class ServicesSeeder extends Seeder
                 'details' => null,
                 'orderNumber' => 2,
                 'type' => 2,
+                'hasFrequency' => 0,
             ],
             [
                 'id' => 3,
@@ -33,6 +35,7 @@ class ServicesSeeder extends Seeder
                 'details' => null,
                 'orderNumber' => 3,
                 'type' => 3,
+                'hasFrequency' => 0,
             ],
             [
                 'id' => 4,
@@ -41,6 +44,7 @@ class ServicesSeeder extends Seeder
                 'details' => null,
                 'orderNumber' => 4,
                 'type' => 4,
+                'hasFrequency' => 0,
             ],
             [
                 'id' => 5,
@@ -49,6 +53,7 @@ class ServicesSeeder extends Seeder
                 'details' => null,
                 'orderNumber' => 5,
                 'type' => 5,
+                'hasFrequency' => 0,
             ],
             [
                 'id' => 6,
@@ -57,6 +62,7 @@ class ServicesSeeder extends Seeder
                 'details' => null,
                 'orderNumber' => 6,
                 'type' => 6,
+                'hasFrequency' => 0,
             ],
             [
                 'id' => 7,
@@ -65,6 +71,7 @@ class ServicesSeeder extends Seeder
                 'details' => null,
                 'orderNumber' => 7,
                 'type' => 7,
+                'hasFrequency' => 1,
             ],
             [
                 'id' => 8,
@@ -73,6 +80,7 @@ class ServicesSeeder extends Seeder
                 'details' => null,
                 'orderNumber' => 8,
                 'type' => 8,
+                'hasFrequency' => 0,
             ],
             [
                 'id' => 9,
@@ -81,6 +89,7 @@ class ServicesSeeder extends Seeder
                 'details' => null,
                 'orderNumber' => 9,
                 'type' => 9,
+                'hasFrequency' => 0,
             ],
             [
                 'id' => 10,
@@ -89,6 +98,7 @@ class ServicesSeeder extends Seeder
                 'details' => null,
                 'orderNumber' => 10,
                 'type' => 10,
+                'hasFrequency' => 0,
             ],
             [
                 'id' => 11,
@@ -97,6 +107,7 @@ class ServicesSeeder extends Seeder
                 'details' => null,
                 'orderNumber' => 11,
                 'type' => 11,
+                'hasFrequency' => 1,
             ],
             [
                 'id' => 12,
@@ -105,6 +116,7 @@ class ServicesSeeder extends Seeder
                 'details' => null,
                 'orderNumber' => 12,
                 'type' => 12,
+                'hasFrequency' => 1,
             ],
         ]);
         //   factory(App\Models\Service::class,100)->create();
