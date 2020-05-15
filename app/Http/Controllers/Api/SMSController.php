@@ -54,7 +54,7 @@ class SMSController extends Controller
                 return $this->apiResponse($response, "User is logged in", 422);
             } else {
                 #region SendSms
-                $SPApiClient = new ApiClient(API_USER_ID, API_SECRET, new FileStorage());
+/*                 $SPApiClient = new ApiClient(API_USER_ID, API_SECRET, new FileStorage());
                 $phones = [$mobile];
                 $params = [
                     'sender' => 'Pchelka',
@@ -64,7 +64,7 @@ class SMSController extends Controller
                     'transliterate' => 0
                 ];
                 $response = $SPApiClient->sendSmsByList($phones, $params, $additionalParams);
-                return $this->apiResponse($response);
+                return $this->apiResponse($response); */
                 #endregion
             }
         } catch (\Exception $exception) {
