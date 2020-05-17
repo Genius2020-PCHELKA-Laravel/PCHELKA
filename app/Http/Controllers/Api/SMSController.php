@@ -24,8 +24,6 @@ class SMSController extends Controller
     public function sendSMS(Request $request)
     {
         try {
-
-
             $response = array();
             $input = $request->all();
 
