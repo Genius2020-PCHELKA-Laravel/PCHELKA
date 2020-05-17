@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use BenSampo\Enum\Rules\Enum;
 use BenSampo\Enum\Rules\EnumKey;
-use BenSampo\Enum\Rules\EnumValue;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\User;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\Enums\LanguageEnum;
@@ -47,6 +44,7 @@ class UserController extends Controller
 
     /**
      * Register api
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
     public function register(Request $request)
@@ -60,19 +58,25 @@ class UserController extends Controller
                 'email' => 'required|email',
                 'gender' => 'required',
                 'language' => 'required',
-                'mobile' => 'required|digits:12'
+
             ]);
             if ($validator->fails()) {
-                return response()->json(['error' => $validator->errors()], 401);
+                return $this->apiResponse(null, $validator->errors(), 401);
             }
-            $mobile = $input['mobile'];
-            $user = User::where('mobile', '=', $mobile)->first();
-            if ($user) {
-                $user->update($request->all());
+
+            if (Auth::user()) {
+                $user=Auth::user();
+                $user->fullName = $request->fullName;
+                $user->email = $request->email;
+                $user->dateOfBirth = $request->dateOfBirth;
+                $user->language = $request->language;
+                $user->language = LanguageEnum::coerce($request->language);
+                $user->save();
                 return $this->apiResponse('Your registration has been successful', null, 200);
             } else {
-                return $this->notFoundMassage();
+                return $this->unAuthoriseResponse();
             }
+
         } catch (\Exception $exception) {
             return $this->generalError();
         }
@@ -120,8 +124,8 @@ class UserController extends Controller
         try {
             if (Auth::check()) {
                 $user = Auth::user();
-                $language = $user->language;
-                return $this->apiResponse($language, null, 200);
+                $language = LanguageEnum::coerce($user->language);
+                return $this->apiResponse($language->key, null, 200);
             }
             return $this->unAuthoriseResponse();
         } catch (\Exception $exception) {
@@ -132,26 +136,26 @@ class UserController extends Controller
     public function updateUserLanguage(Request $request)
     {
         try {
-        $input = $request->all();
-        #region UserInputValidate
-        $validator = Validator::make($request->all(), [
-            'language' => ['required', new EnumKey(LanguageEnum::class)]
-        ]);
-        if ($validator->fails()) {
-            return $this->apiResponse(null, $validator->errors(), 520);
-        }
-        #endregion
+            $input = $request->all();
+            #region UserInputValidate
+            $validator = Validator::make($request->all(), [
+                'language' => ['required', new EnumKey(LanguageEnum::class)]
+            ]);
+            if ($validator->fails()) {
+                return $this->apiResponse(null, $validator->errors(), 520);
+            }
+            #endregion
 
-        $language = $input['language'];
-        if (Auth::check()) {
-            $user = Auth::user();
-            $user['language'] = LanguageEnum::coerce($language);
-            $user->save();
-            return $this->apiResponse('Language update successfully ', null, 200);
-        }
+            $language = $input['language'];
+            if (Auth::check()) {
+                $user = Auth::user();
+                $user['language'] = LanguageEnum::coerce($language);
+                $user->save();
+                return $this->apiResponse('Language update successfully ', null, 200);
+            }
 
 
-        return $this->unAuthoriseResponse();
+            return $this->unAuthoriseResponse();
         } catch (\Exception $exception) {
             return $this->generalError();
         }

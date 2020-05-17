@@ -24,3 +24,7 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/test', 'EvaluationController@test');
 
+Route::get('/clearCache', function() {
+    Artisan::call('cache:clear');
+    return "Cache is cleared";
+});

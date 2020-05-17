@@ -18,6 +18,7 @@ class CreateServiceProvidersTable extends Migration
             $table->string('name');
             $table->string('email');
             $table->string('mobileNumber');
+            $table->tinyInteger('serviceType')->nullable();
             $table->enum('type',['Maid','CarWash']);
             $table->timestamps();
         });

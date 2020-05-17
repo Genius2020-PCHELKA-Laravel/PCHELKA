@@ -17,14 +17,16 @@ class ServiceProvidersSeeder extends Seeder
                 'id' => 1,
                 'name' => 'Belal',
                 'email' => "B@b.c",
-                'mobileNumber' =>'0994665567',
+                'mobileNumber' => '0994665567',
+                'serviceType' => 1,
                 'type' => 1,
             ],
             [
                 'id' => 2,
                 'name' => 'mohamad',
                 'email' => "m@m.c",
-                'mobileNumber' =>'0994665567',
+                'mobileNumber' => '0994665567',
+                'serviceType' => 2,
                 'type' => 1,
             ],
         ]);

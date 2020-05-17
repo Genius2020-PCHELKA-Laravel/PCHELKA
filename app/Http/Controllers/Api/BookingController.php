@@ -28,7 +28,7 @@ class BookingController extends Controller
             $validator = Validator::make($request->all(), [
                 'serviceType' => ['required', new EnumKey(ServicesEnum::class)],
                 'dueDate' => ['required', 'date_format:Y-m-d H:i:s'],
-                'frequency' => ['integer','min:1','max:3'],
+                'frequency' => ['integer', 'min:1', 'max:3'],
                 'answers' => [
                     'questionId' => ['required', 'integer'],
                 ],
@@ -43,9 +43,14 @@ class BookingController extends Controller
 
                 #region GetPriceAndSum
                 foreach ($answers as $answer) {
+//                    if ($answer) {
                     $questionDetails = QuestionDetails::where('id', '=', $answer['questionId'])->first();
                     $price = $price + $questionDetails->price;
+//                    } else {
+//                        return $this->notFoundMassage('Question');
+//                    }
                 }
+
                 #endregion
 
                 #region AddBookingToTable
@@ -127,10 +132,16 @@ class BookingController extends Controller
                 return $this->notFoundMassage();
             }
 
-            switch ($request->operator) {
+            $operator = intval($request->operator);
+            switch ($operator) {
+
                 case 1: // Payment status
+                    //  if (PaymentStatusEnum:: ( $request->type)) {
                     $booking['paidStatus'] = PaymentStatusEnum::coerce($request->type);
                     $booking->save();
+                    // }
+                    //  return $this->apiResponse(null, 'Error ! ', 190);
+
                     break;
                 case 2: // Payment ways
                     $booking['paymentWays'] = PaymentWaysEnum::coerce($request->type);
@@ -150,5 +161,21 @@ class BookingController extends Controller
         (\Exception $exception) {
             return $this->generalError();
         }
+    }
+
+    public function getQuestionsPrice(Request $request)
+    {
+        //validate
+        $answers = $request->answers;
+        $price = 0;
+
+        #region GetPriceAndSum
+        foreach ($answers as $answer) {
+            $questionDetails = QuestionDetails::where('id', '=', $answer['questionId'])->first();
+            $price = $price + $questionDetails->price;
+        }
+        #endregion
+
+        return $this->apiResponse($price, null, 200);
     }
 }

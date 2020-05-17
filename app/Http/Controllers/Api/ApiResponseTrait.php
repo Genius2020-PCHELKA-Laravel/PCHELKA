@@ -51,9 +51,9 @@ trait ApiResponseTrait
         return $this->apiResponse('Unauthorised !', null, 401);
     }
 
-    public function notFoundMassage()
+    public function notFoundMassage($more = null)
     {
-        return $this->apiResponse(null, "Not found", 404);
+        return $this->apiResponse(null, $more ."Not found", 404);
     }
 
     public function generalError()

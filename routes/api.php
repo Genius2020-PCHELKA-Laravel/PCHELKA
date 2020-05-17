@@ -30,6 +30,10 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('updatesubscribe', 'PaymentController@updatesubscribe');
     Route::post('sendinvoice', 'PaymentController@sendinvoice');
     Route::post('cancelinvoice', 'PaymentController@cancelinvoice');
+
+    Route::post('booking', 'BookingController@BookService');
+    Route::post('updateBookingStatus', 'BookingController@updateBookingEnum');
+
 });
 
 Route::get('sendemail', 'EmailController@sendEMail');
@@ -39,10 +43,14 @@ Route::post('verifysmscode', 'SMSController@verifySMSCode');
 
 Route::post('login', 'UserController@login');
 
+Route::get('booking/price','BookingController@getQuestionsPrice');
+
 Route::get('service/{id}', 'ServiceController@show');
 Route::get('service', 'ServiceController@index');
 Route::post('service', 'ServiceController@store');
 Route::post('service/{id}', 'ServiceController@update');
 Route::get('service/delete/{id}', 'ServiceController@delete');
 
-Route::post('booking', 'BookingController@BookService');
+Route::get('providers','ServiceProviderController@getProvidersByServiceType');
+
+

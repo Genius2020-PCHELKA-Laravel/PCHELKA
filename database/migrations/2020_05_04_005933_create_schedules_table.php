@@ -19,7 +19,8 @@ class CreateSchedulesTable extends Migration
             $table->time('timeStart');
             $table->time('timeEnd');
             $table->bigInteger('serviceProviderId')->unsigned();
-            $table->foreign('serviceProviderId')->references('id')->on('service_providers');
+            $table->foreign('serviceProviderId')->references('id')->on('service_providers')
+            ->onDelete('cascade');
             $table->timestamps();
         });
     }

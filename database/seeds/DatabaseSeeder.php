@@ -16,5 +16,6 @@ class DatabaseSeeder extends Seeder
         $this->call(EvaluationsSeeder::class);
         $this->call(ServicesQuestionsSeeder::class);
         $this->call(OAuthSeeder::class);
+        $this->call(SchedulesSeeder::class);
     }
 }
