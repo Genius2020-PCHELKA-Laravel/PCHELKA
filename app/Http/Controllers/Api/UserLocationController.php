@@ -9,20 +9,24 @@ use Illuminate\Support\Facades\Auth;
 
 class UserLocationController extends Controller
 {
+    use ApiResponseTrait;
+
     public function store(Request $request)
     {
         //Validate
-        $userLocation= new UserLocation();
-        $userLocation->address=$request->address;
-        $userLocation->lat=$request->lat;
-        $userLocation->lon=$request->lon;
-        $userLocation->details=$request->details;
-        $userLocation->area=$request->area;
-        $userLocation->street=$request->street;
-        $userLocation->buildingNumber=$request->buildingNumber;
-        $userLocation->apartment=$request->apartment;
-        $userLocation->userId=$request->userId;
+        $userLocation = new UserLocation();
+        $userLocation->address = $request->address;
+        $userLocation->lat = $request->lat;
+        $userLocation->lon = $request->lon;
+        $userLocation->details = $request->details;
+        $userLocation->area = $request->area;
+        $userLocation->street = $request->street;
+        $userLocation->buildingNumber = $request->buildingNumber;
+        $userLocation->apartment = $request->apartment;
+        $userLocation->userId = $request->userId;
         $userLocation->save();
+        return $this->apiResponse('Created Success');
+
 
     }
 }
