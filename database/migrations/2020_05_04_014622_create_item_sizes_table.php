@@ -21,7 +21,7 @@ class CreateItemSizesTable extends Migration
             $table->double('itemSizeY');
             $table->double('priceOfSm');
             $table->bigInteger('bookingId')->unsigned();
-            $table->foreign('bookingId')->references('id')->on('bookings');
+            $table->foreign('bookingId')->references('id')->on('bookings')->onDelete('cascade');
             $table->timestamps();
         });
     }

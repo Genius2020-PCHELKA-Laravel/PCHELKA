@@ -18,7 +18,7 @@ class CreateServicesQuestionsTable extends Migration
             $table->bigInteger('serviceId')->unsigned();
             $table->bigInteger('questionId')->unsigned();
             $table->foreign('serviceId')->references('id')->on('services')->onDelete('cascade');
-            $table->foreign('questionId')->references('id')->on('questions');
+            $table->foreign('questionId')->references('id')->on('questions')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -710,123 +710,88 @@ class QuestionDetailsSeeder extends Seeder
                 'id' => 113,
                 'name' => '3',
                 'price' => 100,
-                'questionId' => 27
+                'questionId' => 28
             ],
             [
                 'id' => 114,
                 'name' => '4',
                 'price' => 100,
-                'questionId' => 27
+                'questionId' => 28
             ],
             [
                 'id' => 115,
                 'name' => '5',
                 'price' => 100,
-                'questionId' => 27
+                'questionId' => 28
             ],
             [
                 'id' => 116,
                 'name' => '0',
                 'price' => 100,
-                'questionId' => 28
+                'questionId' => 29
             ],
             [
                 'id' => 117,
                 'name' => '1',
                 'price' => 100,
-                'questionId' => 28
+                'questionId' => 29
             ],
             [
                 'id' => 118,
                 'name' => '2',
                 'price' => 100,
-                'questionId' => 28
+                'questionId' => 29
             ],
             [
                 'id' => 119,
                 'name' => '3',
                 'price' => 100,
-                'questionId' => 28
+                'questionId' => 29
             ],
             [
                 'id' => 120,
                 'name' => '4',
                 'price' => 100,
-                'questionId' => 28
+                'questionId' => 29
             ],
             [
                 'id' => 121,
                 'name' => '5',
                 'price' => 100,
-                'questionId' => 28
-            ],[
+                'questionId' => 29
+            ],
+            [
                 'id' => 122,
                 'name' => '0',
                 'price' => 100,
-                'questionId' => 29
+                'questionId' => 30
             ],
             [
                 'id' => 123,
                 'name' => '1',
                 'price' => 100,
-                'questionId' => 29
+                'questionId' => 30
             ],
             [
                 'id' => 124,
                 'name' => '2',
                 'price' => 100,
-                'questionId' => 29
+                'questionId' => 30
             ],
             [
                 'id' => 125,
                 'name' => '3',
                 'price' => 100,
-                'questionId' => 29
+                'questionId' => 30
             ],
             [
                 'id' => 126,
                 'name' => '4',
                 'price' => 100,
-                'questionId' => 29
+                'questionId' => 30
             ],
             [
                 'id' => 127,
-                'name' => '5',
-                'price' => 100,
-                'questionId' => 29
-            ],
-            [
-                'id' => 128,
-                'name' => '0',
-                'price' => 100,
-                'questionId' => 30
-            ],
-            [
-                'id' => 129,
-                'name' => '1',
-                'price' => 100,
-                'questionId' => 30
-            ],
-            [
-                'id' => 130,
-                'name' => '2',
-                'price' => 100,
-                'questionId' => 30
-            ],
-            [
-                'id' => 131,
-                'name' => '3',
-                'price' => 100,
-                'questionId' => 30
-            ],
-            [
-                'id' => 132,
-                'name' => '4',
-                'price' => 100,
-                'questionId' => 30
-            ],
-            [
-                'id' => 133,
                 'name' => '5',
                 'price' => 100,
                 'questionId' => 30

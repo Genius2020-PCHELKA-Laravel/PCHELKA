@@ -16,21 +16,21 @@ class CreateBookingsTable extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->dateTime('duoDate');
-            $table->double('price');
-            $table->double('discount');
-            $table->double('totalAmount');
+            $table->double('price')->nullable();
+            $table->double('discount')->nullable();
+            $table->double('totalAmount')->nullable();
             $table->tinyInteger('paidStatus')->unsigned()->nullable();
             $table->tinyInteger('paymentWays')->unsigned()->nullable();
             $table->tinyInteger('status')->unsigned()->nullable();
             $table->tinyInteger('serviceType')->unsigned()->nullable();
-            $table->bigInteger('userId')->unsigned();
-            $table->bigInteger('serviceId')->unsigned();
+            $table->bigInteger('userId')->unsigned()->nullable();
+            $table->bigInteger('serviceId')->unsigned()->nullable();
             $table->bigInteger('couponId')->unsigned()->nullable();
-            $table->bigInteger('parentId')->unsigned()->nullable()->nullable();
-            $table->foreign('userId')->references('id')->on('users');
-            $table->foreign('serviceId')->references('id')->on('services');
-            $table->foreign('couponId')->references('id')->on('coupons');
-            $table->foreign('parentId')->references('id')->on('bookings');
+            $table->bigInteger('parentId')->unsigned()->nullable();
+            $table->foreign('userId')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('serviceId')->references('id')->on('services')->onDelete('set null');
+            $table->foreign('couponId')->references('id')->on('coupons')->onDelete('set null');
+            $table->foreign('parentId')->references('id')->on('bookings')->onDelete('set null');
             $table->timestamps();
         });
     }

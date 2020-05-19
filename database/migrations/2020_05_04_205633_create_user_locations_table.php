@@ -21,10 +21,10 @@ class CreateUserLocationsTable extends Migration
             $table->string('details');
             $table->string('area');
             $table->string('street');
-            $table->integer('buildingNumber');
+            $table->string('buildingNumber');
             $table->string('apartment');
             $table->bigInteger('userId')->unsigned();
-            $table->foreign('userId')->references('id')->on('users');
+            $table->foreign('userId')->references('id')->on('users')->onDelete('cascade');
 
             $table->timestamps();
         });

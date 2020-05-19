@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::post('details', 'UserController@details');
-    Route::post('logout','UserController@logout');
+    Route::post('logout', 'UserController@logout');
     Route::post('register', 'UserController@register');
 
     Route::get('userLanguage', 'UserController@getUserLanguage');
@@ -34,6 +34,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('booking', 'BookingController@BookService');
     Route::post('updateBookingStatus', 'BookingController@updateBookingEnum');
 
+    Route::post('userLocation', 'UserLocationController@store');
+    Route::post('userUpdate', 'UserController@updateUserInformation');
+
 });
 
 Route::get('sendemail', 'EmailController@sendEMail');
@@ -43,7 +46,7 @@ Route::post('verifysmscode', 'SMSController@verifySMSCode');
 
 Route::post('login', 'UserController@login');
 
-Route::get('booking/price','BookingController@getQuestionsPrice');
+Route::get('booking/price', 'BookingController@getQuestionsPrice');
 
 Route::get('service/{id}', 'ServiceController@show');
 Route::get('service', 'ServiceController@index');
@@ -51,8 +54,8 @@ Route::post('service', 'ServiceController@store');
 Route::post('service/{id}', 'ServiceController@update');
 Route::get('service/delete/{id}', 'ServiceController@delete');
 
-Route::get('providers','ServiceProviderController@getProvidersByServiceType');
-Route::get('schedule','ScheduleController@getSchedulesByProvidersId');
-Route::get('scheduleByType','ScheduleController@getSchedulesByServiceType');
+Route::get('providers', 'ServiceProviderController@getProvidersByServiceType');
+Route::get('schedule', 'ScheduleController@getSchedulesByProvidersId');
+Route::get('scheduleByType', 'ScheduleController@getSchedulesByServiceType');
 
 

@@ -16,6 +16,7 @@ use App\Enums\ServicesEnum;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use Illuminate\Support\Facades\DB;
+use function Safe\eio_lstat;
 
 class BookingController extends Controller
 {
@@ -37,27 +38,17 @@ class BookingController extends Controller
                 return $this->apiResponse(null, $validator->errors(), 520);
             }
             #endregion
+
             if (Auth::check()) {
-                $answers = $request->answers;
-                $price = 0;
 
-                #region GetPriceAndSum
-                foreach ($answers as $answer) {
-//                    if ($answer) {
-                    $questionDetails = QuestionDetails::where('id', '=', $answer['questionId'])->first();
-                    $price = $price + $questionDetails->price;
-//                    } else {
-//                        return $this->notFoundMassage('Question');
-//                    }
-                }
-
-                #endregion
-
+                $price = $request->price;
+                $discount = $request->discount;
+                $discount = 0;
+                $bookingDiscount = 0;
                 #region AddBookingToTable
                 $bookingUserId = Auth::user()->id;
                 $bookingServiceId = Service::where('type', ServicesEnum::coerce($request->serviceType))->first()->id;;
-                $bookingDiscount = 0;
-                $bookingTotalAmount = $price - ($price * $bookingDiscount / 100);
+                $bookingTotalAmount = $price - ($price * $discount / 100);
                 $booking = new Booking();
                 $booking->duoDate = $request->dueDate;
                 $booking->price = $price;
@@ -74,14 +65,19 @@ class BookingController extends Controller
                 #endregion
                 $serviceFreq = Service::where('type', ServicesEnum::coerce($request->serviceType))->first()->hasFrequency;
                 if ($serviceFreq == 1) {
+                    $frequencyDate = $request->dueDate;
+                    $date = strtotime($frequencyDate);
                     $frequency = intval($request->frequency);
-                    $duoDate = $booking->duoDate;
-                    for ($i = 0; $i <= $frequency - 1; $i++) {
+                    // $duoDate = $booking->duoDate;
+
+                    if ($frequency == 2) {
+                        $date = strtotime("+15 day", $date);
+                        $endDate = date('Y/m/d', $date);
                         $bookingChild = new Booking();
-                        $bookingChild->duoDate = $duoDate;
-                        $bookingChild->price = $price;
-                        $bookingChild->discount = $bookingDiscount;
-                        $bookingChild->totalAmount = $bookingTotalAmount;
+                        $bookingChild->duoDate = $endDate;
+                        $bookingChild->price = null;
+                        $bookingChild->discount = null;
+                        $bookingChild->totalAmount = null;
                         $bookingChild->paidStatus = PaymentStatusEnum::NotPaid;
                         $bookingChild->status = BookingStatusEnum::Created;
                         $bookingChild->serviceType = ServicesEnum::coerce($request->serviceType);
@@ -89,9 +85,29 @@ class BookingController extends Controller
                         $bookingChild->serviceId = $bookingServiceId;
                         $bookingChild->parentId = $lastId;
                         $bookingChild->save();
+
+                    } else if ($frequency == 3) {
+                        for ($i = 0; $i <= 2; $i++) {
+                            $date = strtotime("+7 day", $date);
+                            $endDate = date('Y/m/d', $date);
+                            $bookingChild = new Booking();
+                            $bookingChild->duoDate = $endDate;
+                            $bookingChild->price = null;
+                            $bookingChild->discount = null;
+                            $bookingChild->totalAmount = null;
+                            $bookingChild->paidStatus = PaymentStatusEnum::NotPaid;
+                            $bookingChild->status = BookingStatusEnum::Created;
+                            $bookingChild->serviceType = ServicesEnum::coerce($request->serviceType);
+                            $bookingChild->userId = $bookingUserId;
+                            $bookingChild->serviceId = $bookingServiceId;
+                            $bookingChild->parentId = $lastId;
+                            $bookingChild->save();
+                        }
                     }
+
                 }
                 #region AddBookingAnswers
+                $answers = $request->answers;
                 foreach ($answers as $answer) {
                     $bookingAnswers = new BookingAnswers();
                     $bookingAnswers->bookingId = $lastId;

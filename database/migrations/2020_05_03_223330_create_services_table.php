@@ -22,7 +22,7 @@ class CreateServicesTable extends Migration
             $table->boolean('hasFrequency')->default(0);
             $table->bigInteger('couponId')->unsigned()->nullable();
             $table->integer('orderNumber');
-            $table->foreign('couponId')->references('id')->on('coupons');
+            $table->foreign('couponId')->references('id')->on('coupons')->onDelete('set null');
             $table->timestamps();
 
         });

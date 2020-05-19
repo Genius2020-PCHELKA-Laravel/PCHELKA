@@ -20,10 +20,10 @@ class CreateBookingAnswersTable extends Migration
             $table->double('itemPrice')->nullable();
             $table->double('totalAmount')->nullable();
             $table->bigInteger('answerId')->nullable()->unsigned();
-            $table->bigInteger('questionId')->unsigned();
+            $table->bigInteger('questionId')->unsigned()->nullable();
             $table->bigInteger('bookingId')->unsigned();
-            $table->foreign('answerId')->references('id')->on('question_details');
-            $table->foreign('questionId')->references('id')->on('questions');
+            $table->foreign('answerId')->references('id')->on('question_details')->onDelete('set null');
+            $table->foreign('questionId')->references('id')->on('questions')->onDelete('set null');
             $table->foreign('bookingId')->references('id')->on('bookings')
             ->onDelete('cascade');
             $table->timestamps();
