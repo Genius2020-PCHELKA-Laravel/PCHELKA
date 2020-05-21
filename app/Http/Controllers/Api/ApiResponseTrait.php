@@ -53,7 +53,7 @@ trait ApiResponseTrait
 
     public function notFoundMassage($more = null)
     {
-        return $this->apiResponse(null, $more ."Not found", 404);
+        return $this->apiResponse(null, $more ." Not found", 404);
     }
 
     public function generalError()

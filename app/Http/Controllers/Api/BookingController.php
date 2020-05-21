@@ -188,7 +188,11 @@ class BookingController extends Controller
         #region GetPriceAndSum
         foreach ($answers as $answer) {
             $questionDetails = QuestionDetails::where('id', '=', $answer['questionId'])->first();
-            $price = $price + $questionDetails->price;
+            if ($questionDetails) {
+                $price = $price + $questionDetails->price;
+            } else {
+                return $this->notFoundMassage( "The question id : ".$answer['questionId']. " /");
+            }
         }
         #endregion
 

@@ -35,7 +35,12 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('updateBookingStatus', 'BookingController@updateBookingEnum');
 
     Route::post('userLocation', 'UserLocationController@store');
+    Route::get('userLocation', 'UserLocationController@getUserLocations');
+    Route::post('locationDelete', 'UserLocationController@deleteLocation');
+    Route::post('locationUpdate', 'UserLocationController@updateLocation');
+
     Route::post('userUpdate', 'UserController@updateUserInformation');
+
 
 });
 
