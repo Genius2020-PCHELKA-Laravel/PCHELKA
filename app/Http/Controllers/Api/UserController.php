@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\UserLocation;
+use App\User;
 use BenSampo\Enum\Rules\EnumKey;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -56,8 +57,8 @@ class UserController extends Controller
                 'email' => 'required|email',
                 'language' => 'required',
                 'address' => ['required'],
-                'lat' => ['required','regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
-                'lon' =>  ['required','regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
+                'lat' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+                'lon' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
                 'details' => 'required',
                 'area' => 'required',
                 'street' => 'required',
@@ -70,7 +71,7 @@ class UserController extends Controller
 
             if (Auth::user()) {
                 $user = Auth::user();
-                $userId =$user['id'];
+                $userId = $user['id'];
                 $user->fullName = $request->fullName;
                 $user->email = $request->email;
                 $user->language = LanguageEnum::coerce($request->language);
@@ -84,7 +85,7 @@ class UserController extends Controller
                 $userLocation->street = $request->street;
                 $userLocation->buildingNumber = $request->buildingNumber;
                 $userLocation->apartment = $request->apartment;
-                $userLocation->userId =$userId;
+                $userLocation->userId = $userId;
                 $userLocation->save();
                 return $this->apiResponse('Your registration has been successful', null, 200);
             } else {
@@ -191,7 +192,7 @@ class UserController extends Controller
                 $user = Auth::user();
                 $user->fullName = $request->fullName;
                 $user->email = $request->email;
-               // $user->dateOfBirth = $request->dateOfBirth;
+                // $user->dateOfBirth = $request->dateOfBirth;
                 $user->language = $request->language;
                 $user->language = LanguageEnum::coerce($request->language);
                 $user->save();
@@ -202,6 +203,21 @@ class UserController extends Controller
 
         } catch (\Exception $exception) {
             return $this->generalError();
+        }
+    }
+
+    public function checkFullName(Request $request)
+    {
+        $user = User::where('mobile', $request->mobile)->get();
+        if (count($user) > 0) {
+            // user  exist
+            if (isset($user[0]->fullName)) {
+                return $this->apiResponse(true);
+            } else {
+                return $this->apiResponse(false);
+            }
+        } else {
+            return $this->apiResponse(false);
         }
     }
 }

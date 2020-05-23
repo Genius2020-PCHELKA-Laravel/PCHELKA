@@ -63,4 +63,4 @@ Route::get('providers', 'ServiceProviderController@getProvidersByServiceType');
 Route::get('schedule', 'ScheduleController@getSchedulesByProvidersId');
 Route::get('scheduleByType', 'ScheduleController@getSchedulesByServiceType');
 
-
+Route::get('checkFullName', 'UserController@checkFullName');

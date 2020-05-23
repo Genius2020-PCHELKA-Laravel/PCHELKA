@@ -15,14 +15,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
-// Updated from maher
-//updted from github
-
-Auth::routes();
+});;
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/test', 'EvaluationController@test');
+
+Route::get('/admin',function(){
+    return view('admin.register');
+});
 
 Route::get('/clearCache', function() {
     Artisan::call('cache:clear');
