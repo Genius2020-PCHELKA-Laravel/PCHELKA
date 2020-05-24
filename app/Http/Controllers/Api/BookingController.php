@@ -22,14 +22,23 @@ class BookingController extends Controller
 {
     use ApiResponseTrait;
 
+
     public function bookService(Request $request)
     {
+
         try {
             #region UserInputValidate
             $validator = Validator::make($request->all(), [
                 'serviceType' => ['required', new EnumKey(ServicesEnum::class)],
-                'dueDate' => ['required', 'date_format:Y-m-d H:i:s'],
-                'frequency' => ['integer', 'min:1', 'max:3'],
+                'duoDate' => ['required', 'date_format:Y-m-d'],
+                'duoTime' => ['required', 'date_format:H:i:s'],
+                'subTotal' => ['required', 'regex:/^\d+(\.\d{1,2})?$/'],
+                'discount' => ['required', 'regex:/^\d+(\.\d{1,2})?$/'],
+                'totalAmount' => ['required', 'regex:/^\d+(\.\d{1,2})?$/'],
+                'locationId' => ['required', 'integer'],
+                'providerId' => ['required', 'integer'],
+                'scheduleId' => ['required', 'integer'],
+                'paymentWays' => ['required', new EnumKey(PaymentWaysEnum::class)],
                 'answers' => [
                     'questionId' => ['required', 'integer'],
                 ],
@@ -38,61 +47,44 @@ class BookingController extends Controller
                 return $this->apiResponse(null, $validator->errors(), 520);
             }
             #endregion
-
             if (Auth::check()) {
-
-                $price = $request->price;
-                $discount = $request->discount;
-                $discount = 0;
-                $bookingDiscount = 0;
-                #region AddBookingToTable
-                $bookingUserId = Auth::user()->id;
-                $bookingServiceId = Service::where('type', ServicesEnum::coerce($request->serviceType))->first()->id;;
-                $bookingTotalAmount = $price - ($price * $discount / 100);
+                $userId = Auth::user()->id;
+                #region AddBooking
+                $bookingUserId = $userId;
+                $bookingServiceId = ServicesEnum::coerce($request->serviceType);
+                $date = strtotime($request->duoDate);
                 $booking = new Booking();
-                $booking->duoDate = $request->dueDate;
-                $booking->price = $price;
-                $booking->discount = $bookingDiscount;
-                $booking->totalAmount = $bookingTotalAmount;
+                $booking->duoDate = $request->duoDate;
+                $booking->duoTime = $request->duoTime;
+                $booking->subTotal = $request->subTotal;
+                $booking->discount = $request->discount;
+                $booking->totalAmount = $request->totalAmount;
                 $booking->paidStatus = PaymentStatusEnum::NotPaid;
+                $booking->paymentWays = PaymentWaysEnum::coerce($request->paymentWays);
                 $booking->status = BookingStatusEnum::Created;
                 $booking->serviceType = ServicesEnum::coerce($request->serviceType);
                 $booking->userId = $bookingUserId;
                 $booking->serviceId = $bookingServiceId;
+                $booking->locationId = $request->locationId;
+                $booking->providerId = $request->providerId;
+                $booking->scheduleId = $request->scheduleId;
                 $booking->parentId = null;
                 $booking->save();
                 $lastId = intval($booking->id);
-                #endregion
-                $serviceFreq = Service::where('type', ServicesEnum::coerce($request->serviceType))->first()->hasFrequency;
-                if ($serviceFreq == 1) {
-                    $frequencyDate = $request->dueDate;
-                    $date = strtotime($frequencyDate);
-                    $frequency = intval($request->frequency);
-                    // $duoDate = $booking->duoDate;
-
-                    if ($frequency == 2) {
-                        $date = strtotime("+15 day", $date);
-                        $endDate = date('Y/m/d', $date);
-                        $bookingChild = new Booking();
-                        $bookingChild->duoDate = $endDate;
-                        $bookingChild->price = null;
-                        $bookingChild->discount = null;
-                        $bookingChild->totalAmount = null;
-                        $bookingChild->paidStatus = PaymentStatusEnum::NotPaid;
-                        $bookingChild->status = BookingStatusEnum::Created;
-                        $bookingChild->serviceType = ServicesEnum::coerce($request->serviceType);
-                        $bookingChild->userId = $bookingUserId;
-                        $bookingChild->serviceId = $bookingServiceId;
-                        $bookingChild->parentId = $lastId;
-                        $bookingChild->save();
-
-                    } else if ($frequency == 3) {
+                switch ($request->frequency) {
+                    case "One-time":
+                    {
+                        break;
+                    }
+                    case "Weekly":
+                    {
                         for ($i = 0; $i <= 2; $i++) {
                             $date = strtotime("+7 day", $date);
                             $endDate = date('Y/m/d', $date);
                             $bookingChild = new Booking();
                             $bookingChild->duoDate = $endDate;
-                            $bookingChild->price = null;
+                            $bookingChild->duoTime = $request->duoTime;
+                            $bookingChild->subTotal = null;
                             $bookingChild->discount = null;
                             $bookingChild->totalAmount = null;
                             $bookingChild->paidStatus = PaymentStatusEnum::NotPaid;
@@ -103,9 +95,31 @@ class BookingController extends Controller
                             $bookingChild->parentId = $lastId;
                             $bookingChild->save();
                         }
+                        break;
                     }
-
+                    case "Bi-weekly":
+                    {
+                        $date = strtotime("+15 day", $date);
+                        $endDate = date('Y/m/d', $date);
+                        $bookingChild = new Booking();
+                        $bookingChild->duoDate = $endDate;
+                        $bookingChild->duoTime = $request->duoTime;
+                        $bookingChild->subTotal = null;
+                        $bookingChild->discount = null;
+                        $bookingChild->totalAmount = null;
+                        $bookingChild->paidStatus = PaymentStatusEnum::NotPaid;
+                        $bookingChild->status = BookingStatusEnum::Created;
+                        $bookingChild->serviceType = ServicesEnum::coerce($request->serviceType);
+                        $bookingChild->userId = $bookingUserId;
+                        $bookingChild->serviceId = $bookingServiceId;
+                        $bookingChild->parentId = $lastId;
+                        $bookingChild->save();
+                        break;
+                    }
+                    default:
+                        return $this->apiResponse("Please select correct frequency value !");
                 }
+                #endregion
                 #region AddBookingAnswers
                 $answers = $request->answers;
                 foreach ($answers as $answer) {
@@ -191,7 +205,7 @@ class BookingController extends Controller
             if ($questionDetails) {
                 $price = $price + $questionDetails->price;
             } else {
-                return $this->notFoundMassage( "The question id : ".$answer['questionId']. " /");
+                return $this->notFoundMassage("The question id : " . $answer['questionId'] . " /");
             }
         }
         #endregion
