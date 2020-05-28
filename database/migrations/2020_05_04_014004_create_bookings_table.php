@@ -17,6 +17,7 @@ class CreateBookingsTable extends Migration
             $table->bigIncrements('id');
             $table->date('duoDate');
             $table->time('duoTime');
+            $table->string('refCode');
             $table->double('subTotal')->nullable();
             $table->double('discount')->nullable();
             $table->double('totalAmount')->nullable();

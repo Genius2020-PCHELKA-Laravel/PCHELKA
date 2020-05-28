@@ -41,12 +41,14 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::post('userUpdate', 'UserController@updateUserInformation');
 
+    Route::get('pastBooking', 'BookingController@getPastBooking');
+    Route::get('upComingBooking', 'BookingController@getUpComingBooking');
 
 });
 
 Route::get('sendemail', 'EmailController@sendEMail');
 
-Route::post('sendsms', 'SMSController@sendSMS');
+//Route::post('sendsms', 'SMSController@sendSMS');
 Route::post('verifysmscode', 'SMSController@verifySMSCode');
 
 Route::post('login', 'UserController@login');
@@ -61,9 +63,11 @@ Route::get('service/delete/{id}', 'ServiceController@delete');
 
 Route::get('providers', 'ServiceProviderController@getProvidersByServiceType');
 
-Route::get('checkFullName', 'UserController@checkFullName');
+Route::post('checkFullName', 'UserController@checkFullName');
 Route::get('schedulesDays', 'ScheduleController@getSchedulesDays');
 Route::get('schedulesTime', 'ScheduleController@getSchedulesTime');
 
 Route::get('materialPrice', 'ServiceController@getMaterialPrice');
 Route::get('hourPrice', 'ServiceController@getHourPrice');
+
+

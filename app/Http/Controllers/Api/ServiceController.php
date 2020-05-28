@@ -11,6 +11,7 @@ use Dotenv\Validator;
 //use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 
 
 class ServiceController extends Controller
@@ -96,6 +97,7 @@ class ServiceController extends Controller
 
     public function getHourPrice(Request $request)
     {
+
         $response = array();
         $data = Service::where('type', ServicesEnum::coerce($request->serviceType))->first();
         $response['hourPrice'] = $data->hourPrice;
