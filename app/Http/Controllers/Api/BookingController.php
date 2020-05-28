@@ -26,27 +26,27 @@ class BookingController extends Controller
     public function bookService(Request $request)
     {
 
-        try {
-            #region UserInputValidate
-            $validator = Validator::make($request->all(), [
-                'serviceType' => ['required', new EnumKey(ServicesEnum::class)],
-                'duoDate' => ['required', 'date_format:Y-m-d'],
-                'duoTime' => ['required', 'date_format:H:i:s'],
-                'subTotal' => ['required', 'regex:/^\d+(\.\d{1,2})?$/'],
-                'discount' => ['required', 'regex:/^\d+(\.\d{1,2})?$/'],
-                'totalAmount' => ['required', 'regex:/^\d+(\.\d{1,2})?$/'],
-                'locationId' => ['required', 'integer'],
-                'providerId' => ['required', 'integer'],
-                'scheduleId' => ['required', 'integer'],
-                'paymentWays' => ['required', new EnumKey(PaymentWaysEnum::class)],
-                'answers' => [
-                    'questionId' => ['required', 'integer'],
-                ],
-            ]);
-            if ($validator->fails()) {
-                return $this->apiResponse(null, $validator->errors(), 520);
-            }
-            #endregion
+//        try {
+//            #region UserInputValidate
+//            $validator = Validator::make($request->all(), [
+//                'serviceType' => ['required', new EnumKey(ServicesEnum::class)],
+//                'duoDate' => ['required', 'date_format:Y-m-d'],
+//                'duoTime' => ['required', 'date_format:H:i:s'],
+//                'subTotal' => ['required', 'regex:/^\d+(\.\d{1,2})?$/'],
+//                'discount' => ['required', 'regex:/^\d+(\.\d{1,2})?$/'],
+//                'totalAmount' => ['required', 'regex:/^\d+(\.\d{1,2})?$/'],
+//                'locationId' => ['required', 'integer'],
+//                'providerId' => ['required', 'integer'],
+//                'scheduleId' => ['required', 'integer'],
+//                'paymentWays' => ['required', new EnumKey(PaymentWaysEnum::class)],
+//                'answers' => [
+//                    'questionId' => ['required', 'integer'],
+//                ],
+//            ]);
+//            if ($validator->fails()) {
+//                return $this->apiResponse(null, $validator->errors(), 520);
+//            }
+       //     #endregion
             if (Auth::check()) {
                 $userId = Auth::user()->id;
                 #region AddBooking
@@ -140,9 +140,9 @@ class BookingController extends Controller
             } else {
                 return $this->unAuthoriseResponse();
             }
-        } catch (\Exception $exception) {
-            return $this->generalError();
-        }
+//        } catch (\Exception $exception) {
+//            return $this->generalError();
+//        }
     }
 
     public function updateBookingEnum(Request $request)

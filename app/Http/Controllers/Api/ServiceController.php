@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ServicesEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ServiceResource;
 use App\Models\Service;
@@ -85,4 +86,19 @@ class ServiceController extends Controller
         }
     }
 
+    public function getMaterialPrice(Request $request)
+    {
+        $response = array();
+        $data = Service::where('type', ServicesEnum::coerce($request->serviceType))->first();
+        $response['materialPrice'] = $data->materialPrice;
+        return $this->apiResponse($response);
+    }
+
+    public function getHourPrice(Request $request)
+    {
+        $response = array();
+        $data = Service::where('type', ServicesEnum::coerce($request->serviceType))->first();
+        $response['hourPrice'] = $data->hourPrice;
+        return $this->apiResponse($response);
+    }
 }

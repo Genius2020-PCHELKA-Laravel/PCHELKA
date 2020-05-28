@@ -60,7 +60,10 @@ Route::post('service/{id}', 'ServiceController@update');
 Route::get('service/delete/{id}', 'ServiceController@delete');
 
 Route::get('providers', 'ServiceProviderController@getProvidersByServiceType');
-Route::get('schedule', 'ScheduleController@getSchedulesByProvidersId');
-Route::get('scheduleByType', 'ScheduleController@getSchedulesByServiceType');
 
 Route::get('checkFullName', 'UserController@checkFullName');
+Route::get('schedulesDays', 'ScheduleController@getSchedulesDays');
+Route::get('schedulesTime', 'ScheduleController@getSchedulesTime');
+
+Route::get('materialPrice', 'ServiceController@getMaterialPrice');
+Route::get('hourPrice', 'ServiceController@getHourPrice');

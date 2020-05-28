@@ -14,27 +14,32 @@
                     <div class="card-body">
                         <form method="POST">
                             <div class="row">
-                                <div class="form-group col-6">
-                                    <label for="frist_name">First Name</label>
+                                <div class="form-group col-12">
+                                    <label for="frist_name">Full Name</label>
                                     <input id="frist_name" type="text" class="form-control" name="frist_name" autofocus>
                                 </div>
+
+                            </div>
+                            <div class="row">
                                 <div class="form-group col-6">
-                                    <label for="last_name">Last Name</label>
-                                    <input id="last_name" type="text" class="form-control" name="last_name">
+                                    <label for="email">Email</label>
+                                    <input id="email" type="email" class="form-control" name="email">
+                                    <div class="invalid-feedback">
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-6">
+                                    <label for="email">Mobile Number</label>
+                                    <input id="email" type="email" class="form-control" name="email">
+                                    <div class="invalid-feedback">
+                                    </div>
                                 </div>
                             </div>
-
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input id="email" type="email" class="form-control" name="email">
-                                <div class="invalid-feedback">
-                                </div>
-                            </div>
-
                             <div class="row">
                                 <div class="form-group col-6">
                                     <label for="password" class="d-block">Password</label>
-                                    <input id="password" type="password" class="form-control pwstrength" data-indicator="pwindicator" name="password">
+                                    <input id="password" type="password" class="form-control pwstrength"
+                                           data-indicator="pwindicator" name="password">
                                     <div id="pwindicator" class="pwindicator">
                                         <div class="bar"></div>
                                         <div class="label"></div>
@@ -46,45 +51,6 @@
                                 </div>
                             </div>
 
-                            <div class="form-divider">
-                                Your Home
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-6">
-                                    <label>Country</label>
-                                    <select class="form-control selectric">
-                                        <option>Indonesia</option>
-                                        <option>Palestine</option>
-                                        <option>Syria</option>
-                                        <option>Malaysia</option>
-                                        <option>Thailand</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-6">
-                                    <label>Province</label>
-                                    <select class="form-control selectric">
-                                        <option>West Java</option>
-                                        <option>East Java</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-6">
-                                    <label>City</label>
-                                    <input type="text" class="form-control">
-                                </div>
-                                <div class="form-group col-6">
-                                    <label>Postal Code</label>
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" name="agree" class="custom-control-input" id="agree">
-                                    <label class="custom-control-label" for="agree">I agree with the terms and conditions</label>
-                                </div>
-                            </div>
 
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary btn-lg btn-block">
@@ -95,7 +61,7 @@
                     </div>
                 </div>
                 <div class="simple-footer">
-                    Copyright &copy; {{env('Project_title') }}  2020
+                    Copyright &copy; {{env('Project_title') }} 2020
                 </div>
             </div>
         </div>

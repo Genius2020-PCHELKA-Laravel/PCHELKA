@@ -20,7 +20,7 @@ class CreateEvaluationsTable extends Migration
             $table->bigInteger('serviceProviderId')->unsigned()->nullable();
             $table->bigInteger('bookingId')->unsigned();
             $table->foreign('userId')->references('id')->on('users')->onDelete('set null');;
-            $table->foreign('serviceProviderId')->references('id')->on('service_providers')->onDelete('set null');
+            $table->foreign('serviceProviderId')->references('id')->on('providers')->onDelete('set null');
             $table->foreign('bookingId')->references('id')->on('bookings')->onDelete('cascade');
             $table->timestamps();
         });

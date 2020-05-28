@@ -19,12 +19,12 @@ class CreateServicesTable extends Migration
             $table->string('details')->nullable();
             $table->string('imgPath');
             $table->tinyInteger('type')->nullable();
-            $table->boolean('hasFrequency')->default(0);
             $table->bigInteger('couponId')->unsigned()->nullable();
             $table->integer('orderNumber');
             $table->foreign('couponId')->references('id')->on('coupons')->onDelete('set null');
             $table->timestamps();
-
+            $table->double('materialPrice');
+            $table->double('hourPrice');
         });
     }
 

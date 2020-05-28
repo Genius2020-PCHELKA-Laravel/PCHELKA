@@ -178,33 +178,36 @@ class UserController extends Controller
 
     public function updateUserInformation(Request $request)
     {
-        try {
-            $validator = Validator::make($request->all(), [
-                'fullName' => 'required',
-                'email' => 'required|email',
-                'language' => 'required',
-            ]);
-            if ($validator->fails()) {
-                return $this->apiResponse(null, $validator->errors(), 401);
-            }
+//        try {
+//            $validator = Validator::make($request->all(), [
+//                'fullName' => 'required',
+//                'email' => 'required|email',
+//                'language' => 'required',
+//            ]);
+//            if ($validator->fails()) {
+//                return $this->apiResponse(null, $validator->errors(), 401);
+//            }
 
-            if (Auth::user()) {
-                $user = Auth::user();
-                $user->fullName = $request->fullName;
-                $user->email = $request->email;
-                // $user->dateOfBirth = $request->dateOfBirth;
-                $user->language = $request->language;
-                $user->language = LanguageEnum::coerce($request->language);
-                $user->save();
-                return $this->apiResponse('User information update has been successful', null, 200);
-            } else {
-                return $this->unAuthoriseResponse();
-            }
-
-        } catch (\Exception $exception) {
-            return $this->generalError();
+        if (Auth::user()) {
+            $user = Auth::user();
+            //$user->mobile = $request->mobile;
+            $user->fullName = $request->fullName;
+            $user->email = $request->email;
+            $user->dateOfBirth = $request->dateOfBirth;
+            $user->gender = $request->gender;
+            $user->language = $request->language;
+            $user->language = LanguageEnum::coerce($request->language);
+            $user->save();
+            return $this->apiResponse('User information update has been successful', null, 200);
+        } else {
+            return $this->unAuthoriseResponse();
         }
+
+//        } catch (\Exception $exception) {
+//            return $exception->getMessage();
+//        }
     }
+
 
     public function checkFullName(Request $request)
     {

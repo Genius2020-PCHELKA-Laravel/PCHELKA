@@ -11,23 +11,23 @@ class ServiceProvidersSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('service_providers')->delete();
-        DB::table('service_providers')->insert([
+        DB::table('providers')->delete();
+        DB::table('providers')->insert([
             [
                 'id' => 1,
                 'name' => 'Belal',
                 'email' => "B@b.c",
                 'mobileNumber' => '0994665567',
-                'serviceType' => 1,
-                'type' => 1,
+                'imageUrl' => '1',
+                'companyId' => null
             ],
             [
                 'id' => 2,
                 'name' => 'mohamad',
                 'email' => "m@m.c",
                 'mobileNumber' => '0994665567',
-                'serviceType' => 2,
-                'type' => 1,
+                'imageUrl' => '2',
+                'companyId'=>null
             ],
         ]);
     }
