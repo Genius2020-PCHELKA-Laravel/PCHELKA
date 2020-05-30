@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class ServiceProvidersSeeder extends Seeder
+class ProvidersSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,6 +11,7 @@ class ServiceProvidersSeeder extends Seeder
      */
     public function run()
     {
+
         DB::table('providers')->delete();
         DB::table('providers')->insert([
             [
@@ -27,7 +28,7 @@ class ServiceProvidersSeeder extends Seeder
                 'email' => "m@m.c",
                 'mobileNumber' => '0994665567',
                 'imageUrl' => '2',
-                'companyId'=>null
+                'companyId' => null
             ],
         ]);
     }

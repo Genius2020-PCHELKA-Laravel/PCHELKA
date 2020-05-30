@@ -21,7 +21,6 @@ class BookingController extends Controller
 {
     use ApiResponseTrait;
 
-//dd(Str::random(6));
     public function createRefCode()
     {
         global $data;
@@ -70,13 +69,12 @@ class BookingController extends Controller
             $booking->totalAmount = $request->totalAmount;
             $booking->paidStatus = PaymentStatusEnum::NotPaid;
             $booking->paymentWays = PaymentWaysEnum::coerce($request->paymentWays);
-            $booking->status = BookingStatusEnum::Created;
+            $booking->status = BookingStatusEnum::Pending;
             $booking->serviceType = ServicesEnum::coerce($request->serviceType);
             $booking->userId = $bookingUserId;
             $booking->serviceId = $bookingServiceId;
             $booking->locationId = $request->locationId;
             $booking->providerId = $request->providerId;
-            $booking->scheduleId = $request->scheduleId;
             $booking->parentId = null;
             $booking->refCode = $this->createRefCode();
             $booking->save();
@@ -98,7 +96,7 @@ class BookingController extends Controller
                         $bookingChild->discount = null;
                         $bookingChild->totalAmount = null;
                         $bookingChild->paidStatus = PaymentStatusEnum::NotPaid;
-                        $bookingChild->status = BookingStatusEnum::Created;
+                        $bookingChild->status = BookingStatusEnum::Pending;
                         $bookingChild->serviceType = ServicesEnum::coerce($request->serviceType);
                         $bookingChild->userId = $bookingUserId;
                         $bookingChild->serviceId = $bookingServiceId;
@@ -120,7 +118,7 @@ class BookingController extends Controller
                     $bookingChild->discount = null;
                     $bookingChild->totalAmount = null;
                     $bookingChild->paidStatus = PaymentStatusEnum::NotPaid;
-                    $bookingChild->status = BookingStatusEnum::Created;
+                    $bookingChild->status = BookingStatusEnum::Pending;
                     $bookingChild->serviceType = ServicesEnum::coerce($request->serviceType);
                     $bookingChild->userId = $bookingUserId;
                     $bookingChild->serviceId = $bookingServiceId;
@@ -264,7 +262,7 @@ class BookingController extends Controller
 
             $user = Auth::user()->id;
             $data = Booking::where('userId', $user)->where(function ($q) {
-                $q->where('status', '=', BookingStatusEnum::Created());
+                $q->where('status', '=', BookingStatusEnum::Pending());
             })
                 ->orderBy('created_at', 'asc')
                 ->get();

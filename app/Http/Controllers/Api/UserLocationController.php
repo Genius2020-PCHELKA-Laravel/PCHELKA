@@ -14,22 +14,23 @@ class UserLocationController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            #region ValidateUserInput
-            $validator = Validator::make($request->all(), [
-                'address' => ['required'],
-                'lat' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
-                'lon' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
-                'details' => 'required',
-                'area' => 'required',
-                'street' => 'required',
-                'buildingNumber' => 'required',
-                'apartment' => 'required',
-            ]);
-            if ($validator->fails()) {
-                return $this->apiResponse(null, $validator->errors(), 401);
-            }
-            #endregion
+        $response = array();
+//        try {
+//            #region ValidateUserInput
+//            $validator = Validator::make($request->all(), [
+//                'address' => ['required'],
+//                'lat' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+//                'lon' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
+//                'details' => 'required',
+//                'area' => 'required',
+//                'street' => 'required',
+//                'buildingNumber' => 'required',
+//                'apartment' => 'required',
+//            ]);
+//            if ($validator->fails()) {
+//                return $this->apiResponse(null, $validator->errors(), 401);
+//            }
+         //   #endregion
 
             if (Auth::user()) {
                 $user = Auth::user();
@@ -45,13 +46,14 @@ class UserLocationController extends Controller
                 $userLocation->apartment = $request->apartment;
                 $userLocation->userId = $userId;
                 $userLocation->save();
+                $response['locationId'] =$lastId = intval($userLocation->id);
             } else {
                 return $this->unAuthoriseResponse();
             }
-            return $this->apiResponse('User location added successfully');
-        } catch (\Exception $exception) {
-            return $this->generalError();
-        }
+            return $this->apiResponse($response);
+//        } catch (\Exception $exception) {
+//            return $this->generalError();
+//        }
     }
 
     public function getUserLocations()

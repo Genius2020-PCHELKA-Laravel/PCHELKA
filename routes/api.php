@@ -48,7 +48,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 Route::get('sendemail', 'EmailController@sendEMail');
 
-//Route::post('sendsms', 'SMSController@sendSMS');
+Route::post('sendsms', 'SMSController@sendSMS');
 Route::post('verifysmscode', 'SMSController@verifySMSCode');
 
 Route::post('login', 'UserController@login');
@@ -67,7 +67,7 @@ Route::post('checkFullName', 'UserController@checkFullName');
 Route::get('schedulesDays', 'ScheduleController@getSchedulesDays');
 Route::get('schedulesTime', 'ScheduleController@getSchedulesTime');
 
-Route::get('materialPrice', 'ServiceController@getMaterialPrice');
-Route::get('hourPrice', 'ServiceController@getHourPrice');
+Route::post('materialPrice', 'ServiceController@getMaterialPrice');
+Route::post('hourPrice', 'ServiceController@getHourPrice');
 
 

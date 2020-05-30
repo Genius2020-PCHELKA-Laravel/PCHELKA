@@ -31,14 +31,11 @@ class CreateBookingsTable extends Migration
             $table->bigInteger('parentId')->unsigned()->nullable();
             $table->bigInteger('locationId')->unsigned()->nullable();
             $table->bigInteger('providerId')->unsigned()->nullable();
-            $table->bigInteger('scheduleId')->unsigned()->nullable();
             $table->foreign('userId')->references('id')->on('users')->onDelete('set null');
             $table->foreign('couponId')->references('id')->on('coupons')->onDelete('set null');
             $table->foreign('parentId')->references('id')->on('bookings')->onDelete('set null');
             $table->foreign('locationId')->references('id')->on('user_locations')->onDelete('set null');
             $table->foreign('providerId')->references('id')->on('providers')->onDelete('set null');
-            $table->foreign('scheduleId')->references('id')->on('schedules')->onDelete('set null');
-
             $table->timestamps();
         });
     }

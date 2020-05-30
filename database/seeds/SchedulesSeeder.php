@@ -12,35 +12,32 @@ class SchedulesSeeder extends Seeder
     public function run()
     {
         DB::table('schedules')->delete();
-        DB::table('schedules')->insert([
-            [
-                'availableDate' => '2020-05-06',
-                'id' => 1,
-                'timeStart' => "05:00:00",
-                'timeEnd' => '19:00:00',
-                'serviceProviderId' => 1,
-            ],
-            [
-                'availableDate' => '2020-05-07',
-                'id' => 2,
-                'timeStart' => "03:00:00",
-                'timeEnd' => '14:00:00',
-                'serviceProviderId' => 1,
-            ],
-            [
-                'availableDate' => '2020-05-06',
-                'id' => 3,
-                'timeStart' => "05:00:00",
-                'timeEnd' => '19:00:00',
-                'serviceProviderId' => 2,
-            ],
-            [
-                'availableDate' => '2020-05-07',
-                'id' => 4,
-                'timeStart' => "03:00:00",
-                'timeEnd' => '14:00:00',
-                'serviceProviderId' => 2,
-            ],
-        ]);
+
+        $begin = new DateTime("08:00");
+        $end = new DateTime("16:00");
+        $interval = DateInterval::createFromDateString('30 min');
+        $times = new DatePeriod($begin, $interval, $end);
+        $date = date("Y-m-d");
+        for ($i = 0; $i < 7; $i++) {
+            foreach ($times as $time) {
+                DB::table('schedules')->insert(
+                    [
+                        'availableDate' => date('Y-m-d', strtotime($date . ' +1 day')),
+                        'timeStart' => $time->format('H:i'),
+                        'timeEnd' => $time->add($interval)->format('H:i'),
+                        'serviceProviderId' => 1,
+                    ]);
+            }
+            foreach ($times as $time) {
+                DB::table('schedules')->insert(
+                    [
+                        'availableDate' => date('Y-m-d', strtotime($date . ' +1 day')),
+                        'timeStart' => $time->format('H:i'),
+                        'timeEnd' => $time->add($interval)->format('H:i'),
+                        'serviceProviderId' => 2,
+                    ]);
+            }
+            $date = date('Y-m-d', strtotime($date . ' +1 day'));
+        }
     }
 }

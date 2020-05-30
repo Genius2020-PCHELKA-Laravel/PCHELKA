@@ -31,6 +31,6 @@ class ServiceProvider extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('services');
+        Schema::dropIfExists('providerServices');
     }
 }
