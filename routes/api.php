@@ -61,11 +61,14 @@ Route::post('service', 'ServiceController@store');
 Route::post('service/{id}', 'ServiceController@update');
 Route::get('service/delete/{id}', 'ServiceController@delete');
 
-Route::get('providers', 'ServiceProviderController@getProvidersByServiceType');
+Route::post('providers', 'ServiceProviderController@getProvidersByServiceType');
 
 Route::post('checkFullName', 'UserController@checkFullName');
-Route::get('schedulesDays', 'ScheduleController@getSchedulesDays');
-Route::get('schedulesTime', 'ScheduleController@getSchedulesTime');
+
+Route::get('getSchedules', 'ScheduleController@getSchedules');
+
+Route::post('schedulesDays', 'ScheduleController@getSchedulesDays');
+Route::post('schedulesTime', 'ScheduleController@getSchedulesTime');
 
 Route::post('materialPrice', 'ServiceController@getMaterialPrice');
 Route::post('hourPrice', 'ServiceController@getHourPrice');

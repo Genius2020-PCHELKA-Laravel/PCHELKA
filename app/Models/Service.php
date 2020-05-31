@@ -24,4 +24,8 @@ class Service extends Model
         return $this->hasMany('App\Models\ServicesQuestions', 'serviceId');
     }
 
+    public function Providers()
+    {
+        return $this->belongsToMany('App\Models\ServiceProvider', 'providerservices');
+    }
 }

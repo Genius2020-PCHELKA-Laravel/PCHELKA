@@ -15,11 +15,11 @@ class ServiceProvider extends Migration
     {
         Schema::create('providerServices', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('serviceId')->unsigned();
-            $table->bigInteger('providerId')->unsigned();
-            $table->foreign('serviceId')->references('id')->on('services')
+            $table->bigInteger('service_id')->unsigned();
+            $table->bigInteger('provider_id')->unsigned();
+            $table->foreign('service_id')->references('id')->on('services')
                 ->onDelete('cascade');
-            $table->foreign('providerId')->references('id')->on('providers')
+            $table->foreign('provider_id')->references('id')->on('providers')
                 ->onDelete('cascade');
         });
     }

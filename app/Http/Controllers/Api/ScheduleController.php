@@ -18,22 +18,47 @@ class ScheduleController extends Controller
     use ApiResponseTrait;
 
 
-
-    public function getDaysByServiceType(Request $request)
-    {
-
-    }
-
     public function getSchedulesDays(Request $request)
     {
-        $days = collect(Schedule::where('serviceProviderId', $request->id)->get());
-        return $this->apiResponse($days);
+        try {
+            $days = collect(Schedule::where('serviceProviderId', $request->id)
+                ->select(['availableDate'])
+                ->distinct()
+                ->get());
+            return $this->apiResponse($days);
+        } catch (\Exception $exception) {
+            return $this->apiResponse($exception->getMessage());
+        }
     }
 
     public function getSchedulesTime(Request $request)
     {
-        $time = Schedule::where('id', $request->id)->first();
-        $data = ['timeStart' => $time->timeStart, 'timeEnd' => $time->timeEnd];
-        return $this->apiResponse($data);
+        try {
+            $time = Schedule::where('serviceProviderId', $request->id)
+                ->where('availableDate', $request->day)
+                ->where('isActive',true)
+                ->select('timeStart')
+                ->get();
+
+            return $this->apiResponse($time);
+        } catch (\Exception $exception) {
+            return $this->apiResponse($exception->getMessage());
+        }
+    }
+    public function getSchedules()
+    {
+        try {
+
+            $from = date('Y-m-d');
+
+            $to = date('Y-m-d', strtotime("+15 days"));
+            $sch = Schedule::whereBetween('availableDate', [$from, $to])
+                ->where('isActive',true)->select(['id','availableDate','timeStart','timeEnd','serviceProviderId'])
+                ->get();
+
+            return $this->apiResponse($sch);
+        } catch (\Exception $exception) {
+            return $this->apiResponse($exception->getMessage());
+        }
     }
 }

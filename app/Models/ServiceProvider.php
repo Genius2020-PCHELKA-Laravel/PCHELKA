@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ServiceProvider extends Model
 {
     protected $table = 'providers';
-    protected $fillable = ['id', 'name', 'email', 'mobileNumber', 'type'];
+    protected $fillable = ['id', 'name', 'email', 'mobileNumber' ];
 
     public function Schedules()
     {
@@ -16,5 +16,9 @@ class ServiceProvider extends Model
     public function Evaluations()
     {
         return $this->hasMany('App\Models\Evaluation', 'serviceProviderId');
+    }
+    public function Services()
+    {
+        return $this->belongsToMany('App\Models\Service', 'providerservices');
     }
 }

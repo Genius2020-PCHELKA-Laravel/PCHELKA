@@ -8,6 +8,7 @@ use App\Http\Resources\ProviderResource;
 use App\Models\ServiceProvider;
 use BenSampo\Enum\Rules\EnumKey;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Validator;
 
 
@@ -17,14 +18,14 @@ class ServiceProviderController extends Controller
 
     public function getProvidersByServiceType(Request $request)
     {
-        //Validate
-        $validator = Validator::make($request->all(), [
-            'serviceType' => ['required', new EnumKey(ServicesEnum::class)]
-        ]);
-        if ($validator->fails()) {
-            return $this->apiResponse(null, $validator->errors(), 520);
+        try {
+            $res = DB::table('providers')->select(['providers.id', 'name', 'imageUrl'])
+                ->join('providerservices', 'providers.id', '=', 'providerservices.provider_id')
+                ->where('providerservices.service_id', '=', ServicesEnum::coerce($request->serviceType))
+                ->get();
+            return $this->apiResponse($res);
+        } catch (\Exception $exception) {
+            return $this->apiResponse($exception->getMessage());
         }
-        $data = ServiceProvider::where("serviceType", ServicesEnum::coerce($request->serviceType))->get();
-        return $this->apiResponse(ProviderResource::collection($data), null, 200);
     }
 }

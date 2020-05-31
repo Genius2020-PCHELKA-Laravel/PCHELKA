@@ -6,12 +6,11 @@ use App\Enums\ServicesEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ServiceResource;
 use App\Models\Service;
-use Dotenv\Validator;
 
 //use http\Env\Response;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use MongoDB\Driver\Exception\ExecutionTimeoutException;
 
 
 class ServiceController extends Controller
@@ -103,4 +102,6 @@ class ServiceController extends Controller
         $response['hourPrice'] = $data->hourPrice;
         return $this->apiResponse($response);
     }
+
+
 }

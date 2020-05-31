@@ -18,5 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(OAuthSeeder::class);
         $this->call(SchedulesSeeder::class);
         $this->call(UserLocationsSeed::class);
+        $this->call(ServicesProvidersSeeder::class);
     }
 }
