@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\BookingAnswers;
 use App\Models\QuestionDetails;
+use App\Models\Schedule;
 use App\Models\ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,9 +32,85 @@ class BookingController extends Controller
         return $data;
     }
 
+    public function deActiveSchdule($duoDate, $providerId, $answare, $duoTime)
+    {
+        global $to;
+        switch ($answare) {
+            case 4 :
+            case 17 :
+            case 29 :
+            case 41 :
+            {
+                $to = 60 * 60 * 2;
+                break;
+            }
+
+            case 5 :
+            case 18 :
+            case 30 :
+            case 42 :
+            {
+                $to = 60 * 60 * 3;
+                break;
+            }
+
+            case 6 :
+            case 19 :
+            case 31 :
+            case 43 :
+            {
+                $to = 60 * 60 * 4;
+                break;
+            }
+
+            case 7 :
+            case 20 :
+            case 32 :
+            case 44 :
+            {
+                $to = 60 * 60 * 5;
+                break;
+            }
+
+            case 8 :
+            case 21 :
+            case 33 :
+            case 45 :
+            {
+                $to = 60 * 60 * 6;
+                break;
+            }
+
+            case 9 :
+            case 22 :
+            case 34 :
+            case 46 :
+            {
+                $to = 60 * 60 * 7;
+                break;
+            }
+            default:
+            {
+                return $this->apiResponse('Please select available time value', null, 404);
+            }
+        }
+        $timestamp = strtotime($duoTime) + intval($to);
+        $endTime = date('H:i', $timestamp);
+
+        $data = Schedule::where('availableDate', $duoDate)
+            ->where('serviceProviderId', $providerId)
+            ->whereBetween('timeStart', [$duoTime, $endTime])
+            ->get();
+        foreach ($data as $singleData) {
+            $schedule = Schedule::where('id', $singleData['id'])->first();
+            $schedule['isActive'] = 0;
+            $schedule->save();
+        }
+    }
+
     public function bookService(Request $request)
     {
-
+//2 6 9 12
 //        try {
 //            #region UserInputValidate
 //            $validator = Validator::make($request->all(), [
@@ -55,7 +132,19 @@ class BookingController extends Controller
 //                return $this->apiResponse(null, $validator->errors(), 520);
 //            }
         //     #endregion
+        global $answerHourValue;
         if (Auth::check()) {
+            $answerss = $request->answers;
+            foreach ($answerss as $answer) {
+                switch (intval($answer['questionId'])) {
+                    case 2:
+                    case 6:
+                    case 9:
+                    case 12:
+                        $answerHourValue = $answer['answerId'];
+                }
+
+            }
             $userId = Auth::user()->id;
             #region AddBooking
             $bookingUserId = $userId;
@@ -79,9 +168,12 @@ class BookingController extends Controller
             $booking->refCode = $this->createRefCode();
             $booking->save();
             $lastId = intval($booking->id);
+
+
             switch ($request->frequency) {
                 case "One-time":
                 {
+                    $this->deActiveSchdule($request->duoDate, $request->providerId, $answerHourValue, $request->duoTime);
                     break;
                 }
                 case "Weekly":

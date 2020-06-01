@@ -18,7 +18,7 @@ class SchedulesSeeder extends Seeder
         $interval = DateInterval::createFromDateString('30 min');
         $times = new DatePeriod($begin, $interval, $end);
         $date = date("Y-m-d");
-        for ($i = 0; $i < 7; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             foreach ($times as $time) {
                 DB::table('schedules')->insert(
                     [

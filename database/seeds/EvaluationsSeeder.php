@@ -12,28 +12,16 @@ class EvaluationsSeeder extends Seeder
     public function run()
     {
         DB::table('evaluations')->delete();
-        DB::table('evaluations')->insert([
-            [
-                'id' => 1,
-                'starCount' => 4,
-                'userId' => 1,
-                'serviceProviderId' =>1,
-                'bookingId' => 1,
-            ],
-            [
-                'id' => 2,
-                'starCount' => 4,
-                'userId' => 1,
-                'serviceProviderId' =>1,
-                'bookingId' => 2,
-            ],
-            [
-                'id' => 3,
-                'starCount' => 4,
-                'userId' => 3,
-                'serviceProviderId' =>1,
-                'bookingId' => 3,
-            ],
-        ]);
+        for ($i = 1; $i < 200; $i++) {
+            DB::table('evaluations')->insert([
+                [
+                    'id' => $i,
+                    'starCount' => mt_rand(2,5),
+                    'userId' => mt_rand(1,2),
+                    'serviceProviderId' => mt_rand(1,4),
+                    'bookingId' => mt_rand(1,12),
+                ]
+            ]);
+        }
     }
 }

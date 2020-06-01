@@ -43,7 +43,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::get('pastBooking', 'BookingController@getPastBooking');
     Route::get('upComingBooking', 'BookingController@getUpComingBooking');
-
+    Route::post('providers', 'ServiceProviderController@getProvidersByServiceType');
 });
 
 Route::get('sendemail', 'EmailController@sendEMail');
@@ -61,7 +61,7 @@ Route::post('service', 'ServiceController@store');
 Route::post('service/{id}', 'ServiceController@update');
 Route::get('service/delete/{id}', 'ServiceController@delete');
 
-Route::post('providers', 'ServiceProviderController@getProvidersByServiceType');
+//Route::post('providers', 'ServiceProviderController@getProvidersByServiceType');
 
 Route::post('checkFullName', 'UserController@checkFullName');
 

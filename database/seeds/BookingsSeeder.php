@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class BookingsSeeder extends Seeder
 {
@@ -11,37 +12,26 @@ class BookingsSeeder extends Seeder
      */
     public function run()
     {
+
         DB::table('bookings')->delete();
-        DB::table('bookings')->insert([
-            [
-                'id' => 1,
-                'duoDate' => now(),
-                'price' => 150,
-                'discount' => 0.0,
-                'totalAmount' =>150,
-                'status' => 1,
-                'userId' => 1,
-                'serviceId' => 1,
-            ],
-            [
-                'id' => 2,
-                'duoDate' => now(),
-                'price' => 200,
-                'discount' => 0.0,
-                'totalAmount' =>200,
-                'status' => 2,
-                'userId' => 2,
-                'serviceId' => 2,
-            ],[
-                'id' => 3,
-                'duoDate' => now(),
-                'price' => 222,
-                'discount' => 0.0,
-                'totalAmount' =>222,
-                'status' => 2,
-                'userId' => 3,
-                'serviceId' => 1,
-            ],
-        ]);
+        for ($i = 1; $i < 40; $i++) {
+            DB::table('bookings')->insert([
+                [
+                    'id' => $i,
+                    'duoDate' => date('Y-m-d'),
+                    'duoTime' => '08:00:00',
+                    'refCode' => Str::random(6),
+                    'subTotal' => 150,
+                    'discount' => 0.0,
+                    'totalAmount' => 150,
+                    'paidStatus' => 1,
+                    'paymentWays' => 1,
+                    'status' => mt_rand(1,3),
+                    'userId' => mt_rand(1,3),
+                    'serviceId' => 1,
+                    'providerId' => 1,
+                ]
+            ]);
+        }
     }
 }
