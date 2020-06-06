@@ -443,4 +443,57 @@ class BookingController extends Controller
 
     }
 
+    public function t()
+    {
+//        $time = array(
+//            strtotime('08:00'),
+//            strtotime('08:30'),
+//            strtotime('09:00'),
+//            strtotime('09:30'),
+//            strtotime('10:00'),
+//            strtotime('10:30'),
+//            strtotime('11:00'),
+//            strtotime('11:30'), //isActiveFalse
+//            strtotime('12:00'),
+//            strtotime('12:30'),
+//        );
+//
+//        $tt = $time[0] + (60 * 60) * 2;
+//        if (in_array($tt, $time)) {
+//            dd('true');
+//        } else {
+//            dd('notfound');
+//        }
+
+        $times = Schedule::where('serviceProviderId', 1)->where('availableDate', '2020-06-06')->select(['id', 'timeStart', 'isActive'])->get();
+
+        foreach ($times as $time) {
+            if ($time['isActive'] == 1) {
+                $tt = date('H:i', strtotime($time['timeStart']) + (60 * 60) * 2);
+                $timeCond = Schedule::where('serviceProviderId', 1)->where('availableDate', '2020-06-06')->
+                where('timeStart', $tt)->select(['timeStart', 'isActive'])->first();
+                if ($timeCond && $timeCond['isActive'] == false) {
+                    $row = Schedule::where('id',$time['id'])->first();
+                    $row['isActive']=0;
+                    $row->save();
+                }
+
+            }
+        }
+        #region d
+
+//        for ($i = 0; $i <= count($time) - 1; $i = $i + 1) {
+//            $startDate = new  \DateTime(date('H:i', $time[$i]));
+//            if ($i + 1 == count($time)) {
+//                break;
+//            } else {
+//                $end = $startDate->diff(new \DateTime(date('H:i', $time[$i + 1])));
+//                echo $end->h . ' hours<br>';
+//                echo $end->i . ' minutes<br>';
+//                echo ' ---------------------------<br>';
+//            }
+//        }
+        #endregion
+
+    }
 }

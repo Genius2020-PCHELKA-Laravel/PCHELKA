@@ -15,7 +15,7 @@ trait BookingHelperTrait
     {
         $response = array();
         $book = Booking::where('id', $bookingId)->
-        select(['serviceType', 'refCode', 'duoDate', 'duoTime', 'locationId', 'totalAmount', 'paymentWays', 'parentId', 'status'])->first();
+        select(['serviceType', 'refCode', 'duoDate', 'duoTime', 'locationId', 'totalAmount', 'paymentWays', 'parentId', 'status', 'discount', 'subTotal'])->first();
 
 
         $response['serviceType'] = ServicesEnum::getKey($book->serviceType);
@@ -25,6 +25,8 @@ trait BookingHelperTrait
         $response['duoDate'] = $book->duoDate;
         $response['duoTime'] = $book->duoTime;
         $response['paymentWays'] = $book->paymentWays;
+        $response['discount'] = $book->discount;
+        $response['subTotal'] = $book->subTotal;
 
         $address = UserLocation::where('id', $book->locationId)
             ->select(['address', 'details', 'area', 'street', 'buildingNumber', 'apartment'])->first();

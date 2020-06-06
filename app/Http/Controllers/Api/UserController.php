@@ -72,14 +72,14 @@ class UserController extends Controller
         if (Auth::user()) {
             $email = User::where('email', $request->email)->first();
             if ($email) {
-                return $this->apiResponse('Email is already used, please use another email');
+                return $this->apiResponse('Duplicated Email');
             } else {
                 $user = Auth::user();
                 $user->fullName = $request->fullName;
                 $user->email = $request->email;
                 $user->language = LanguageEnum::coerce($request->language);
                 $user->save();
-                return $this->apiResponse('Your registration has been successful', null, 200);
+                return $this->apiResponse('success');
             }
         } else {
             return $this->unAuthoriseResponse();
@@ -184,6 +184,11 @@ class UserController extends Controller
         if (Auth::user()) {
             $user = Auth::user();
             //$user->mobile = $request->mobile;
+            $email = User::where('email', $request->email)
+                ->where('id', '!=', $user->id)->first();
+            if ($email) {
+                return $this->apiResponse('Duplicated Email');
+            }
             $user->fullName = $request->fullName;
             $user->email = $request->email;
             $user->dateOfBirth = $request->dateOfBirth;
@@ -191,7 +196,7 @@ class UserController extends Controller
             $user->language = $request->language;
             $user->language = LanguageEnum::coerce($request->language);
             $user->save();
-            return $this->apiResponse('User information update has been successful', null, 200);
+            return $this->apiResponse('success');
         } else {
             return $this->unAuthoriseResponse();
         }
@@ -200,7 +205,6 @@ class UserController extends Controller
 //            return $exception->getMessage();
 //        }
     }
-
 
     public function checkFullName(Request $request)
     {

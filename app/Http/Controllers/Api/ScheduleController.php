@@ -46,7 +46,8 @@ class ScheduleController extends Controller
         }
     }
 
-    public function getSchedules()
+
+    public function getSchedules(Request $request)
     {
         try {
 
@@ -54,6 +55,7 @@ class ScheduleController extends Controller
 
             $to = date('Y-m-d', strtotime("+15 days"));
             $sch = Schedule::whereBetween('availableDate', [$from, $to])
+                ->where('serviceProviderId', $request->id)
                 ->where('isActive', true)->select(['id', 'availableDate', 'timeStart', 'timeEnd', 'serviceProviderId'])
                 ->get();
 
@@ -63,3 +65,4 @@ class ScheduleController extends Controller
         }
     }
 }
+

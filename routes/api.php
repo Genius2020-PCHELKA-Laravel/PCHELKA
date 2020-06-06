@@ -67,7 +67,7 @@ Route::get('service/delete/{id}', 'ServiceController@delete');
 
 Route::post('checkFullName', 'UserController@checkFullName');
 
-Route::get('getSchedules', 'ScheduleController@getSchedules');
+Route::post('getSchedules', 'ScheduleController@getSchedules');
 
 Route::post('schedulesDays', 'ScheduleController@getSchedulesDays');
 Route::post('schedulesTime', 'ScheduleController@getSchedulesTime');
