@@ -69,17 +69,21 @@ class UserController extends Controller
 //                return $this->apiResponse(null, $validator->errors(), 401);
 //            }
 
-            if (Auth::user()) {
+        if (Auth::user()) {
+            $email = User::where('email', $request->email)->first();
+            if ($email) {
+                return $this->apiResponse('Email is already used, please use another email');
+            } else {
                 $user = Auth::user();
                 $user->fullName = $request->fullName;
                 $user->email = $request->email;
                 $user->language = LanguageEnum::coerce($request->language);
                 $user->save();
-
                 return $this->apiResponse('Your registration has been successful', null, 200);
-            } else {
-                return $this->unAuthoriseResponse();
             }
+        } else {
+            return $this->unAuthoriseResponse();
+        }
 
 //        } catch (\Exception $exception) {
 //            return $this->generalError();

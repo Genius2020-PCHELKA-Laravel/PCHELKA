@@ -23,7 +23,7 @@ class UserLocationsSeed extends Seeder
                 'street' => 'asmhdd',
                 'buildingNumber' => 0,
                 'apartment' => 0,
-                'userId' => 1,
+                'userId' => 3,
             ],
             [
                 'id' => '2',
@@ -35,7 +35,7 @@ class UserLocationsSeed extends Seeder
                 'street' => 'asmhdd',
                 'buildingNumber' => 0,
                 'apartment' => 0,
-                'userId' => 1,
+                'userId' => 3,
             ],
         ]);
     }

@@ -25,9 +25,11 @@ class BookingsSeeder extends Seeder
                     'discount' => 0.0,
                     'totalAmount' => 150,
                     'paidStatus' => 1,
+                    'serviceType' => mt_rand(1,12),
                     'paymentWays' => 1,
-                    'status' => mt_rand(1,3),
-                    'userId' => mt_rand(1,3),
+                    'status' => mt_rand(1, 2),
+                    'userId' => mt_rand(1, 3),
+                    'locationId' => mt_rand(1, 2),
                     'serviceId' => 1,
                     'providerId' => 1,
                 ]

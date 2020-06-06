@@ -33,6 +33,8 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::post('booking', 'BookingController@BookService');
     Route::post('updateBookingStatus', 'BookingController@updateBookingEnum');
+    Route::post('getHCBookingById', 'BookingController@getHCBookingById');
+    Route::post('getBookingById', 'BookingController@getBookingById');
 
     Route::post('userLocation', 'UserLocationController@store');
     Route::get('userLocation', 'UserLocationController@getUserLocations');
@@ -73,4 +75,4 @@ Route::post('schedulesTime', 'ScheduleController@getSchedulesTime');
 Route::post('materialPrice', 'ServiceController@getMaterialPrice');
 Route::post('hourPrice', 'ServiceController@getHourPrice');
 
-
+Route::post('t', 'BookingController@t');

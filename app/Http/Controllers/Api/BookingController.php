@@ -9,24 +9,36 @@ use App\Enums\ServicesEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\BookingAnswers;
+use App\Models\Question;
 use App\Models\QuestionDetails;
 use App\Models\Schedule;
 use App\Models\ServiceProvider;
+use App\Models\UserLocation;
+use App\User;
+use BenSampo\Enum\Enum;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use SebastianBergmann\Comparator\Book;
 use Validator;
 use function Safe\eio_lstat;
 
 class BookingController extends Controller
 {
     use ApiResponseTrait;
+    use BookingHelperTrait;
+
+    public function convertString($enum)
+    {
+        $temp = preg_replace('%([a-z])([A-Z])%', '\1 \2', $enum);
+        return $temp;
+    }
 
     public function createRefCode()
     {
         global $data;
         do {
-            $data = Str::random(6);
+            $data = strtoupper(Str::random(6));
             $refCode = Booking::where('refCode', $data)->first();
         } while ($refCode != null);
         return $data;
@@ -34,6 +46,11 @@ class BookingController extends Controller
 
     public function deActiveSchdule($duoDate, $providerId, $answare, $duoTime)
     {
+//        $duoDate = $request->$duoDate;
+//        $providerId = $request->$providerId;
+//        $providerId = $request->$providerId;
+//        $answare = $request->$answare;
+//        $duoTime = $request->$duoTime;
         global $to;
         switch ($answare) {
             case 4 :
@@ -110,7 +127,7 @@ class BookingController extends Controller
 
     public function bookService(Request $request)
     {
-//2 6 9 12
+
 //        try {
 //            #region UserInputValidate
 //            $validator = Validator::make($request->all(), [
@@ -158,7 +175,7 @@ class BookingController extends Controller
             $booking->totalAmount = $request->totalAmount;
             $booking->paidStatus = PaymentStatusEnum::NotPaid;
             $booking->paymentWays = PaymentWaysEnum::coerce($request->paymentWays);
-            $booking->status = BookingStatusEnum::Pending;
+            $booking->status = BookingStatusEnum::Confirmed;
             $booking->serviceType = ServicesEnum::coerce($request->serviceType);
             $booking->userId = $bookingUserId;
             $booking->serviceId = $bookingServiceId;
@@ -188,7 +205,7 @@ class BookingController extends Controller
                         $bookingChild->discount = null;
                         $bookingChild->totalAmount = null;
                         $bookingChild->paidStatus = PaymentStatusEnum::NotPaid;
-                        $bookingChild->status = BookingStatusEnum::Pending;
+                        $bookingChild->status = BookingStatusEnum::Confirmed;
                         $bookingChild->serviceType = ServicesEnum::coerce($request->serviceType);
                         $bookingChild->userId = $bookingUserId;
                         $bookingChild->serviceId = $bookingServiceId;
@@ -210,7 +227,7 @@ class BookingController extends Controller
                     $bookingChild->discount = null;
                     $bookingChild->totalAmount = null;
                     $bookingChild->paidStatus = PaymentStatusEnum::NotPaid;
-                    $bookingChild->status = BookingStatusEnum::Pending;
+                    $bookingChild->status = BookingStatusEnum::Confirmed;
                     $bookingChild->serviceType = ServicesEnum::coerce($request->serviceType);
                     $bookingChild->userId = $bookingUserId;
                     $bookingChild->serviceId = $bookingServiceId;
@@ -321,12 +338,8 @@ class BookingController extends Controller
     {
         $response = array();
         if (Auth::user()) {
-
             $user = Auth::user()->id;
-            $data = Booking::where('userId', $user)->where(function ($q) {
-                $q->where('status', '=', BookingStatusEnum::Canceled())
-                    ->orWhere('status', '=', BookingStatusEnum::Completed());
-            })
+            $data = Booking::where('userId', $user)->where('status', '=', BookingStatusEnum::Completed)
                 ->orderBy('created_at', 'asc')
                 ->get();
             foreach ($data as $newdata) {
@@ -353,9 +366,7 @@ class BookingController extends Controller
         if (Auth::user()) {
 
             $user = Auth::user()->id;
-            $data = Booking::where('userId', $user)->where(function ($q) {
-                $q->where('status', '=', BookingStatusEnum::Pending());
-            })
+            $data = Booking::where('userId', $user)->where('status', '=', BookingStatusEnum::Confirmed())
                 ->orderBy('created_at', 'asc')
                 ->get();
             foreach ($data as $newdata) {
@@ -375,4 +386,61 @@ class BookingController extends Controller
         }
         return $this->unAuthoriseResponse();
     }
+
+    public function getHCBookingById(Request $request)
+    {
+        if (Auth::user()) {
+            $response = array();
+            $response = $this->getBookingDetailes($request->id);
+
+            $answers = null;
+            if ($response['parentId'] != null) {
+                $answers = BookingAnswers::where('bookingId', $book->parentId)->select(['answerValue', 'answerId', 'questionId'])->get();
+            } else {
+                $answers = BookingAnswers::where('bookingId', $request->id)->select(['answerValue', 'answerId', 'questionId'])->get();
+            }
+            foreach ($answers as $answer) {
+                if ($answer['questionId'] == 1) {
+                    $response['frequency'] = $this->frequencyConvert($answer['answerId']);
+                } elseif ($answer['questionId'] == 2) {
+                    $response['hoursNeeded'] = $this->getAnswer($answer['answerId']);
+                } elseif ($answer['questionId'] == 3) {
+                    $response['cleanerCount'] = $this->getAnswer($answer['answerId']);
+                } elseif ($answer['questionId'] == 4) {
+                    $response['requireMaterial'] = $this->materialsConvert($answer['answerId']);
+                }
+            }
+            return $this->apiResponse($response);
+        } else {
+            return $this->unAuthoriseResponse();
+        }
+    }
+
+    public function getBookingById(Request $request)
+    {
+        if (Auth::user()) {
+            $response = array();
+            $response = $this->getBookingDetailes($request->id);
+            $answers = null;
+            if ($response['parentId'] != null) {
+                $answers = BookingAnswers::where('bookingId', $book->parentId)->select(['answerValue', 'answerId', 'questionId'])->get();
+            } else {
+                $answers = BookingAnswers::where('bookingId', $request->id)->select(['answerValue', 'answerId', 'questionId'])->get();
+            }
+            $answerRes = array();
+            foreach ($answers as $answer) {
+                $row = [
+                    'question' => $answer['questionId'],
+                    'answer' => $answer['answerId'] ? $answer['answerId'] : $answer['answerValue']
+                ];
+                array_push($answerRes, $row);
+            }
+            $response['answers'] = $answerRes;
+            return $this->apiResponse($response);
+        } else {
+            return $this->unAuthoriseResponse();
+        }
+
+    }
+
 }
