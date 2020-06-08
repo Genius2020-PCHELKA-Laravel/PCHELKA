@@ -35,6 +35,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('updateBookingStatus', 'BookingController@updateBookingEnum');
     Route::post('getHCBookingById', 'BookingController@getHCBookingById');
     Route::post('getBookingById', 'BookingController@getBookingById');
+    Route::post('rescheduleBook', 'BookingController@rescheduleBook');
 
     Route::post('userLocation', 'UserLocationController@store');
     Route::get('userLocation', 'UserLocationController@getUserLocations');
@@ -46,9 +47,14 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('pastBooking', 'BookingController@getPastBooking');
     Route::get('upComingBooking', 'BookingController@getUpComingBooking');
     Route::post('providers', 'ServiceProviderController@getProvidersByServiceType');
+
+    Route::post('changemobilesendsms', 'SMSController@changeMobileSendSMS');
+    Route::post('changemobileverifysms', 'SMSController@changeMobileVerifySMS');
+
 });
 
 Route::get('sendemail', 'EmailController@sendEMail');
+
 
 Route::post('sendsms', 'SMSController@sendSMS');
 Route::post('verifysmscode', 'SMSController@verifySMSCode');
@@ -75,4 +81,4 @@ Route::post('schedulesTime', 'ScheduleController@getSchedulesTime');
 Route::post('materialPrice', 'ServiceController@getMaterialPrice');
 Route::post('hourPrice', 'ServiceController@getHourPrice');
 
-Route::post('t', 'BookingController@t');
+Route::post('t', 'BookingController@autoAssignId');

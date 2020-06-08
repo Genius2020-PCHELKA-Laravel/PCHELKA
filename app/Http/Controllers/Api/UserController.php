@@ -184,11 +184,17 @@ class UserController extends Controller
         if (Auth::user()) {
             $user = Auth::user();
             //$user->mobile = $request->mobile;
+            $mobile = User::where('mobile', $request->mobile)
+                ->where('id','!=',$user->id)->first();
             $email = User::where('email', $request->email)
-                ->where('id', '!=', $user->id)->first();
+                ->where('id','!=',$user->id)->first();
+            if ($mobile) {
+                return $this->apiResponse('Duplicated Mobile');
+            }
             if ($email) {
                 return $this->apiResponse('Duplicated Email');
             }
+            $user->mobile = $request->mobile;
             $user->fullName = $request->fullName;
             $user->email = $request->email;
             $user->dateOfBirth = $request->dateOfBirth;
@@ -205,6 +211,7 @@ class UserController extends Controller
 //            return $exception->getMessage();
 //        }
     }
+
 
     public function checkFullName(Request $request)
     {

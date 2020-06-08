@@ -9,6 +9,7 @@ use App\Enums\ServicesEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\BookingAnswers;
+use App\Models\Evaluation;
 use App\Models\Question;
 use App\Models\QuestionDetails;
 use App\Models\Schedule;
@@ -18,6 +19,7 @@ use App\User;
 use BenSampo\Enum\Enum;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use SebastianBergmann\Comparator\Book;
 use Validator;
@@ -160,7 +162,10 @@ class BookingController extends Controller
                     case 12:
                         $answerHourValue = $answer['answerId'];
                 }
-
+            }
+            $providerId = $request->providerId == null ? $providerId = $this->autoAssignId($request->duoDate, $request->serviceType) : $request->providerId;
+            if ($providerId == null) {
+                return $this->apiResponse('The time is not available please select another time');
             }
             $userId = Auth::user()->id;
             #region AddBooking
@@ -180,7 +185,7 @@ class BookingController extends Controller
             $booking->userId = $bookingUserId;
             $booking->serviceId = $bookingServiceId;
             $booking->locationId = $request->locationId;
-            $booking->providerId = $request->providerId;
+            $booking->providerId = $providerId;
             $booking->parentId = null;
             $booking->refCode = $this->createRefCode();
             $booking->save();
@@ -190,7 +195,7 @@ class BookingController extends Controller
             switch ($request->frequency) {
                 case "One-time":
                 {
-                    $this->deActiveSchdule($request->duoDate, $request->providerId, $answerHourValue, $request->duoTime);
+                    $this->deActiveSchdule($request->duoDate, $providerId, $answerHourValue, $request->duoTime);
                     break;
                 }
                 case "Weekly":
@@ -209,7 +214,7 @@ class BookingController extends Controller
                         $bookingChild->serviceType = ServicesEnum::coerce($request->serviceType);
                         $bookingChild->userId = $bookingUserId;
                         $bookingChild->serviceId = $bookingServiceId;
-                        $bookingChild->providerId = $request->providerId;
+                        $bookingChild->providerId = $providerId;
                         $bookingChild->parentId = $lastId;
                         $bookingChild->refCode = $this->createRefCode();
                         $bookingChild->save();
@@ -232,7 +237,7 @@ class BookingController extends Controller
                     $bookingChild->userId = $bookingUserId;
                     $bookingChild->serviceId = $bookingServiceId;
                     $bookingChild->parentId = $lastId;
-                    $bookingChild->providerId = $request->providerId;
+                    $bookingChild->providerId = $providerId;
                     $bookingChild->refCode = $this->createRefCode();
                     $bookingChild->save();
                     break;
@@ -366,7 +371,9 @@ class BookingController extends Controller
         if (Auth::user()) {
 
             $user = Auth::user()->id;
+
             $data = Booking::where('userId', $user)->where('status', '=', BookingStatusEnum::Confirmed())
+                ->where('duoDate', '>', date('Y-m-d', strtotime("-1 days")))
                 ->orderBy('created_at', 'asc')
                 ->get();
             foreach ($data as $newdata) {
@@ -443,57 +450,35 @@ class BookingController extends Controller
 
     }
 
-    public function t()
+    public function rescheduleBook(Request $request)
     {
-//        $time = array(
-//            strtotime('08:00'),
-//            strtotime('08:30'),
-//            strtotime('09:00'),
-//            strtotime('09:30'),
-//            strtotime('10:00'),
-//            strtotime('10:30'),
-//            strtotime('11:00'),
-//            strtotime('11:30'), //isActiveFalse
-//            strtotime('12:00'),
-//            strtotime('12:30'),
-//        );
-//
-//        $tt = $time[0] + (60 * 60) * 2;
-//        if (in_array($tt, $time)) {
-//            dd('true');
-//        } else {
-//            dd('notfound');
-//        }
+        global $answerHourValue;
+        if (Auth::user()) {
 
-        $times = Schedule::where('serviceProviderId', 1)->where('availableDate', '2020-06-06')->select(['id', 'timeStart', 'isActive'])->get();
-
-        foreach ($times as $time) {
-            if ($time['isActive'] == 1) {
-                $tt = date('H:i', strtotime($time['timeStart']) + (60 * 60) * 2);
-                $timeCond = Schedule::where('serviceProviderId', 1)->where('availableDate', '2020-06-06')->
-                where('timeStart', $tt)->select(['timeStart', 'isActive'])->first();
-                if ($timeCond && $timeCond['isActive'] == false) {
-                    $row = Schedule::where('id',$time['id'])->first();
-                    $row['isActive']=0;
-                    $row->save();
-                }
-
+            switch ($request->hourId) {
+                case 2:
+                case 6:
+                case 9:
+                case 12:
+                    $answerHourValue = $request->hourId;
             }
+            $book = Booking::where('id', $request->id)->first();
+            if ($book) {
+                $oldDate = $book->duoDate;
+                $oldTime = $book->duoDate;
+                $serviceProvider = $request->providerId == null ? $this->autoAssignId($request->duoDate, $book->serviceType) : $request->providerId;
+                $book->duoDate = $request->duoDate;
+                $book->duoTime = $request->duoTime;
+                $book->providerId = $serviceProvider;
+                $book->save();
+                $this->deActiveSchdule($request->duoDate, $serviceProvider, $answerHourValue, $request->duoTime);
+                return $this->apiResponse('Updated successfully');
+            } else {
+                return $this->notFoundMassage();
+            }
+        } else {
+            return $this->unAuthoriseResponse();
         }
-        #region d
-
-//        for ($i = 0; $i <= count($time) - 1; $i = $i + 1) {
-//            $startDate = new  \DateTime(date('H:i', $time[$i]));
-//            if ($i + 1 == count($time)) {
-//                break;
-//            } else {
-//                $end = $startDate->diff(new \DateTime(date('H:i', $time[$i + 1])));
-//                echo $end->h . ' hours<br>';
-//                echo $end->i . ' minutes<br>';
-//                echo ' ---------------------------<br>';
-//            }
-//        }
-        #endregion
-
     }
+
 }
