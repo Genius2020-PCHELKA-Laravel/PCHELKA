@@ -12,32 +12,16 @@ class ServicesProvidersSeeder extends Seeder
     public function run()
     {
         DB::table('providerservices')->delete();
-        DB::table('providerservices')->insert([
-            [
-                'service_id' => 1,
-                'provider_id' => 1,
-            ],
-            [
-                'service_id' => 1,
-                'provider_id' => 2,
-            ],
-            [
-                'service_id' => 2,
-                'provider_id' => 1,
-            ],
-            [
-                'service_id' => 3,
-                'provider_id' => 2,
-            ],
-            [
-                'service_id' => 3,
-                'provider_id' => 3,
-            ],
-            [
-                'service_id' => 3,
-                'provider_id' => 4,
-            ],
 
-        ]);
+        for ($i = 1; $i < 13; $i++) {
+            for ($j = 1; $j < 11; $j++) {
+                DB::table('providerservices')->insert([
+                    'service_id' => $i,
+                    'provider_id' => $j,
+                ]);
+            }
+        }
+
+
     }
 }

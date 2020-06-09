@@ -16,7 +16,7 @@ use Validator;
 class ScheduleController extends Controller
 {
     use ApiResponseTrait;
-
+    use BookingHelperTrait;
 
     public function getSchedulesDays(Request $request)
     {
@@ -50,14 +50,16 @@ class ScheduleController extends Controller
     public function getSchedules(Request $request)
     {
         try {
-
+            $this->removeGap($request->id);
             $from = date('Y-m-d');
 
             $to = date('Y-m-d', strtotime("+15 days"));
             $sch = Schedule::whereBetween('availableDate', [$from, $to])
                 ->where('serviceProviderId', $request->id)
-                ->where('isActive', true)->select(['id', 'availableDate', 'timeStart', 'timeEnd', 'serviceProviderId'])
+                ->where('isActive', true)
+                ->where('availableDate','2020-06-10')->select(['id', 'availableDate', 'timeStart', 'timeEnd', 'serviceProviderId'])
                 ->get();
+
 
             return $this->apiResponse($sch);
         } catch (\Exception $exception) {

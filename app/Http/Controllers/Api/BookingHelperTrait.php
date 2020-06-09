@@ -102,8 +102,8 @@ trait BookingHelperTrait
 
     public function removeGap($serviceProviderId)
     {
-        // $times = Schedule::where('serviceProviderId', 1)->where('availableDate', '2020-06-06')->select(['id', 'timeStart', 'isActive'])->get();
-        $times = array();
+        $times = Schedule::where('serviceProviderId', 1)->select(['id', 'timeStart', 'isActive'])->get();
+
         foreach ($times as $time) {
             if ($time['isActive'] == 1) {
                 $after2Hours = date('H:i', strtotime($time['timeStart']) + (60 * 60) * 2);
@@ -118,30 +118,72 @@ trait BookingHelperTrait
         }
     }
 
-    public function autoAssignId($duoDate, $serviceType)
+    public function switchHourAnswer($duoTime, $answare)
     {
-        $response = array();
-        $res = DB::table('providers')->select(['providers.id'])
-            ->join('providerservices', 'providers.id', '=', 'providerservices.provider_id')
-            ->where('providerservices.service_id', '=', ServicesEnum::coerce($serviceType))
-            ->get();
-        $result = json_decode($res, true);
-        foreach ($result as $newData) {
-            $this->removeGap($newData['id']);
-            $row = DB::table('schedules')->where('serviceProviderId', $newData['id'])
-                ->where('isActive', 1)
-                ->where('availableDate', '=', $duoDate)
-                ->groupBy('serviceProviderId')->count();
-            array_push($response, $row);
+        global $to;
+        switch ($answare) {
+            case 4 :
+            case 17 :
+            case 29 :
+            case 41 :
+            {
+                $to = 60 * 60 * 2;
+                break;
+            }
+
+            case 5 :
+            case 18 :
+            case 30 :
+            case 42 :
+            {
+                $to = 60 * 60 * 3;
+                break;
+            }
+
+            case 6 :
+            case 19 :
+            case 31 :
+            case 43 :
+            {
+                $to = 60 * 60 * 4;
+                break;
+            }
+
+            case 7 :
+            case 20 :
+            case 32 :
+            case 44 :
+            {
+                $to = 60 * 60 * 5;
+                break;
+            }
+
+            case 8 :
+            case 21 :
+            case 33 :
+            case 45 :
+            {
+                $to = 60 * 60 * 6;
+                break;
+            }
+
+            case 9 :
+            case 22 :
+            case 34 :
+            case 46 :
+            {
+                $to = 60 * 60 * 7;
+                break;
+            }
+            default:
+            {
+                return $this->apiResponse('Please select available time value', null, 404);
+            }
         }
-        $minShift = min($response);
-        $result = DB::table('schedules')->where('isActive', 1)->where('availableDate', '=', $duoDate)
-            ->select(['serviceProviderId', DB::raw("COUNT(*) as 't' ")])
-            ->groupBy('serviceProviderId')
-            ->having('t', '=', $minShift)
-            ->first();
-        if ($result == null)
-            return null;
-        return $result->serviceProviderId;
+        $timestamp = strtotime($duoTime) + intval($to);
+        $endTime = date('H:i', $timestamp);
+        return $endTime;
     }
+
+
 }

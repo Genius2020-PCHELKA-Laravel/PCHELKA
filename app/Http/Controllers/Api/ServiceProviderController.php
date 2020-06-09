@@ -28,7 +28,7 @@ class ServiceProviderController extends Controller
             $response = array();
             $providers = array();
             $user = Auth::user()->id;
-            $bookProvider = Booking::where('userId', $user)->select('providerId')->get();
+            $bookProvider = Booking::where('userId', $user)->select(['providerId'])->get();
             if ($bookProvider) {
                 foreach ($bookProvider as $provider) {
                     $res = DB::table('providers')->select(['providers.id', 'name', 'imageUrl'])->distinct()
@@ -36,7 +36,9 @@ class ServiceProviderController extends Controller
                         ->where('providerservices.service_id', '=', ServicesEnum::coerce($request->serviceType))
                         ->where('providers.id', '=', $provider['providerId'])
                         ->first();
+
                     array_push($providers, $res);
+
                 }
             }
             $collection = collect($providers);
@@ -50,7 +52,12 @@ class ServiceProviderController extends Controller
                     'evaluation' => intval(Evaluation::where('serviceProviderId', $newData->id)->avg('starCount')),
                     'desc' => Booking::where('userId', $user)->where('providerId', $newData->id)->first() ? true : false
                 ];
-                array_push($response, $row);
+                $tt = Booking::where('userId', $user)
+                    ->where('providerId', $newData->id)
+                    ->select(['serviceType'])->first()->serviceType;
+
+                if ($tt == ServicesEnum::getValue($request->serviceType))
+                    array_push($response, $row);
             }
             return $this->apiResponse($response);
         } else {

@@ -52,6 +52,62 @@ class ProvidersSeeder extends Seeder
                 'imageUrl' => 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
                 'companyId' => null
             ],
+            [
+                'id' => 6,
+                'name' => 'basssel',
+                'email' => "B@b.c",
+                'mobileNumber' => '0994665567',
+                'imageUrl' => 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+                'companyId' => null
+            ],
+            [
+                'id' => 7,
+                'name' => 'soha',
+                'email' => "B@b.c",
+                'mobileNumber' => '0994665567',
+                'imageUrl' => 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+                'companyId' => null
+            ],
+            [
+                'id' => 8,
+                'name' => 'zina',
+                'email' => "B@b.c",
+                'mobileNumber' => '0994665567',
+                'imageUrl' => 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+                'companyId' => null
+            ],
+            [
+                'id' => 9,
+                'name' => 'znzn',
+                'email' => "B@b.c",
+                'mobileNumber' => '0994665567',
+                'imageUrl' => 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+                'companyId' => null
+            ],
+            [
+                'id' => 10,
+                'name' => 'fatima',
+                'email' => "B@b.c",
+                'mobileNumber' => '0994665567',
+                'imageUrl' => 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+                'companyId' => null
+            ],
+            [
+                'id' => 11,
+                'name' => 'morad',
+                'email' => "B@b.c",
+                'mobileNumber' => '0994665567',
+                'imageUrl' => 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+                'companyId' => null
+            ],
+            [
+                'id' => 12,
+                'name' => 'mazen',
+                'email' => "B@b.c",
+                'mobileNumber' => '0994665567',
+                'imageUrl' => 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+                'companyId' => null
+            ],
         ]);
     }
 }

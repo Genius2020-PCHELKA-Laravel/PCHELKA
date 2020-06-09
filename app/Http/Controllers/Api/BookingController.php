@@ -9,19 +9,13 @@ use App\Enums\ServicesEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\BookingAnswers;
-use App\Models\Evaluation;
-use App\Models\Question;
 use App\Models\QuestionDetails;
 use App\Models\Schedule;
 use App\Models\ServiceProvider;
-use App\Models\UserLocation;
-use App\User;
-use BenSampo\Enum\Enum;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use SebastianBergmann\Comparator\Book;
 use Validator;
 use function Safe\eio_lstat;
 
@@ -218,6 +212,29 @@ class BookingController extends Controller
                         $bookingChild->parentId = $lastId;
                         $bookingChild->refCode = $this->createRefCode();
                         $bookingChild->save();
+
+                        $schdule = Schedule::where('serviceProviderId', $providerId)->where('availableDate', $endDate)->get();
+                        if (count($schdule) < 1) {
+                            $begin = new  \DateTime($request->duoTime);
+                            $endTime = $this->switchHourAnswer($request->duoTime, $answerHourValue);
+                            $endFormat = date('H:i', strtotime($endTime . '+30 minutes'));
+                            $end = new \DateTime($endFormat);
+                            $interval = \DateInterval:: createFromDateString('30 min');
+                            $times = new \DatePeriod($begin, $interval, $end);
+
+                            foreach ($times as $time) {
+                                $newSchdule = new Schedule();
+                                $newSchdule->availableDate = $endDate;
+                                $newSchdule->timeStart = $time->format('H:i');
+                                $newSchdule->timeEnd = $time->add($interval)->format('H:i');
+                                $newSchdule->serviceProviderId = $providerId;
+                                $newSchdule->isActive = false;
+                                $newSchdule->save();
+                            }
+                        } else {
+                            $this->deActiveSchdule($endDate, $providerId, $answerHourValue, $request->duoTime);
+                            $this->removeGap($providerId);
+                        }
                     }
                     break;
                 }
@@ -240,6 +257,29 @@ class BookingController extends Controller
                     $bookingChild->providerId = $providerId;
                     $bookingChild->refCode = $this->createRefCode();
                     $bookingChild->save();
+
+                    $schdule = Schedule::where('serviceProviderId', $providerId)->where('availableDate', $endDate)->get();
+                    if (count($schdule) < 1) {
+                        $begin = new  \DateTime($request->duoTime);
+                        $endTime = $this->switchHourAnswer($request->duoTime, $answerHourValue);
+                        $endFormat = date('H:i', strtotime($endTime . '+30 minutes'));
+                        $end = new \DateTime($endFormat);
+                        $interval = \DateInterval:: createFromDateString('30 min');
+                        $times = new \DatePeriod($begin, $interval, $end);
+
+                        foreach ($times as $time) {
+                            $newSchdule = new Schedule();
+                            $newSchdule->availableDate = $endDate;
+                            $newSchdule->timeStart = $time->format('H:i');
+                            $newSchdule->timeEnd = $time->add($interval)->format('H:i');
+                            $newSchdule->serviceProviderId = $providerId;
+                            $newSchdule->isActive = false;
+                            $newSchdule->save();
+                        }
+                    } else {
+                        $this->deActiveSchdule($endDate, $providerId, $answerHourValue, $request->duoTime);
+                        $this->removeGap($providerId);
+                    }
                     break;
                 }
                 default:
@@ -478,6 +518,40 @@ class BookingController extends Controller
             }
         } else {
             return $this->unAuthoriseResponse();
+        }
+    }
+
+    public function autoAssignId($duoDate, $serviceType)
+    {
+        $response = array();
+        $res = DB::table('providers')->select(['providers.id'])
+            ->join('providerservices', 'providers.id', '=', 'providerservices.provider_id')
+            ->where('providerservices.service_id', '=', ServicesEnum::coerce($serviceType))
+            ->get();
+        if ($res == null) return null;
+        $result = json_decode($res, true);
+        foreach ($result as $newData) {
+            $this->removeGap($newData['id']);
+            $row = DB::table('schedules')->where('serviceProviderId', $newData['id'])
+                ->where('isActive', 1)
+                ->where('availableDate', '=', $duoDate)
+                ->groupBy('serviceProviderId')->count();
+            array_push($response, $row);
+        }
+        if ($response != null) {
+            $minShift = max($response);
+
+            $result = DB::table('schedules')->where('isActive', 1)->where('availableDate', '=', $duoDate)
+                ->select(['serviceProviderId', DB::raw("COUNT(*) as 't' ")])
+                ->groupBy('serviceProviderId')
+                ->having('t', '=', $minShift)
+                ->first();
+            if ($result == null) {
+                return null;
+            }
+            return $result->serviceProviderId;
+        } else {
+            return null;
         }
     }
 
