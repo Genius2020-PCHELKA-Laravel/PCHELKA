@@ -10,6 +10,7 @@ use App\Models\Schedule;
 use App\Models\UserLocation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 trait BookingHelperTrait
 {
@@ -185,5 +186,134 @@ trait BookingHelperTrait
         return $endTime;
     }
 
+    public function convertString($enum)
+    {
+        $temp = preg_replace('%([a-z])([A-Z])%', '\1 \2', $enum);
+        return $temp;
+    }
 
+    public function createRefCode()
+    {
+        global $data;
+        do {
+            $data = strtoupper(Str::random(6));
+            $refCode = Booking::where('refCode', $data)->first();
+        } while ($refCode != null);
+        return $data;
+    }
+
+    public function deActiveSchdule($duoDate, $providerId, $answare, $duoTime)
+    {
+//        $duoDate = $request->$duoDate;
+//        $providerId = $request->$providerId;
+//        $providerId = $request->$providerId;
+//        $answare = $request->$answare;
+//        $duoTime = $request->$duoTime;
+        global $to;
+        switch ($answare) {
+            case 4 :
+            case 17 :
+            case 29 :
+            case 41 :
+            {
+                $to = 60 * 60 * 2;
+                break;
+            }
+
+            case 5 :
+            case 18 :
+            case 30 :
+            case 42 :
+            {
+                $to = 60 * 60 * 3;
+                break;
+            }
+
+            case 6 :
+            case 19 :
+            case 31 :
+            case 43 :
+            {
+                $to = 60 * 60 * 4;
+                break;
+            }
+
+            case 7 :
+            case 20 :
+            case 32 :
+            case 44 :
+            {
+                $to = 60 * 60 * 5;
+                break;
+            }
+
+            case 8 :
+            case 21 :
+            case 33 :
+            case 45 :
+            {
+                $to = 60 * 60 * 6;
+                break;
+            }
+
+            case 9 :
+            case 22 :
+            case 34 :
+            case 46 :
+            {
+                $to = 60 * 60 * 7;
+                break;
+            }
+            default:
+            {
+                return $this->apiResponse('Please select available time value', null, 404);
+            }
+        }
+        $timestamp = strtotime($duoTime) + intval($to);
+        $endTime = date('H:i', $timestamp);
+
+        $data = Schedule::where('availableDate', $duoDate)
+            ->where('serviceProviderId', $providerId)
+            ->whereBetween('timeStart', [$duoTime, $endTime])
+            ->get();
+        foreach ($data as $singleData) {
+            $schedule = Schedule::where('id', $singleData['id'])->first();
+            $schedule['isActive'] = 0;
+            $schedule->save();
+        }
+    }
+
+    public function autoAssignId($duoDate, $serviceType)
+    {
+        $response = array();
+        $res = DB::table('providers')->select(['providers.id'])
+            ->join('providerservices', 'providers.id', '=', 'providerservices.provider_id')
+            ->where('providerservices.service_id', '=', ServicesEnum::coerce($serviceType))
+            ->get();
+        if ($res == null) return null;
+        $result = json_decode($res, true);
+        foreach ($result as $newData) {
+            $this->removeGap($newData['id']);
+            $row = DB::table('schedules')->where('serviceProviderId', $newData['id'])
+                ->where('isActive', 1)
+                ->where('availableDate', '=', $duoDate)
+                ->groupBy('serviceProviderId')->count();
+            array_push($response, $row);
+        }
+        if ($response != null) {
+            $minShift = max($response);
+
+            $result = DB::table('schedules')->where('isActive', 1)->where('availableDate', '=', $duoDate)
+                ->select(['serviceProviderId', DB::raw("COUNT(*) as 't' ")])
+                ->groupBy('serviceProviderId')
+                ->having('t', '=', $minShift)
+                ->first();
+            if ($result == null) {
+                return null;
+            }
+            return $result->serviceProviderId;
+        } else {
+            return null;
+        }
+    }
 }

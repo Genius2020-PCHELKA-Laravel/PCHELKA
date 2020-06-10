@@ -212,7 +212,6 @@ class UserController extends Controller
 //        }
     }
 
-
     public function checkFullName(Request $request)
     {
         $user = User::where('mobile', $request->mobile)->get();

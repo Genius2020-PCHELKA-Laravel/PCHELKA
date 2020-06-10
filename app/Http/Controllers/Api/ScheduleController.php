@@ -57,7 +57,7 @@ class ScheduleController extends Controller
             $sch = Schedule::whereBetween('availableDate', [$from, $to])
                 ->where('serviceProviderId', $request->id)
                 ->where('isActive', true)
-                ->where('availableDate','2020-06-10')->select(['id', 'availableDate', 'timeStart', 'timeEnd', 'serviceProviderId'])
+                ->select(['id', 'availableDate', 'timeStart', 'timeEnd', 'serviceProviderId'])
                 ->get();
 
 
