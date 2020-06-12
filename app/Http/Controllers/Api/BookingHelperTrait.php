@@ -18,9 +18,12 @@ trait BookingHelperTrait
     {
         $response = array();
         $book = Booking::where('id', $bookingId)->
-        select(['serviceType', 'refCode', 'duoDate', 'duoTime', 'locationId', 'totalAmount', 'paymentWays', 'parentId', 'status', 'discount', 'subTotal'])->first();
+        select(['serviceType', 'refCode', 'duoDate', 'duoTime', 'locationId', 'totalAmount', 'paymentWays', 'parentId', 'status', 'discount', 'subTotal','materialPrice'])
+            ->first();
 
-
+        if ($book->locationId == null) {
+            $book->locationId = Booking::where('id', $book['parentId'])->select('locationId')->first()->locationId;
+        }
         $response['serviceType'] = ServicesEnum::getKey($book->serviceType);
         $response['status'] = BookingStatusEnum::getKey($book->status);
         $response['totalAmount'] = $book->totalAmount;
@@ -30,7 +33,7 @@ trait BookingHelperTrait
         $response['paymentWays'] = $book->paymentWays;
         $response['discount'] = $book->discount;
         $response['subTotal'] = $book->subTotal;
-
+        $response['materialPrice']=$book->materialPrice;
         $address = UserLocation::where('id', $book->locationId)
             ->select(['address', 'details', 'area', 'street', 'buildingNumber', 'apartment'])->first();
         if ($address) {
@@ -43,8 +46,10 @@ trait BookingHelperTrait
                 'buildingNumber' => $address->buildingNumber,
                 'apartment' => $address->apartment];
         } else {
+            dd('hi');
             $response['addressDetails'] = null;
         }
+
         $response['parentId'] = $book->parentId;
         return $response;
     }
@@ -85,6 +90,12 @@ trait BookingHelperTrait
         switch ($id) {
             case 14:
             case 15:
+            case 27:
+            case 28:
+            case 39:
+            case 40:
+            case 51:
+            case 52:
                 $material = QuestionDetails::where('id', $id)->first()->name;
                 switch ($material) {
                     case 'No , I have them' :
@@ -101,21 +112,43 @@ trait BookingHelperTrait
         }
     }
 
-    public function removeGap($serviceProviderId)
+    public function removeGap($serviceProviderId, $availableDate)
     {
-        $times = Schedule::where('serviceProviderId', 1)->select(['id', 'timeStart', 'isActive'])->get();
-
+        $times = Schedule::where('serviceProviderId', $serviceProviderId)->where('availableDate', $availableDate)
+            ->select(['id', 'timeStart', 'isActive'])
+            ->get();
+        global $data;
+        $data = array();
+        global $counter;
+        $counter = 0;
         foreach ($times as $time) {
             if ($time['isActive'] == 1) {
-                $after2Hours = date('H:i', strtotime($time['timeStart']) + (60 * 60) * 2);
-                $timeCond = Schedule::where('serviceProviderId', $serviceProviderId)
-                    ->where('timeStart', $after2Hours)->select(['timeStart', 'isActive'])->first();
-                if ($timeCond && $timeCond['isActive'] == false) {
-                    $row = Schedule::where('id', $time['id'])->first();
-                    $row['isActive'] = 0;
-                    $row->save();
+                array_push($data, $time['id']);
+                $counter++;
+
+            } else if ($time['isActive'] == 0) {
+                if ($counter < 5) {
+                    for ($i = 0; $i < $counter; $i++) {
+                        $row = Schedule::where('id', $data[$i])->first();
+                        $row['isActive'] = 0;
+                        $row['isGap'] = 1;
+                        $row->save();
+                    }
+                } else {
+                    $data = [];
+                    $counter = 0;
+
                 }
             }
+        }
+        if ($counter < 5) {
+            for ($i = 0; $i < $counter; $i++) {
+                $row = Schedule::where('id', $data[$i])->first();
+                $row['isActive'] = 0;
+                $row['isGap'] = 1;
+                $row->save();
+            }
+
         }
     }
 
@@ -204,73 +237,7 @@ trait BookingHelperTrait
 
     public function deActiveSchdule($duoDate, $providerId, $answare, $duoTime)
     {
-//        $duoDate = $request->$duoDate;
-//        $providerId = $request->$providerId;
-//        $providerId = $request->$providerId;
-//        $answare = $request->$answare;
-//        $duoTime = $request->$duoTime;
-        global $to;
-        switch ($answare) {
-            case 4 :
-            case 17 :
-            case 29 :
-            case 41 :
-            {
-                $to = 60 * 60 * 2;
-                break;
-            }
-
-            case 5 :
-            case 18 :
-            case 30 :
-            case 42 :
-            {
-                $to = 60 * 60 * 3;
-                break;
-            }
-
-            case 6 :
-            case 19 :
-            case 31 :
-            case 43 :
-            {
-                $to = 60 * 60 * 4;
-                break;
-            }
-
-            case 7 :
-            case 20 :
-            case 32 :
-            case 44 :
-            {
-                $to = 60 * 60 * 5;
-                break;
-            }
-
-            case 8 :
-            case 21 :
-            case 33 :
-            case 45 :
-            {
-                $to = 60 * 60 * 6;
-                break;
-            }
-
-            case 9 :
-            case 22 :
-            case 34 :
-            case 46 :
-            {
-                $to = 60 * 60 * 7;
-                break;
-            }
-            default:
-            {
-                return $this->apiResponse('Please select available time value', null, 404);
-            }
-        }
-        $timestamp = strtotime($duoTime) + intval($to);
-        $endTime = date('H:i', $timestamp);
+        $endTime = $this->switchHourAnswer($duoTime, $answare);
 
         $data = Schedule::where('availableDate', $duoDate)
             ->where('serviceProviderId', $providerId)
@@ -283,6 +250,34 @@ trait BookingHelperTrait
         }
     }
 
+    public function activeSchdule($duoDate, $providerId, $answare, $duoTime)
+    {
+
+        $endTime = $this->switchHourAnswer($duoTime, $answare);
+
+        $data = Schedule::where('availableDate', $duoDate)
+            ->where('serviceProviderId', $providerId)
+            ->whereBetween('timeStart', [$duoTime, $endTime])
+            ->get();
+        foreach ($data as $singleData) {
+            $schedule = Schedule::where('id', $singleData['id'])->first();
+            $schedule['isActive'] = 1;
+            $schedule->save();
+        }
+        $times = Schedule::where('serviceProviderId', $providerId)->where('availableDate', $duoDate)->where('isGap', 1)
+            ->select(['id', 'timeStart', 'isActive'])
+            ->get();
+        if ($times) {
+            foreach ($times as $time) {
+                $row = Schedule::where('id', $time['id'])->first();
+                $row->isGap = 0;
+                $row->isActive = 1;
+                $row->save();
+            }
+        }
+        $this->removeGap($providerId, $duoDate);
+    }
+
     public function autoAssignId($duoDate, $serviceType)
     {
         $response = array();
@@ -293,7 +288,7 @@ trait BookingHelperTrait
         if ($res == null) return null;
         $result = json_decode($res, true);
         foreach ($result as $newData) {
-            $this->removeGap($newData['id']);
+            $this->removeGap($newData['id'], $duoDate);
             $row = DB::table('schedules')->where('serviceProviderId', $newData['id'])
                 ->where('isActive', 1)
                 ->where('availableDate', '=', $duoDate)
@@ -302,6 +297,7 @@ trait BookingHelperTrait
         }
         if ($response != null) {
             $minShift = max($response);
+
 
             $result = DB::table('schedules')->where('isActive', 1)->where('availableDate', '=', $duoDate)
                 ->select(['serviceProviderId', DB::raw("COUNT(*) as 't' ")])

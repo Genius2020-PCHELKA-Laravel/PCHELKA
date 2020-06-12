@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use PHPUnit\Exception;
 use Validator;
 use function Safe\eio_lstat;
 
@@ -87,6 +88,7 @@ class BookingController extends Controller
             $booking->providerId = $providerId;
             $booking->parentId = null;
             $booking->refCode = $this->createRefCode();
+            $booking->materialPrice = $request->materialPrice;
             $booking->save();
             $lastId = intval($booking->id);
 
@@ -95,6 +97,7 @@ class BookingController extends Controller
                 case "One-time":
                 {
                     $this->deActiveSchdule($request->duoDate, $providerId, $answerHourValue, $request->duoTime);
+                    $this->removeGap($providerId, $request->duoDate);
                     break;
                 }
                 case "Weekly":
@@ -138,7 +141,7 @@ class BookingController extends Controller
                             }
                         } else {
                             $this->deActiveSchdule($endDate, $providerId, $answerHourValue, $request->duoTime);
-                            $this->removeGap($providerId);
+                            $this->removeGap($providerId, $request->duoDate);
                         }
                     }
                     break;
@@ -183,7 +186,7 @@ class BookingController extends Controller
                         }
                     } else {
                         $this->deActiveSchdule($endDate, $providerId, $answerHourValue, $request->duoTime);
-                        $this->removeGap($providerId);
+                        $this->removeGap($providerId, $request->duoDate);
                     }
                     break;
                 }
@@ -284,7 +287,7 @@ class BookingController extends Controller
         return $this->apiResponse($price, null, 200);
     }
 
-    public function getPastBooking(Request $request)
+    public function getPastBooking()
     {
         $response = array();
         if (Auth::user()) {
@@ -310,7 +313,7 @@ class BookingController extends Controller
         return $this->unAuthoriseResponse();
     }
 
-    public function getUpComingBooking(Request $request)
+    public function getUpComingBooking()
     {
         $response = array();
         if (Auth::user()) {
@@ -321,9 +324,17 @@ class BookingController extends Controller
                 ->where('duoDate', '>', date('Y-m-d', strtotime("-1 days")))
                 ->orderBy('created_at', 'asc')
                 ->get();
+
             foreach ($data as $newdata) {
                 $providerData = ServiceProvider::where('id', $newdata['providerId'])->select('id', 'name', 'imageUrl')->first();
                 $providerData['evaluation'] = intval(Evaluation::where('serviceProviderId', $newdata['providerId'])->avg('starCount'));
+                $lastServiceDate =
+                    Booking::where('userId', $user)->where('providerId', $newdata->providerId)
+                        ->where('status', BookingStatusEnum::Completed)
+                        ->where('serviceType', ServicesEnum::coerce($newdata['serviceType']))
+                        ->orderBy('duoDate', 'DESC')
+                        ->select('duoDate')->first();
+                $providerData['lastServiceDate'] = $lastServiceDate['duoDate'];
                 $row = [
                     'id' => $newdata['id'],
                     'duoDate' => $newdata['duoDate'],
@@ -331,7 +342,8 @@ class BookingController extends Controller
                     'serviceType' => ServicesEnum::getKey($newdata['serviceType']),
                     'refCode' => $newdata['refCode'],
                     'status' => BookingStatusEnum::getKey($newdata['status']),
-                    'providerData' => $providerData
+                    'providerData' => $providerData,
+
                 ];
                 array_push($response, $row);
 
@@ -347,21 +359,101 @@ class BookingController extends Controller
             $response = array();
             $response = $this->getBookingDetailes($request->id);
 
+            if ($response['parentId'] != null) {
+                $data = Booking::where('id', $response['parentId'])
+                    ->select(['totalAmount', 'discount', 'subTotal', 'materialPrice','paymentWays'])->first();
+                $response['totalAmount'] = $data['totalAmount'];
+                $response['discount'] = $data['discount'];
+                $response['subTotal'] = $data['subTotal'];
+                $response['materialPrice'] = $data['materialPrice'];
+                $response['paymentWays'] = $data['paymentWays'];
+
+            }
+
             $answers = null;
             if ($response['parentId'] != null) {
-                $answers = BookingAnswers::where('bookingId', $book->parentId)->select(['answerValue', 'answerId', 'questionId'])->get();
+                $answers = BookingAnswers::where('bookingId', $response['parentId'])->select(['answerValue', 'answerId', 'questionId'])->get();
             } else {
                 $answers = BookingAnswers::where('bookingId', $request->id)->select(['answerValue', 'answerId', 'questionId'])->get();
             }
             foreach ($answers as $answer) {
-                if ($answer['questionId'] == 1) {
-                    $response['frequency'] = $this->frequencyConvert($answer['answerId']);
-                } elseif ($answer['questionId'] == 2) {
-                    $response['hoursNeeded'] = $this->getAnswer($answer['answerId']);
-                } elseif ($answer['questionId'] == 3) {
-                    $response['cleanerCount'] = $this->getAnswer($answer['answerId']);
-                } elseif ($answer['questionId'] == 4) {
-                    $response['requireMaterial'] = $this->materialsConvert($answer['answerId']);
+                switch (ServicesEnum::getValue($response['serviceType'])) {
+
+                    #region HomeCleaning
+                    case ServicesEnum::HomeCleaning :
+                    {
+                        if ($answer['questionId'] == 1) {
+                            $response['frequency'] = $this->frequencyConvert($answer['answerId']);
+                        } elseif
+                        ($answer['questionId'] == 2) {
+                            $response['hoursNeeded'] = $this->getAnswer($answer['answerId']);
+                        } elseif
+                        ($answer['questionId'] == 3) {
+                            $response['cleanerCount'] = $this->getAnswer($answer['answerId']);
+                        } elseif
+                        ($answer['questionId'] == 4) {
+                            $response['requireMaterial'] = $this->materialsConvert($answer['answerId']);
+                        }
+                        break;
+                    }
+                    #endregion
+
+                    #region BabysitterService
+                    case ServicesEnum::BabysitterService :
+                    {
+
+                        if ($answer['questionId'] == 1) {
+                            $response['frequency'] = $this->frequencyConvert($answer['answerId']);
+                        } elseif
+                        ($answer['questionId'] == 12) {
+                            $response['hoursNeeded'] = $this->getAnswer($answer['answerId']);
+                        } elseif
+                        ($answer['questionId'] == 13) {
+                            $response['cleanerCount'] = $this->getAnswer($answer['answerId']);
+                        }
+                        break;
+                    }
+                    #endregion
+
+                    #region DisinfectionService
+                    case ServicesEnum::DisinfectionService :
+                    {
+
+                        if ($answer['questionId'] == 1) {
+                            $response['frequency'] = $this->frequencyConvert($answer['answerId']);
+                        } elseif
+                        ($answer['questionId'] == 6) {
+                            $response['hoursNeeded'] = $this->getAnswer($answer['answerId']);
+                        } elseif
+                        ($answer['questionId'] == 7) {
+                            $response['cleanerCount'] = $this->getAnswer($answer['answerId']);
+                        } elseif
+                        ($answer['questionId'] == 8) {
+                            $response['requireMaterial'] = $this->materialsConvert($answer['answerId']);
+                        }
+                        break;
+                    }
+                    #endregion
+
+                    #region DeepCleaning
+                    case ServicesEnum::DeepCleaning :
+                    {
+
+                        if ($answer['questionId'] == 1) {
+                            $response['frequency'] = $this->frequencyConvert($answer['answerId']);
+                        } elseif
+                        ($answer['questionId'] == 9) {
+                            $response['hoursNeeded'] = $this->getAnswer($answer['answerId']);
+                        } elseif
+                        ($answer['questionId'] == 10) {
+                            $response['cleanerCount'] = $this->getAnswer($answer['answerId']);
+                        } elseif
+                        ($answer['questionId'] == 11) {
+                            $response['requireMaterial'] = $this->materialsConvert($answer['answerId']);
+                        }
+                        break;
+                    }
+                    #endregion
                 }
             }
             return $this->apiResponse($response);
@@ -399,34 +491,47 @@ class BookingController extends Controller
 
     public function rescheduleBook(Request $request)
     {
-        global $answerHourValue;
-        if (Auth::user()) {
+        try {
+            if (Auth::user()) {
+                $book = Booking::where('id', $request->id)->first();
+                global $oldHourId;
+                if ($book) {
+                    if ($book->parentId!=null)
+                    {
+                        $oldHourId = BookingAnswers::where('bookingId', $book->parentId)->where('questionId', 2)
+                            ->orWhere('questionId', 6)->orWhere('questionId', 9)->orWhere('questionId', 12)
+                            ->select(['answerId'])->first();
 
-            switch ($request->hourId) {
-                case 2:
-                case 6:
-                case 9:
-                case 12:
-                    $answerHourValue = $request->hourId;
-            }
-            $book = Booking::where('id', $request->id)->first();
-            if ($book) {
-                $oldDate = $book->duoDate;
-                $oldTime = $book->duoDate;
-                $serviceProvider = $request->providerId == null ? $this->autoAssignId($request->duoDate, $book->serviceType) : $request->providerId;
-                $book->duoDate = $request->duoDate;
-                $book->duoTime = $request->duoTime;
-                $book->providerId = $serviceProvider;
-                $book->save();
-                $this->deActiveSchdule($request->duoDate, $serviceProvider, $answerHourValue, $request->duoTime);
-                return $this->apiResponse('Updated successfully');
+                    }else{
+                        $oldHourId = BookingAnswers::where('bookingId', $request->id)->where('questionId', 2)
+                            ->orWhere('questionId', 6)->orWhere('questionId', 9)->orWhere('questionId', 12)
+                            ->select(['answerId'])->first();
+
+                    }
+
+                    $oldProviderId = Booking::where('id', $request->id)->select(['providerId'])->first();
+
+                    $oldDate = Booking::where('id', $request->id)->select(['duoDate'])->first();
+                    $oldTime = Booking::where('id', $request->id)->select(['duoTime'])->first();
+                    $serviceProvider = $request->providerId == null ? $this->autoAssignId($request->duoDate, $book->serviceType) : $request->providerId;
+                    $book->duoDate = $request->duoDate;
+                    $book->duoTime = $request->duoTime;
+                    $book->providerId = $serviceProvider;
+                    $book->save();
+
+                    $this->deActiveSchdule($request->duoDate, $serviceProvider, $oldHourId['answerId'], $request->duoTime);
+                    $this->activeSchdule($oldDate['duoDate'], $oldProviderId['providerId'], $oldHourId['answerId'], $oldTime['duoTime']);
+                    return $this->apiResponse('Updated successfully');
+
+                } else {
+                    return $this->notFoundMassage('Booking Id');
+                }
             } else {
-                return $this->notFoundMassage();
+                return $this->unAuthoriseResponse();
             }
-        } else {
-            return $this->unAuthoriseResponse();
+        } catch (\Exception $exception) {
+            return $this->apiResponse($exception->getMessage());
         }
     }
-
 
 }

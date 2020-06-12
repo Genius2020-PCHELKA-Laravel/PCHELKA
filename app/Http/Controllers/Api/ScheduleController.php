@@ -50,10 +50,20 @@ class ScheduleController extends Controller
     public function getSchedules(Request $request)
     {
         try {
-            $this->removeGap($request->id);
-            $from = date('Y-m-d');
 
+            $from = date('Y-m-d');
             $to = date('Y-m-d', strtotime("+15 days"));
+
+            $begin = new \DateTime($from);
+            $end = new \DateTime($to);
+            $interval = \DateInterval::createFromDateString('1 day');
+            $period = new \DatePeriod($begin, $interval, $end);
+
+            foreach ($period as $dt) {
+                $date = $dt->format("Y-m-d");
+                $this->removeGap($request->id, $date);
+            }
+
             $sch = Schedule::whereBetween('availableDate', [$from, $to])
                 ->where('serviceProviderId', $request->id)
                 ->where('isActive', true)

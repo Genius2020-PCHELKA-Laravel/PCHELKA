@@ -21,6 +21,7 @@ class CreateBookingsTable extends Migration
             $table->double('subTotal')->nullable();
             $table->double('discount')->nullable();
             $table->double('totalAmount')->nullable();
+            $table->double('materialPrice')->nullable();
             $table->tinyInteger('paidStatus')->unsigned()->nullable();
             $table->tinyInteger('paymentWays')->unsigned()->nullable();
             $table->tinyInteger('status')->unsigned()->nullable();

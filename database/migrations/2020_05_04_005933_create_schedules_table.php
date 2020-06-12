@@ -20,6 +20,7 @@ class CreateSchedulesTable extends Migration
             $table->time('timeEnd');
             $table->bigInteger('serviceProviderId')->unsigned();
             $table->boolean('isActive')->default(true);
+            $table->boolean('isGap')->default(false);
             $table->foreign('serviceProviderId')->references('id')->on('providers')
                 ->onDelete('cascade');
             $table->timestamps();

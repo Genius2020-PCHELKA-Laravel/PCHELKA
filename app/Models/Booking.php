@@ -15,7 +15,7 @@ class Booking extends Model
         'discount',
         'totalAmount',
         'paidStatus',
-        'paymentWays' ,
+        'paymentWays',
         'status',
         'serviceType',
         'userId',
@@ -23,8 +23,9 @@ class Booking extends Model
         'couponId',
         'parentId',
         'locationId',
-        'providerId'
-        ,'scheduleId'];
+        'providerId',
+        'scheduleId',
+        'materialPrice'];
 
     public function Coupon()
     {
