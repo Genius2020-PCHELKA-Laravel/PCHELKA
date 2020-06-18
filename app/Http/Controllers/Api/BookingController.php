@@ -91,8 +91,8 @@ class BookingController extends Controller
             $booking->materialPrice = $request->materialPrice;
             $booking->save();
             $lastId = intval($booking->id);
-
-
+//            $this->deActiveSchdule($request->duoDate, $providerId, $answerHourValue, $request->duoTime);
+//            $this->removeGap($providerId, $request->duoDate);
             switch ($request->frequency) {
                 case "One-time":
                 {
@@ -496,13 +496,12 @@ class BookingController extends Controller
                 $book = Booking::where('id', $request->id)->first();
                 global $oldHourId;
                 if ($book) {
-                    if ($book->parentId!=null)
-                    {
+                    if ($book->parentId != null) {
                         $oldHourId = BookingAnswers::where('bookingId', $book->parentId)->where('questionId', 2)
                             ->orWhere('questionId', 6)->orWhere('questionId', 9)->orWhere('questionId', 12)
                             ->select(['answerId'])->first();
 
-                    }else{
+                    } else {
                         $oldHourId = BookingAnswers::where('bookingId', $request->id)->where('questionId', 2)
                             ->orWhere('questionId', 6)->orWhere('questionId', 9)->orWhere('questionId', 12)
                             ->select(['answerId'])->first();

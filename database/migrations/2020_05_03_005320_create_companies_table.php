@@ -18,8 +18,8 @@ class CreateCompaniesTable extends Migration
             $table->string('name');
             $table->string('mobile');
             $table->string('email');
-            $table->double('lan');
-            $table->double('lon');
+            $table->double('lan')->nullable();
+            $table->double('lon')->nullable();
             $table->timestamps();
         });
     }

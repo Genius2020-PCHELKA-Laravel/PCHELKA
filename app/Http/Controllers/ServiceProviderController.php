@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use App\Models\ServiceProvider;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,8 @@ class ServiceProviderController extends Controller
      */
     public function index()
     {
-        //
+        $companies =  Company::pluck('name','id')->toArray();
+        return view('admin.Provider.index',compact('companies'));
     }
 
     /**
@@ -30,7 +32,7 @@ class ServiceProviderController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -41,7 +43,7 @@ class ServiceProviderController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\ServiceProvider  $serviceProvider
+     * @param \App\Models\ServiceProvider $serviceProvider
      * @return \Illuminate\Http\Response
      */
     public function show(ServiceProvider $serviceProvider)
@@ -52,7 +54,7 @@ class ServiceProviderController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\ServiceProvider  $serviceProvider
+     * @param \App\Models\ServiceProvider $serviceProvider
      * @return \Illuminate\Http\Response
      */
     public function edit(ServiceProvider $serviceProvider)
@@ -63,8 +65,8 @@ class ServiceProviderController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ServiceProvider  $serviceProvider
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\ServiceProvider $serviceProvider
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, ServiceProvider $serviceProvider)
@@ -75,7 +77,7 @@ class ServiceProviderController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\ServiceProvider  $serviceProvider
+     * @param \App\Models\ServiceProvider $serviceProvider
      * @return \Illuminate\Http\Response
      */
     public function destroy(ServiceProvider $serviceProvider)

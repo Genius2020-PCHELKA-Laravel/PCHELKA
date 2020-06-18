@@ -7,14 +7,23 @@ use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+
+
     public function index()
     {
-        //
+        $data = Company::paginate(5);
+        $data->count = Company::all()->count();
+        return view('admin.Company.index', compact('data'));
     }
 
     /**
@@ -22,15 +31,20 @@ class CompanyController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        if ($request->isMethod('post')) {
+            $company = Company::create($request->all());
+            return redirect()->back()->with('add', ' ');
+        } else {
+            return view('admin.Company.addCompany');
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -41,7 +55,7 @@ class CompanyController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Company  $company
+     * @param \App\Models\Company $company
      * @return \Illuminate\Http\Response
      */
     public function show(Company $company)
@@ -49,22 +63,21 @@ class CompanyController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Company  $company
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Company $company)
+
+    public function edit(Request $request, $id)
     {
-        //
+        $company = Company::find($id);
+        $company->name = $request->input('name');
+        $company->email = $request->input('email');
+        $company->mobile = $request->input('mobile');
+        $company->save();
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Company  $company
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Company $company
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Company $company)
@@ -75,11 +88,13 @@ class CompanyController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Company  $company
+     * @param \App\Models\Company $company
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Company $company)
+    public function destroy($id)
     {
-        //
+        $company = Company::find($id);
+        $company->delete();
+        return $company;
     }
 }

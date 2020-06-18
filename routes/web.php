@@ -13,21 +13,34 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'CompanyController@index')->name('viewCompany');
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+//Route::get('/home', 'HomeController@index')->name('home');
+//
+//Route::get('/admin',function(){
+//    return view('admin.register');
+//});
+Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout')->name('logout');
 
-Route::get('/admin',function(){
-    return view('admin.register');
+Route::prefix("/company")->group(function () {
+    Route::get('/', 'CompanyController@index')->name('viewCompany');
+    Route::get('/addCompany', 'CompanyController@create')->name('addCompany');
+    Route::post('/addCompany', 'CompanyController@create')->name('addCompany');
+    Route::post('/editCompany/{id}', 'CompanyController@edit')->name('editCompany');
+    Route::post('/deleteCompany/{id}', 'CompanyController@destroy')->name('deleteCompany');
 });
-
-Route::get('/clearCache', function() {
+Route::prefix("/provider")->group(function () {
+    Route::get('/', 'ServiceProviderController@index')->name('viewProvider');
+    Route::get('/addCompany', 'CompanyController@create')->name('addCompany');
+    Route::post('/addCompany', 'CompanyController@create')->name('addCompany');
+    Route::post('/editCompany/{id}', 'CompanyController@edit')->name('editCompany');
+    Route::post('/deleteCompany/{id}', 'CompanyController@destroy')->name('deleteCompany');
+});
+Route::get('/clearCache', function () {
     Artisan::call('cache:clear');
     return "Cache is cleared";
 });
 
 
-Route::get('/home', 'HomeController@index')->name('home');
+//Route::get('/home', 'HomeController@index')->name('home');

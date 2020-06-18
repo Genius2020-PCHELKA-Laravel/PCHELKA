@@ -18,12 +18,13 @@ trait BookingHelperTrait
     {
         $response = array();
         $book = Booking::where('id', $bookingId)->
-        select(['serviceType', 'refCode', 'duoDate', 'duoTime', 'locationId', 'totalAmount', 'paymentWays', 'parentId', 'status', 'discount', 'subTotal','materialPrice'])
+        select(['id','serviceType', 'refCode', 'duoDate', 'duoTime', 'locationId', 'totalAmount', 'paymentWays', 'parentId', 'status', 'discount', 'subTotal','materialPrice'])
             ->first();
 
         if ($book->locationId == null) {
             $book->locationId = Booking::where('id', $book['parentId'])->select('locationId')->first()->locationId;
         }
+        $response['id'] = $book->id;
         $response['serviceType'] = ServicesEnum::getKey($book->serviceType);
         $response['status'] = BookingStatusEnum::getKey($book->status);
         $response['totalAmount'] = $book->totalAmount;
