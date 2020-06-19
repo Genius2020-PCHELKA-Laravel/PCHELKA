@@ -56,7 +56,7 @@ class ServicesQuestionsSeeder extends Seeder
             ], [
                 'id' => 9,
                 'serviceId' => 11,
-                'questionId' => 8,
+                'questionId' => 4,
             ],
             [
                 'id' => 10,
@@ -80,7 +80,7 @@ class ServicesQuestionsSeeder extends Seeder
             ], [
                 'id' => 14,
                 'serviceId' => 7,
-                'questionId' => 11,
+                'questionId' => 4,
             ],
             [
                 'id' => 15,
@@ -88,7 +88,7 @@ class ServicesQuestionsSeeder extends Seeder
                 'questionId' => 5,
             ],
             #endregion
-            ##region BabysitterService
+            #region BabysitterService
             [
                 'id' => 16,
                 'serviceId' => 12,
@@ -101,10 +101,6 @@ class ServicesQuestionsSeeder extends Seeder
                 'id' => 18,
                 'serviceId' => 12,
                 'questionId' => 13,
-            ], [
-                'id' => 19,
-                'serviceId' => 12,
-                'questionId' => 14,
             ],
             [
                 'id' => 20,
@@ -162,31 +158,14 @@ class ServicesQuestionsSeeder extends Seeder
             #endregion
             #region SofaCleaning
             [
-                'id' => 30,
-                'serviceId' => 6,
-                'questionId' => 21,
-            ], [
                 'id' => 31,
                 'serviceId' => 6,
                 'questionId' => 22,
             ],
             [
-                'id' => 32,
-                'serviceId' => 6,
-                'questionId' => 23,
-            ],            [
-                'id' => 33,
-                'serviceId' => 6,
-                'questionId' => 24,
-            ], [
-                'id' => 34,
-                'serviceId' => 6,
-                'questionId' => 25,
-            ],
-            [
                 'id' => 35,
                 'serviceId' => 6,
-                'questionId' => 26,
+                'questionId' => 4,
             ],
             [
                 'id' => 36,
@@ -199,23 +178,59 @@ class ServicesQuestionsSeeder extends Seeder
                 'id' => 37,
                 'serviceId' => 5,
                 'questionId' => 27,
-            ], [
-                'id' => 38,
-                'serviceId' => 5,
-                'questionId' => 28,
             ],
             [
-                'id' => 39,
-                'serviceId' => 5,
-                'questionId' => 29,
-            ],            [
                 'id' => 40,
                 'serviceId' => 5,
-                'questionId' => 30,
+                'questionId' => 4,
             ],
             [
                 'id' => 41,
                 'serviceId' => 5,
+                'questionId' => 5,
+            ],
+            #endregion
+            #region CurtainCleaning
+            [
+                'id' => 42,
+                'serviceId' => 3,
+                'questionId' => 28,
+            ],
+            [
+                'id' => 43,
+                'serviceId' => 3,
+                'questionId' => 29,
+            ],
+            [
+                'id' => 44,
+                'serviceId' => 3,
+                'questionId' => 4,
+            ],
+            [
+                'id' => 45,
+                'serviceId' => 5,
+                'questionId' => 5,
+            ],
+            #endregion
+            #region CarpetCleaning
+            [
+                'id' => 46,
+                'serviceId' => 4,
+                'questionId' => 30,
+            ],
+            [
+                'id' => 47,
+                'serviceId' => 4,
+                'questionId' => 29,
+            ],
+            [
+                'id' => 48,
+                'serviceId' => 4,
+                'questionId' => 4,
+            ],
+            [
+                'id' => 49,
+                'serviceId' => 4,
                 'questionId' => 5,
             ],
             #endregion

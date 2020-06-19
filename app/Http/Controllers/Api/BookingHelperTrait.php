@@ -91,12 +91,6 @@ trait BookingHelperTrait
         switch ($id) {
             case 14:
             case 15:
-            case 27:
-            case 28:
-            case 39:
-            case 40:
-            case 51:
-            case 52:
                 $material = QuestionDetails::where('id', $id)->first()->name;
                 switch ($material) {
                     case 'No , I have them' :

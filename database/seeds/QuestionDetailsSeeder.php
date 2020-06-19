@@ -173,18 +173,6 @@ class QuestionDetailsSeeder extends Seeder
                 'price' => 200,
                 'questionId' => 7
             ],
-            [
-                'id' => 27,
-                'name' => 'No , I have them',
-                'price' => 0,
-                'questionId' => 8
-            ],
-            [
-                'id' => 28,
-                'name' => 'Yes , Please',
-                'price' => 100,
-                'questionId' => 8
-            ],
 
             #endregion
             #region DeepCleaning
@@ -247,18 +235,6 @@ class QuestionDetailsSeeder extends Seeder
                 'name' => '4',
                 'price' => 200,
                 'questionId' => 10
-            ],
-            [
-                'id' => 39,
-                'name' => 'No , I have them',
-                'price' => 0,
-                'questionId' => 11
-            ],
-            [
-                'id' => 40,
-                'name' => 'Yes , Please',
-                'price' => 100,
-                'questionId' => 11
             ],
 
             #endregion
@@ -323,18 +299,7 @@ class QuestionDetailsSeeder extends Seeder
                 'price' => 200,
                 'questionId' => 13
             ],
-            [
-                'id' => 51,
-                'name' => 'No , I have them',
-                'price' => 0,
-                'questionId' => 14
-            ],
-            [
-                'id' => 52,
-                'name' => 'Yes , Please',
-                'price' => 100,
-                'questionId' => 14
-            ],
+
             #endregion
             #region FullTimeMaid
             [
@@ -451,348 +416,275 @@ class QuestionDetailsSeeder extends Seeder
             ],
             #endregion
             #region SofaCleaning
-            [
-                'id' => 71,
-                'name' => 'Leather',
-                'price' => 50,
-                'questionId' => 21
-            ],
-            [
-                'id' => 72,
-                'name' => 'Fabric/Suede',
-                'price' => 100,
-                'questionId' => 21
-            ],
-            [
-                'id' => 73,
-                'name' => 'Mixed',
-                'price' => 100,
-                'questionId' => 21
-            ],
+
             [
                 'id' => 74,
-                'name' => '0',
+                'name' => '2',
                 'price' => 100,
                 'questionId' => 22
             ],
             [
                 'id' => 75,
-                'name' => '1',
+                'name' => '3',
                 'price' => 100,
                 'questionId' => 22
             ],
             [
                 'id' => 76,
-                'name' => '2',
+                'name' => '4',
                 'price' => 100,
                 'questionId' => 22
             ],
             [
                 'id' => 77,
-                'name' => '3',
+                'name' => '5',
                 'price' => 100,
                 'questionId' => 22
             ],
             [
                 'id' => 78,
-                'name' => '4',
+                'name' => '6',
                 'price' => 100,
                 'questionId' => 22
             ],
             [
                 'id' => 79,
-                'name' => '5',
+                'name' => '7',
                 'price' => 100,
                 'questionId' => 22
             ],
             [
                 'id' => 80,
-                'name' => '0',
+                'name' => '8',
                 'price' => 100,
-                'questionId' => 23
+                'questionId' => 22
             ],
             [
                 'id' => 81,
-                'name' => '1',
+                'name' => '9',
                 'price' => 100,
-                'questionId' => 23
+                'questionId' => 22
             ],
             [
                 'id' => 82,
-                'name' => '2',
+                'name' => '10',
                 'price' => 100,
-                'questionId' => 23
+                'questionId' => 22
             ],
             [
                 'id' => 83,
-                'name' => '3',
+                'name' => '11',
                 'price' => 100,
-                'questionId' => 23
+                'questionId' => 22
             ],
             [
                 'id' => 84,
-                'name' => '4',
+                'name' => '12',
                 'price' => 100,
-                'questionId' => 23
-            ],
-            [
-                'id' => 85,
-                'name' => '5',
-                'price' => 100,
-                'questionId' => 23
-            ],
-            [
-                'id' => 86,
-                'name' => '0',
-                'price' => 100,
-                'questionId' => 24
-            ],
-            [
-                'id' => 87,
-                'name' => '1',
-                'price' => 100,
-                'questionId' => 24
-            ],
-            [
-                'id' => 88,
-                'name' => '2',
-                'price' => 100,
-                'questionId' => 24
-            ],
-            [
-                'id' => 89,
-                'name' => '3',
-                'price' => 100,
-                'questionId' => 24
-            ],
-            [
-                'id' => 90,
-                'name' => '4',
-                'price' => 100,
-                'questionId' => 24
-            ],
-            [
-                'id' => 91,
-                'name' => '5',
-                'price' => 100,
-                'questionId' => 24
-            ],
-            [
-                'id' => 92,
-                'name' => '0',
-                'price' => 100,
-                'questionId' => 25
-            ],
-            [
-                'id' => 93,
-                'name' => '1',
-                'price' => 100,
-                'questionId' => 25
-            ],
-            [
-                'id' => 94,
-                'name' => '2',
-                'price' => 100,
-                'questionId' => 25
-            ],
-            [
-                'id' => 95,
-                'name' => '3',
-                'price' => 100,
-                'questionId' => 25
-            ],
-            [
-                'id' => 96,
-                'name' => '4',
-                'price' => 100,
-                'questionId' => 25
-            ],
-            [
-                'id' => 97,
-                'name' => '5',
-                'price' => 100,
-                'questionId' => 25
-            ],
-            [
-                'id' => 98,
-                'name' => '0',
-                'price' => 100,
-                'questionId' => 26
-            ],
-            [
-                'id' => 99,
-                'name' => '1',
-                'price' => 100,
-                'questionId' => 26
-            ],
-            [
-                'id' => 100,
-                'name' => '2',
-                'price' => 100,
-                'questionId' => 26
-            ],
-            [
-                'id' => 101,
-                'name' => '3',
-                'price' => 100,
-                'questionId' => 26
-            ],
-            [
-                'id' => 102,
-                'name' => '4',
-                'price' => 100,
-                'questionId' => 26
-            ],
-            [
-                'id' => 103,
-                'name' => '5',
-                'price' => 100,
-                'questionId' => 26
+                'questionId' => 22
             ],
 
             #endregion
             #region MattressCleaning
             [
                 'id' => 104,
-                'name' => '0',
+                'name' => '2',
                 'price' => 100,
                 'questionId' => 27
             ],
             [
                 'id' => 105,
-                'name' => '1',
+                'name' => '3',
                 'price' => 100,
                 'questionId' => 27
             ],
             [
                 'id' => 106,
-                'name' => '2',
+                'name' => '4',
                 'price' => 100,
                 'questionId' => 27
             ],
             [
                 'id' => 107,
-                'name' => '3',
+                'name' => '5',
                 'price' => 100,
                 'questionId' => 27
             ],
             [
                 'id' => 108,
-                'name' => '4',
+                'name' => '6',
                 'price' => 100,
                 'questionId' => 27
             ],
             [
                 'id' => 109,
-                'name' => '5',
+                'name' => '7',
                 'price' => 100,
                 'questionId' => 27
             ],
             [
                 'id' => 110,
-                'name' => '0',
+                'name' => '8',
                 'price' => 100,
-                'questionId' => 28
+                'questionId' => 27
             ],
             [
                 'id' => 111,
-                'name' => '1',
+                'name' => '9',
                 'price' => 100,
-                'questionId' => 28
+                'questionId' => 27
             ],
             [
                 'id' => 112,
-                'name' => '2',
+                'name' => '10',
                 'price' => 100,
-                'questionId' => 28
+                'questionId' => 27
             ],
             [
                 'id' => 113,
-                'name' => '3',
+                'name' => '11',
                 'price' => 100,
-                'questionId' => 28
+                'questionId' => 27
             ],
             [
                 'id' => 114,
-                'name' => '4',
+                'name' => '12',
                 'price' => 100,
-                'questionId' => 28
+                'questionId' => 27
             ],
+            #endregion
+            #region Curtain
             [
                 'id' => 115,
-                'name' => '5',
+                'name' => '2',
                 'price' => 100,
                 'questionId' => 28
             ],
             [
                 'id' => 116,
-                'name' => '0',
+                'name' => '3',
                 'price' => 100,
-                'questionId' => 29
+                'questionId' => 28
             ],
             [
                 'id' => 117,
-                'name' => '1',
+                'name' => '4',
                 'price' => 100,
-                'questionId' => 29
+                'questionId' => 28
             ],
             [
                 'id' => 118,
-                'name' => '2',
+                'name' => '5',
                 'price' => 100,
-                'questionId' => 29
+                'questionId' => 28
             ],
             [
                 'id' => 119,
-                'name' => '3',
+                'name' => '6',
                 'price' => 100,
-                'questionId' => 29
+                'questionId' => 28
             ],
             [
                 'id' => 120,
-                'name' => '4',
+                'name' => '7',
                 'price' => 100,
-                'questionId' => 29
+                'questionId' => 28
             ],
             [
                 'id' => 121,
-                'name' => '5',
+                'name' => '8',
                 'price' => 100,
-                'questionId' => 29
+                'questionId' => 28
             ],
             [
                 'id' => 122,
-                'name' => '0',
+                'name' => '9',
                 'price' => 100,
-                'questionId' => 30
+                'questionId' => 28
             ],
             [
                 'id' => 123,
-                'name' => '1',
+                'name' => '10',
                 'price' => 100,
-                'questionId' => 30
+                'questionId' => 28
             ],
             [
                 'id' => 124,
-                'name' => '2',
+                'name' => '11',
                 'price' => 100,
-                'questionId' => 30
+                'questionId' => 28
             ],
             [
                 'id' => 125,
-                'name' => '3',
+                'name' => '12',
                 'price' => 100,
-                'questionId' => 30
+                'questionId' => 28
             ],
+            #end region
+            #region CarpetCleaning
             [
                 'id' => 126,
-                'name' => '4',
+                'name' => '2',
                 'price' => 100,
                 'questionId' => 30
             ],
             [
                 'id' => 127,
+                'name' => '3',
+                'price' => 100,
+                'questionId' => 30
+            ],
+            [
+                'id' => 128,
+                'name' => '4',
+                'price' => 100,
+                'questionId' => 30
+            ],
+            [
+                'id' => 129,
                 'name' => '5',
+                'price' => 100,
+                'questionId' => 30
+            ],
+            [
+                'id' => 130,
+                'name' => '6',
+                'price' => 100,
+                'questionId' => 30
+            ],
+            [
+                'id' => 131,
+                'name' => '7',
+                'price' => 100,
+                'questionId' => 30
+            ],
+            [
+                'id' => 132,
+                'name' => '8',
+                'price' => 100,
+                'questionId' => 30
+            ],
+            [
+                'id' => 133,
+                'name' => '9',
+                'price' => 100,
+                'questionId' => 30
+            ],
+            [
+                'id' => 134,
+                'name' => '10',
+                'price' => 100,
+                'questionId' => 30
+            ],
+            [
+                'id' => 135,
+                'name' => '11',
+                'price' => 100,
+                'questionId' => 30
+            ],
+            [
+                'id' => 136,
+                'name' => '12',
                 'price' => 100,
                 'questionId' => 30
             ],

@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Monolog\Handler\IFTTTHandler;
 use PHPUnit\Exception;
 use Validator;
 use function Safe\eio_lstat;
@@ -292,7 +293,10 @@ class BookingController extends Controller
         $response = array();
         if (Auth::user()) {
             $user = Auth::user()->id;
-            $data = Booking::where('userId', $user)->where('status', '=', BookingStatusEnum::Completed)
+            $data = Booking::where('userId', $user)->where(function ($q) {
+                $q->where('status', '=', BookingStatusEnum::Completed)
+                    ->orWhere('status', '=', BookingStatusEnum::Canceled());
+            })
                 ->orderBy('created_at', 'asc')
                 ->get();
             foreach ($data as $newdata) {
@@ -320,7 +324,10 @@ class BookingController extends Controller
 
             $user = Auth::user()->id;
 
-            $data = Booking::where('userId', $user)->where('status', '=', BookingStatusEnum::Confirmed())
+            $data = Booking::where('userId', $user)->where(function ($q) {
+                $q->where('status', '=', BookingStatusEnum::Confirmed())
+                    ->orWhere('status', '=', BookingStatusEnum::Rescheduled());
+            })
                 ->where('duoDate', '>', date('Y-m-d', strtotime("-1 days")))
                 ->orderBy('created_at', 'asc')
                 ->get();
@@ -361,7 +368,7 @@ class BookingController extends Controller
 
             if ($response['parentId'] != null) {
                 $data = Booking::where('id', $response['parentId'])
-                    ->select(['totalAmount', 'discount', 'subTotal', 'materialPrice','paymentWays'])->first();
+                    ->select(['totalAmount', 'discount', 'subTotal', 'materialPrice', 'paymentWays'])->first();
                 $response['totalAmount'] = $data['totalAmount'];
                 $response['discount'] = $data['discount'];
                 $response['subTotal'] = $data['subTotal'];
@@ -397,7 +404,6 @@ class BookingController extends Controller
                         break;
                     }
                     #endregion
-
                     #region BabysitterService
                     case ServicesEnum::BabysitterService :
                     {
@@ -414,11 +420,9 @@ class BookingController extends Controller
                         break;
                     }
                     #endregion
-
                     #region DisinfectionService
                     case ServicesEnum::DisinfectionService :
                     {
-
                         if ($answer['questionId'] == 1) {
                             $response['frequency'] = $this->frequencyConvert($answer['answerId']);
                         } elseif
@@ -428,13 +432,12 @@ class BookingController extends Controller
                         ($answer['questionId'] == 7) {
                             $response['cleanerCount'] = $this->getAnswer($answer['answerId']);
                         } elseif
-                        ($answer['questionId'] == 8) {
+                        ($answer['questionId'] == 4) {
                             $response['requireMaterial'] = $this->materialsConvert($answer['answerId']);
                         }
                         break;
                     }
                     #endregion
-
                     #region DeepCleaning
                     case ServicesEnum::DeepCleaning :
                     {
@@ -448,7 +451,71 @@ class BookingController extends Controller
                         ($answer['questionId'] == 10) {
                             $response['cleanerCount'] = $this->getAnswer($answer['answerId']);
                         } elseif
-                        ($answer['questionId'] == 11) {
+                        ($answer['questionId'] == 4) {
+                            $response['requireMaterial'] = $this->materialsConvert($answer['answerId']);
+                        }
+                        break;
+                    }
+
+                    #endregion
+                    #region Sofa
+                    case ServicesEnum::SofaCleaning:
+                    {
+                        if ($answer['questionId'] == 22) {
+                            $response['quantity'] = $this->getAnswer($answer['answerId']);
+                        } elseif
+                        ($answer['questionId'] == 4) {
+                            $response['requireMaterial'] = $this->materialsConvert($answer['answerId']);
+                        }
+                        break;
+                    }
+                    #endregion
+                    #region Mattress
+                    case ServicesEnum::MattressCleaning:
+                    {
+                        if ($answer['questionId'] == 27) {
+                            $response['quantity'] = $this->getAnswer($answer['answerId']);
+                        } elseif
+                        ($answer['questionId'] == 4) {
+                            $response['requireMaterial'] = $this->materialsConvert($answer['answerId']);
+                        }
+                        break;
+                    }
+                    #endregion
+                    #region CurtainCleaning
+                    case ServicesEnum::CurtainCleaning:
+                    {
+                        if ($answer['questionId'] == 28) {
+                            $response['quantity'] = $this->getAnswer($answer['answerId']);
+                        } elseif
+                        ($answer['questionId'] == 29) {
+                            if ($response['parentId'] != null) {
+                                $response['squareMeters'] = BookingAnswers::where('bookingId', '=', $response['parentId'])->where('questionId', '=', $answer['questionId'])->select('answerValue')->first()->answerValue;
+                            } else {
+                                $response['squareMeters'] = BookingAnswers::where('bookingId', '=', $request->id)->where('questionId', '=', $answer['questionId'])->select('answerValue')->first()->answerValue;
+                            }
+                        } elseif
+                        ($answer['questionId'] == 4) {
+                            $response['requireMaterial'] = $this->materialsConvert($answer['answerId']);
+                        }
+                        break;
+                    }
+                    #endregion
+
+                    #region Carpet
+                    case ServicesEnum::CarpetCleaning:
+                    {
+                        if ($answer['questionId'] == 30) {
+                            $response['quantity'] = $this->getAnswer($answer['answerId']);
+                        } elseif
+                        ($answer['questionId'] == 29) {
+                            if ($response['parentId'] != null) {
+                                $response['squareMeters'] = BookingAnswers::where('bookingId', '=', $response['parentId'])->where('questionId', '=', $answer['questionId'])->select('answerValue')->first()->answerValue;
+                            } else {
+                                $response['squareMeters'] = BookingAnswers::where('bookingId', '=', $request->id)->where('questionId', '=', $answer['questionId'])->select('answerValue')->first()->answerValue;
+                            }
+                        } elseif
+                        ($answer['questionId'] == 4) {
                             $response['requireMaterial'] = $this->materialsConvert($answer['answerId']);
                         }
                         break;
@@ -516,6 +583,7 @@ class BookingController extends Controller
                     $book->duoDate = $request->duoDate;
                     $book->duoTime = $request->duoTime;
                     $book->providerId = $serviceProvider;
+                    $book->status = BookingStatusEnum::Rescheduled();
                     $book->save();
 
                     $this->deActiveSchdule($request->duoDate, $serviceProvider, $oldHourId['answerId'], $request->duoTime);
