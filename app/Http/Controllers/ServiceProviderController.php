@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\Service;
 use App\Models\ServiceProvider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ServiceProviderController extends Controller
 {
@@ -15,8 +18,12 @@ class ServiceProviderController extends Controller
      */
     public function index()
     {
-        $companies =  Company::pluck('name','id')->toArray();
-        return view('admin.Provider.index',compact('companies'));
+//        $companies =  Company::pluck('name','id')->toArray();
+        $data = array();
+        $data = ServiceProvider::paginate(5);
+        $services = Service::all();
+        $company = Company::all();
+        return view('admin.Provider.index', ['data' => $data, 'services' => $services, 'company' => $company]);
     }
 
     /**
@@ -24,9 +31,29 @@ class ServiceProviderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+
+        if ($request->isMethod('post')) {
+            if ($request->has('providerImage')) {
+                $imagex = $request->file('providerImage')->store('/public');
+                $nn = Storage::url($imagex);
+                $ah = asset($nn);
+                // $item->providerImage = $ah;
+                $request['imageUrl'] = $ah;
+            } else {
+                $request['imageUrl'] = 'test';
+            }
+            $provider = ServiceProvider::create($request->all());
+            foreach ($request->services as $service) {
+                DB::table('providerservices')->insert(['service_id' => $service, 'provider_id' => $provider->id]);
+            }
+            //return redirect()->back();
+        } else {
+            $services = Service::all();
+            $company = Company::all();
+            // return view('admin.Provider.addProvider', ['services' => $services, 'company' => $company]);
+        }
     }
 
     /**
@@ -80,8 +107,26 @@ class ServiceProviderController extends Controller
      * @param \App\Models\ServiceProvider $serviceProvider
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ServiceProvider $serviceProvider)
+    public function destroy($id)
     {
-        //
+        $provider = ServiceProvider::find($id);
+        $provider->delete();
+        return $provider;
+    }
+
+    public function providerByService(Request $request)
+    {
+        $data = array();
+        $data = ServiceProvider::paginate(5);
+        $services = Service::all();
+        $company = Company::all();
+
+        $serviceId = $request->serviceId;
+        if ($serviceId != "") {
+            $data = DB::table('providers')->join('providerservices', 'providers.id', '=', 'providerservices.provider_id')
+                ->where('providerservices.service_id', '=', $serviceId)->get();
+        }
+
+        return view('admin.Provider.provider', ['data' => $data, 'services' => $services, 'company' => $company]);
     }
 }

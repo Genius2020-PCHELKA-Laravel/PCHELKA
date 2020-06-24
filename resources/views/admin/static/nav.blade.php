@@ -41,22 +41,38 @@
             <li class="menu-header">Dashboard</li>
             <li><a class="nav-link" href="{{route('viewCompany')}}"><i class="fas fa-fire"></i>
                     <span>Dashboard</span></a></li>
-            <li class="menu-header">Company</li>
-            <li><a class="nav-link" href="{{route('viewCompany')}}"><i class="fas fa-building"></i>
-                    <span>Companies</span></a></li>
-            <li><a class="nav-link" href="{{route('viewProvider')}}"><i class="fas fa-building"></i>
-                    <span>Providers</span></a></li>
+
             <li class="menu-header">Bookings</li>
             <li class="dropdown">
                 <a href="#" class="nav-link has-dropdown"><i class="fas fa-th-large"></i> <span>Booking</span></a>
-                <ul class="dropdown-menu" style="display: block;">
+                <ul class="dropdown-menu" >
                     <li><a class="nav-link" href="#">Confirmed</a></li>
                     <li><a class="nav-link" href="#">Rescheduled</a></li>
                     <li><a class="nav-link" href="#">Completed</a></li>
                     <li><a class="nav-link" href="#">Canceled</a></li>
                 </ul>
             </li>
+            <li class="menu-header">Companies</li>
+            <li><a class="nav-link" href="{{route('viewCompany')}}"><i class="fas fa-building"></i>
+                    <span>Companies</span></a></li>
 
+
+            <li class="dropdown">
+                <a href="#" class="nav-link has-dropdown"><i class="fas fa-th-large"></i> <span>Providers</span></a>
+                <ul class="dropdown-menu" >
+                    <li><a class="nav-link" href="{{route('viewProvider')}}">Show All Provider</a></li>
+                    <li><a class="nav-link" href="{{route('providerByService')}}">Show By Service</a></li>
+                    <li><a class="nav-link" href="#">Show By Company</a></li>
+                </ul>
+            </li>
+
+
+            <li class="menu-header">Users</li>
+            <li><a class="nav-link" href="{{route('viewUser')}}"><i class="fas fa-building"></i>
+                    <span>Users</span></a></li>
+            <li class="menu-header">Services</li>
+            <li><a class="nav-link" href="{{route('viewService')}}"><i class="fas fa-building"></i>
+                    <span>Services</span></a></li>
         </ul>
 
     </aside>

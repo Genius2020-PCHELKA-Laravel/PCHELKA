@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ServiceProvider extends Model
 {
     protected $table = 'providers';
-    protected $fillable = ['id', 'name', 'email', 'mobileNumber' ];
+    protected $fillable = ['id', 'name', 'email', 'mobileNumber','imageUrl','companyId' ];
 
     public function Schedules()
     {

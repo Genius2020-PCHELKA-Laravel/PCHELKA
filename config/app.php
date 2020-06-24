@@ -163,8 +163,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
-
-
+        NotificationChannels\ExpoPushNotifications\ExpoPushNotificationsServiceProvider::class,
         /*
          * Package Servicess Providers...
          */

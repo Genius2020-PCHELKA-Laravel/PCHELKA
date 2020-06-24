@@ -15,7 +15,8 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        //
+        $data = Service::all();
+        return view('admin.Service.index',['data'=>$data]);
     }
 
     /**
@@ -56,9 +57,12 @@ class ServiceController extends Controller
      * @param  \App\Models\Service  $service
      * @return \Illuminate\Http\Response
      */
-    public function edit(Service $service)
+    public function edit(Request $request, $id)
     {
-        //
+        $service = Service::find($id);
+        $service->hourPrice = $request->input('hourPrice');
+        $service->materialPrice = $request->input('materialPrice');
+        $service->save();
     }
 
     /**

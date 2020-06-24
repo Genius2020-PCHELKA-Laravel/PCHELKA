@@ -32,11 +32,31 @@ Route::prefix("/company")->group(function () {
 });
 Route::prefix("/provider")->group(function () {
     Route::get('/', 'ServiceProviderController@index')->name('viewProvider');
-    Route::get('/addCompany', 'CompanyController@create')->name('addCompany');
-    Route::post('/addCompany', 'CompanyController@create')->name('addCompany');
+    Route::get('/addProvider', 'ServiceProviderController@create')->name('addProvider');
+    Route::post('/addProvider', 'ServiceProviderController@create')->name('addProvider');
+    Route::get('/providerByService', 'ServiceProviderController@providerByService')->name('providerByService');
     Route::post('/editCompany/{id}', 'CompanyController@edit')->name('editCompany');
-    Route::post('/deleteCompany/{id}', 'CompanyController@destroy')->name('deleteCompany');
+    Route::post('/deleteProvider/{id}', 'ServiceProviderController@destroy')->name('deleteProvider');
 });
+
+Route::prefix("/user")->group(function () {
+    Route::get('/', 'PCUser@index')->name('viewUser');
+    Route::get('/addUser', 'PCUser@create')->name('addUser');
+    Route::post('/addUser', 'PCUser@create')->name('addUser');
+    Route::post('/editUser/{id}', 'PCUser@edit')->name('editUser');
+    Route::post('/deleteUser/{id}', 'PCUser@destroy')->name('deleteUser');
+});
+Route::prefix("/service")->group(function () {
+    Route::get('/', 'ServiceController@index')->name('viewService');
+    Route::post('/editService/{id}', 'ServiceController@edit')->name('editService');
+});
+
+Route::prefix("/schedule")->group(function () {
+    Route::get('/', 'ServiceController@index')->name('viewService');
+    Route::post('/editService/{id}', 'ServiceController@edit')->name('editService');
+    Route::post('/addSchedule', 'ScheduleController@create')->name('addSchedule');
+});
+
 Route::get('/clearCache', function () {
     Artisan::call('cache:clear');
     return "Cache is cleared";

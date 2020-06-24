@@ -51,6 +51,10 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('changemobilesendsms', 'SMSController@changeMobileSendSMS');
     Route::post('changemobileverifysms', 'SMSController@changeMobileVerifySMS');
 
+
+    Route::post('sendNotification', 'NotificationController@sendNotification');
+
+
 });
 
 Route::get('sendemail', 'EmailController@sendEMail');

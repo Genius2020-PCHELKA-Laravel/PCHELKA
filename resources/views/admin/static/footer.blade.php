@@ -1,8 +1,8 @@
 <footer class="main-footer">
     <div class="footer-left">
-        Copyright &copy; 2018
+        Copyright &copy; 2020
         <div class="bullet"></div>
-        Design By <a href="https://nauval.in/">Muhamad Nauval Azhar</a>
+        PCHELKA
     </div>
     <div class="footer-right">
 
@@ -30,7 +30,5 @@
 <script src="{{asset('js/scripts.js')}}"></script>
 <script src="{{asset('js/custom.js')}}"></script>
 <script src="{{asset('js/select2.min.js')}}"></script>
-<script src="{{asset('js/select2.js')}}"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 </body>
 </html>

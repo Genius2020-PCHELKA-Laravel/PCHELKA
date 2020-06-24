@@ -24,7 +24,7 @@ class ScheduleController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
     /**

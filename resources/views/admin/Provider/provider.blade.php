@@ -28,11 +28,20 @@
                         <div class="card-body">
 
                             <div class="table-responsive">
-                                <div class="form-group">
-                                    <input type="text" name="search" id="search" class="form-control col-3"
-                                           placeholder="Input Key Word To Search">
-                                </div>
-                                <table class="table table-striped table-md">
+                                <form action="" id="searchForm">
+                                    <div class="form-group">
+                                        <label>Service Type</label>
+                                        <select class="form-control custom-select js-example-basic"
+                                                name="serviceType">
+                                            @foreach($services as $ser)
+                                                <option name="serviceId" id="serviceId"
+                                                        value="{{$ser->id}}">{{$ser->name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </form>
+                                <button type="submit" class="btn btn-primary " id="btnFind">Find</button>
+                                <table class="table table-striped table-md data-table" id="tableData">
 
                                     <thead>
                                     <tr>
@@ -73,7 +82,7 @@
                         <div class="card-footer text-right">
                             <nav class="d-inline-block">
                                 <ul class="pagination mb-0">
-                                    {{ $data->appends(request()->except('page'))->links() }}
+                                    {{--                                    {{ $data->links() }}--}}
                                 </ul>
                             </nav>
                         </div>
@@ -114,7 +123,7 @@
                 <h5 class="modal-title" id="exampleModalLabel">Add New Provider</h5>
 
             </div>
-            <form action="" id="addForm" enctype="multipart/form-data" >
+            <form action="" id="addForm" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="form-group">
                         {{csrf_field()}}
@@ -140,7 +149,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="form-group col-12 " >
+                    <div class="form-group col-12 ">
                         <label>Services</label>
                         <br>
                         <select class="form-control custom-select js-example-basic-multiple"
@@ -174,7 +183,7 @@
                 <h5 class="modal-title" id="exampleModalLabel">Add Schedule</h5>
 
             </div>
-            <form action="" id="addScheduleForm" enctype="multipart/form-data" >
+            <form action="" id="addScheduleForm" enctype="multipart/form-data">
                 <div class="modal-body">
                     {{csrf_field()}}
                     <div class="form-group">
@@ -205,11 +214,18 @@
 </div>
 @include('admin.static.footer')
 <script>
+
     $(document).ready(function () {
-        $("#search").on("keyup", function () {
-            var value = $(this).val().toLowerCase();
-            $("#table tr").filter(function () {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        $('#btnFind').click(function () {
+            var serviceId = $('#serviceId').val();
+            $.ajax({
+                type: 'get',
+                dataType: 'html',
+                url: {{route('providerByService')}},
+                data: $('#searchForm').serialize(),
+                success: function (response) {
+                    $('#tableData').html(response);
+                }
             });
         });
     });
@@ -229,10 +245,10 @@
                 type: "POST",
                 url: "provider/addProvider",
                 // data: $('#addForm').serialize(),
-                data:  new FormData(this),
+                data: new FormData(this),
                 contentType: false,
                 cache: false,
-                processData:false,
+                processData: false,
                 success: function (response) {
                     console.log(response)
                     $('#addProvider').modal('hide')
@@ -305,10 +321,10 @@
                 type: "POST",
                 url: "provider/addProvider",
                 // data: $('#addForm').serialize(),
-                data:  new FormData(this),
+                data: new FormData(this),
                 contentType: false,
                 cache: false,
-                processData:false,
+                processData: false,
                 success: function (response) {
                     console.log(response)
                     $('#addSchedule').modal('hide')
