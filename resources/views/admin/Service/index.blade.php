@@ -82,12 +82,12 @@
                     </div>
                     <div class="form-group">
                         <label>Service Price</label>
-                        <input type="text" class="form-control" name="hourPrice" id="hourPrice"
-                               placeholder="" required/>
+                        <input type="number" min="0" class="form-control" name="hourPrice" id="hourPrice"
+                               placeholder="" required />
                     </div>
                     <div class="form-group">
                         <label>Material Price</label>
-                        <input type="text" class="form-control" name="materialPrice" id="materialPrice"
+                        <input type="number" min="0" class="form-control" name="materialPrice" id="materialPrice"
                                placeholder="" required/>
                     </div>
                 </div>

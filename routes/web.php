@@ -14,8 +14,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', 'CompanyController@index')->name('viewCompany');
-Auth::routes();
 
+Auth::routes();
+Route::post('searchProv', 'ServiceProviderController@search')->name('searchProv');
 //Route::get('/home', 'HomeController@index')->name('home');
 //
 //Route::get('/admin',function(){
@@ -35,7 +36,8 @@ Route::prefix("/provider")->group(function () {
     Route::get('/addProvider', 'ServiceProviderController@create')->name('addProvider');
     Route::post('/addProvider', 'ServiceProviderController@create')->name('addProvider');
     Route::get('/providerByService', 'ServiceProviderController@providerByService')->name('providerByService');
-    Route::post('/editCompany/{id}', 'CompanyController@edit')->name('editCompany');
+    Route::post('/editProvider/{id}', 'ServiceProviderController@edit')->name('editProvider');
+    Route::get('/editProvider/{id}', 'ServiceProviderController@edit')->name('editProvider');
     Route::post('/deleteProvider/{id}', 'ServiceProviderController@destroy')->name('deleteProvider');
 });
 
@@ -62,5 +64,5 @@ Route::get('/clearCache', function () {
     return "Cache is cleared";
 });
 
-
+Route::post('/test/{id}', 'ScheduleController@create');
 //Route::get('/home', 'HomeController@index')->name('home');

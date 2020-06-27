@@ -81,15 +81,15 @@
                     <div class="form-group">
                         {{csrf_field()}}
                         <label>Company Name</label>
-                        <input type="text" class="form-control" name="name" placeholder="Insert company name"/>
+                        <input type="text" class="form-control" name="name" placeholder="Insert company name" required/>
                     </div>
                     <div class="form-group">
                         <label>Company Email</label>
-                        <input type="email" class="form-control" name="email" placeholder="Insert company email"/>
+                        <input type="email" class="form-control" name="email" placeholder="Insert company email" required/>
                     </div>
                     <div class="form-group">
                         <label>Company Mobile</label>
-                        <input type="text" class="form-control" name="mobile" placeholder="Insert company mobile num."/>
+                        <input type="text" class="form-control" name="mobile" required placeholder="Insert company mobile num." data-inputmask='"mask": "999-999999"' data-mask/>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -116,18 +116,19 @@
                         {{csrf_field()}}
                         <input type="hidden" id="id"/>
                         <label>Company Name</label>
-                        <input type="text" class="form-control" name="name" id="name"
+                        <input type="text" class="form-control" name="name"  required id="name"
                                placeholder=""/>
                     </div>
                     <div class="form-group">
                         <label>Company Email</label>
-                        <input type="email" class="form-control" name="email" id="email"
+                        <input type="email" class="form-control" name="email" required id="email"
                                placeholder=""/>
                     </div>
                     <div class="form-group">
                         <label>Company Mobile</label>
                         <input type="text" class="form-control" name="mobile" id="mobile"
-                               placeholder=""/>
+                               placeholder="" data-inputmask='"mask": "999-999999"' data-mask required/>
+
                     </div>
                 </div>
                 <div class="modal-footer">

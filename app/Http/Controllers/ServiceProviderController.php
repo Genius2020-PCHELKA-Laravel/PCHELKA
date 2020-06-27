@@ -84,9 +84,23 @@ class ServiceProviderController extends Controller
      * @param \App\Models\ServiceProvider $serviceProvider
      * @return \Illuminate\Http\Response
      */
-    public function edit(ServiceProvider $serviceProvider)
+    public function edit(Request $request,$id)
     {
-        //
+        if($request->isMethod('post')){
+
+        }else{
+            $ser = ServiceProvider::find($id);
+            $company = Company::all();
+            $services = DB::table('providerservices')->where('provider_id',$ser->id)->get();
+            $emptyArray = [];
+            foreach ($services as $sacoOo){
+                $se = Service::find($sacoOo->service_id);
+                array_push($emptyArray,$se->name);
+            }
+            $AllServ = Service::all();
+            return view('admin.Provider.editProvider',['data'=>$ser,'company'=>$company,'services'=>$emptyArray,'AllServ'=>$AllServ]);
+        }
+
     }
 
     /**
@@ -128,5 +142,20 @@ class ServiceProviderController extends Controller
         }
 
         return view('admin.Provider.provider', ['data' => $data, 'services' => $services, 'company' => $company]);
+    }
+
+    public function search(Request $request){
+        if($request->isMethod('post')){
+            $search = ServiceProvider::where('name','like','%'.$request['searchForAll'].'%')
+                ->orWhere('mobileNumber','like','%'.$request['searchForAll'].'%')->get();
+            if(count($search) > 0){
+                $services = Service::all();
+                $company = Company::all();
+                return view('admin.Provider.index',['data'=>$search,'search'=>true,'services'=>$services,'company'=>$company]);
+            }else{
+                return redirect()->route('viewProvider');
+            }
+        }
+
     }
 }

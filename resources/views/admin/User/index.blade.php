@@ -82,19 +82,19 @@
                         {{csrf_field()}}
                         <label>User Name</label>
                         <input type="text" class="form-control" name="fullName" id="name"
-                               placeholder="Insert User Name"/>
+                               placeholder="Insert User Name" required/>
                     </div>
                     <div class="form-group">
                         <label>User Email</label>
-                        <input type="email" class="form-control" name="email" placeholder="Insert User email"/>
+                        <input type="email" class="form-control"  required name="email" placeholder="Insert User email"/>
                     </div>
                     <div class="form-group">
                         <label>User Mobile</label>
-                        <input type="text" class="form-control" name="mobile" placeholder="Insert User mobile num."/>
+                        <input type="text" class="form-control" name="mobile" placeholder="Insert User mobile num." data-inputmask='"mask": "999-999999"' data-mask required/>
                     </div>
                     <div class="form-group">
                         <label>User Password</label>
-                        <input type="password" class="form-control" required name="password" placeholder="Insert User Password"/>
+                        <input type="password" class="form-control" required name="password"  placeholder="Insert User Password"/>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -122,17 +122,17 @@
                         <input type="hidden" id="id"/>
                         <label>User Name</label>
                         <input type="text" class="form-control" name="fullName" id="name"
-                               placeholder=""/>
+                               placeholder="" required/>
                     </div>
                     <div class="form-group">
                         <label>User Email</label>
                         <input type="email" class="form-control" name="email" id="email"
-                               placeholder=""/>
+                               placeholder="" required/>
                     </div>
                     <div class="form-group">
                         <label>User Mobile</label>
-                        <input type="text" class="form-control" name="mobile" id="mobile"
-                               placeholder=""/>
+                        <input type="text" required class="form-control" name="mobile" id="mobile"
+                               placeholder="" data-inputmask='"mask": "999-999999"' data-mask/>
                     </div>
                     <div class="form-group">
                         <label>New User Password</label>
