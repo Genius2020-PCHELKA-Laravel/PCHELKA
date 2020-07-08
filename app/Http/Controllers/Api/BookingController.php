@@ -328,16 +328,6 @@ class BookingController extends Controller
                 ->orderBy('created_at', 'asc')
                 ->get();
             foreach ($data as $newdata) {
-                $providerData = ServiceProvider::where('id', $newdata['providerId'])->select('id', 'name', 'imageUrl')->first();
-                $providerData['evaluation'] = number_format(doubleval(Evaluation::where('serviceProviderId', $newdata['providerId'])->avg('starCount')), 1, '.', '');
-                $lastServiceDate =
-                    Booking::where('userId', $user)->where('providerId', $newdata->providerId)
-                        ->where('status', BookingStatusEnum::Completed)
-                        ->where('serviceType', ServicesEnum::coerce($newdata['serviceType']))
-                        ->orderBy('duoDate', 'DESC')
-                        ->select('duoDate')->first();
-                $providerData['lastServiceDate'] = $lastServiceDate['duoDate'];
-                $bookingEvaluation = Evaluation::where('bookingId', $newdata->id)->first();
                 $row = [
                     'id' => $newdata['id'],
                     'duoDate' => $newdata['duoDate'],
@@ -345,9 +335,7 @@ class BookingController extends Controller
                     'serviceType' => ServicesEnum::getKey($newdata['serviceType']),
                     'refCode' => $newdata['refCode'],
                     'status' => BookingStatusEnum::getKey($newdata['status']),
-                    'bookingEvaluation' => $bookingEvaluation == null ? 0 : $bookingEvaluation->starCount,
-                    'providerData' => $providerData,
-
+                    'providerData' => ServiceProvider::where('id', $newdata['providerId'])->select('id', 'name', 'imageUrl')->first()
                 ];
                 array_push($response, $row);
 
@@ -374,7 +362,7 @@ class BookingController extends Controller
 
             foreach ($data as $newdata) {
                 $providerData = ServiceProvider::where('id', $newdata['providerId'])->select('id', 'name', 'imageUrl')->first();
-                $providerData['evaluation'] = number_format(doubleval(Evaluation::where('serviceProviderId', $newdata['providerId'])->avg('starCount')), 1, '.', '');
+                $providerData['evaluation'] = intval(Evaluation::where('serviceProviderId', $newdata['providerId'])->avg('starCount'));
                 $lastServiceDate =
                     Booking::where('userId', $user)->where('providerId', $newdata->providerId)
                         ->where('status', BookingStatusEnum::Completed)
@@ -382,7 +370,6 @@ class BookingController extends Controller
                         ->orderBy('duoDate', 'DESC')
                         ->select('duoDate')->first();
                 $providerData['lastServiceDate'] = $lastServiceDate['duoDate'];
-                $bookingEvaluation = Evaluation::where('bookingId', $newdata->id)->first();
                 $row = [
                     'id' => $newdata['id'],
                     'duoDate' => $newdata['duoDate'],
@@ -390,8 +377,8 @@ class BookingController extends Controller
                     'serviceType' => ServicesEnum::getKey($newdata['serviceType']),
                     'refCode' => $newdata['refCode'],
                     'status' => BookingStatusEnum::getKey($newdata['status']),
-                    'bookingEvaluation' => $bookingEvaluation == null ? 0 : $bookingEvaluation->starCount,
                     'providerData' => $providerData,
+
                 ];
                 array_push($response, $row);
 
@@ -400,6 +387,7 @@ class BookingController extends Controller
         }
         return $this->unAuthoriseResponse();
     }
+
 
     public function getHCBookingById(Request $request)
     {

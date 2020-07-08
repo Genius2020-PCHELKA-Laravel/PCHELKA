@@ -121,6 +121,7 @@
       <path value="$PROJECT_DIR$/vendor/liqpay/liqpay" />
       <path value="$PROJECT_DIR$/vendor/alymosul/laravel-exponent-push-notifications" />
       <path value="$PROJECT_DIR$/vendor/alymosul/exponent-server-sdk-php" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php80" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.2" />

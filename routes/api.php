@@ -44,8 +44,8 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::post('userUpdate', 'UserController@updateUserInformation');
 
-    Route::get('pastBooking', 'BookingController@getPastBooking');
-    Route::get('upComingBooking', 'BookingController@getUpComingBooking');
+    Route::post('pastBooking', 'BookingController@getPastBooking');
+    Route::post('upComingBooking', 'BookingController@getUpComingBooking');
     Route::post('providers', 'ServiceProviderController@getProvidersByServiceType');
 
     Route::post('changemobilesendsms', 'SMSController@changeMobileSendSMS');
