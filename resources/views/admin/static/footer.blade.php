@@ -40,13 +40,44 @@
 
     $(function () {
 //Datemask dd/mm/yyyy
-        $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
+        $('#datemask').inputmask('dd/mm/yyyy', {'placeholder': 'dd/mm/yyyy'})
         //Datemask2 mm/dd/yyyy
-        $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
+        $('#datemask2').inputmask('mm/dd/yyyy', {'placeholder': 'mm/dd/yyyy'})
         //Money Euro
         $('[data-mask]').inputmask()
     })
 </script>
 <!-- date-range-picker -->
+<script>
+    $(document).ready(function () {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $('.edit1Btn').on('click', function () {
+            $('#editcanceled').modal('show');
+
+        });
+        $('#edit1Form').on('submit', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: 'POST',
+                url: "/schedule/deleteSchedule",
+                success: function (response) {
+                    console.log(response);
+                    $('#editcanceled').modal('hide');
+                    location.reload();
+                },
+                error: function (error) {
+                    console.log(error)
+                    // alert("Data Not Saved");
+                }
+            });
+        });
+    });
+</script>
+
 </body>
 </html>

@@ -162,8 +162,11 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
-        Barryvdh\Debugbar\ServiceProvider::class,
+//        Barryvdh\Debugbar\ServiceProvider::class,
         NotificationChannels\ExpoPushNotifications\ExpoPushNotificationsServiceProvider::class,
+
+
+
         /*
          * Package Servicess Providers...
          */
@@ -228,7 +231,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'Debugbar' => Barryvdh\Debugbar\Facade::class,
+//        'Debugbar' => Barryvdh\Debugbar\Facade::class,
+
 
     ],
 

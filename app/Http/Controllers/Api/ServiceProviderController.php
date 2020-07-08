@@ -5,17 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Enums\BookingStatusEnum;
 use App\Enums\ServicesEnum;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ProviderResource;
 use App\Models\Booking;
 use App\Models\Evaluation;
-use App\Models\ServiceProvider;
-use BenSampo\Enum\Rules\EnumKey;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use SebastianBergmann\Comparator\Book;
 use Validator;
-use function GuzzleHttp\Psr7\str;
 
 
 class ServiceProviderController extends Controller
@@ -60,7 +55,7 @@ class ServiceProviderController extends Controller
                     'id' => $newData->id,
                     'name' => $newData->name,
                     'imageUrl' => $newData->imageUrl,
-                    'evaluation' => intval(Evaluation::where('serviceProviderId', $newData->id)->avg('starCount')),
+                    'evaluation' => number_format(doubleval(Evaluation::where('serviceProviderId', $newData->id)->avg('starCount')),1,'.',''),
                     'desc' => Booking::where('userId', $user)->where('providerId', $newData->id)->first() ? true : false,
                     'lastServiceDate' => $lastServiceDate['duoDate']
                 ];
@@ -75,5 +70,30 @@ class ServiceProviderController extends Controller
 //        } catch (\Exception $exception) {
 //            return $this->apiResponse($exception->getMessage());
 //        }
+    }
+
+    public function evaluation(Request $request)
+    {
+        if (Auth::user()) {
+            $bookId = $request->bookId;
+            $starCount = $request->starCount;
+            if ($bookId) {
+                $data = Booking::where('id', $bookId)->first();
+                $evaluation = new Evaluation();
+                $evaluation->starCount = $starCount;
+                $evaluation->bookingId = $bookId;
+                $evaluation->userId = $data->userId;
+                $evaluation->serviceProviderId = $data->providerId;
+                $evaluation->save();
+                return $this->apiResponse('Evaluation Added Success');
+
+            } else {
+                $this->apiResponse('Please select correct booking');
+            }
+
+
+        } else {
+            $this->unAuthoriseResponse();
+        }
     }
 }

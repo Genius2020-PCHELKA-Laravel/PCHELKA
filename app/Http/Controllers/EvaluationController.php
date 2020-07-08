@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class EvaluationController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -21,7 +26,6 @@ class EvaluationController extends Controller
         $ev = Evaluation::with('User')->get();
 
         $user = User::with('Evaluations')->get();
-        dd($user);
     }
     /**
      * Show the form for creating a new resource.

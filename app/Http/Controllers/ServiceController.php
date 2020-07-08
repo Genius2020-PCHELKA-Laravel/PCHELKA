@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -62,6 +66,7 @@ class ServiceController extends Controller
         $service = Service::find($id);
         $service->hourPrice = $request->input('hourPrice');
         $service->materialPrice = $request->input('materialPrice');
+        $service->unit = $request->input('unit');
         $service->save();
     }
 

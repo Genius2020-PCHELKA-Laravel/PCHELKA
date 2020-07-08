@@ -1704,7 +1704,7 @@ users-people:
     - user-times
     - users
     - wheelchair
-  label: Users & People
+  label: User & People
 vehicles:
   icons:
     - accessible-icon

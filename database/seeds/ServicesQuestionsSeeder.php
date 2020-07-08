@@ -88,7 +88,7 @@ class ServicesQuestionsSeeder extends Seeder
                 'questionId' => 5,
             ],
             #endregion
-            #region BabysitterService
+            ##region BabysitterService
             [
                 'id' => 16,
                 'serviceId' => 12,
@@ -190,6 +190,7 @@ class ServicesQuestionsSeeder extends Seeder
                 'questionId' => 5,
             ],
             #endregion
+
             #region CurtainCleaning
             [
                 'id' => 42,
@@ -208,11 +209,12 @@ class ServicesQuestionsSeeder extends Seeder
             ],
             [
                 'id' => 45,
-                'serviceId' => 5,
+                'serviceId' => 3,
                 'questionId' => 5,
             ],
             #endregion
-            #region CarpetCleaning
+
+            #region CurtainCleaning
             [
                 'id' => 46,
                 'serviceId' => 4,

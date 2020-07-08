@@ -24,7 +24,7 @@
                                         <th scope="col">Service Name</th>
                                         <th scope="col">Service Price</th>
                                         <th scope="col">Material Price</th>
-                                        <th>Unit</th>
+                                        <th scope="col">Unit</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                     </thead>
@@ -34,7 +34,7 @@
                                             <td>{{$single->name}}</td>
                                             <td>{{$single->hourPrice}}</td>
                                             <td>{{$single->materialPrice}}</td>
-                                            <td></td>
+                                            <td>{{$single->unit}}</td>
                                             <td>
                                                 <a href="#" class="btn btn-outline-success editBtn">Edit <i
                                                         class="fas fa-edit "></i></a>
@@ -90,6 +90,11 @@
                         <input type="number" min="0" class="form-control" name="materialPrice" id="materialPrice"
                                placeholder="" required/>
                     </div>
+                    <div class="form-group">
+                        <label>Unit</label>
+                        <input type="text"  class="form-control" name="unit" id="unit"
+                               placeholder="" required/>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Save</button>
@@ -123,6 +128,7 @@
             $('#name').val(data[1]);
             $('#hourPrice').val(data[2]);
             $('#materialPrice').val(data[3]);
+            $('#unit').val(data[4]);
         });
 
         $('#editForm').on('submit', function (e) {

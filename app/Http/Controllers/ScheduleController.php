@@ -4,9 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Schedule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ScheduleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -106,8 +112,8 @@ class ScheduleController extends Controller
      * @param \App\Models\Schedule $schedule
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Schedule $schedule)
+    public function delete()
     {
-        //
+        DB::table('schedules')->where('availableDate','<', date('Y-m-d'))->delete();
     }
 }

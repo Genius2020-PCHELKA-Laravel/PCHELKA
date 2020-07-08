@@ -50,23 +50,23 @@ class SMSController extends Controller
                 Auth::login($user, true);
             }
 
-            if (Auth::user()) {
-                return $this->apiResponse($response, "User is logged in", 422);
-            } else {
-                #region SendSms
+            // if (Auth::user()) {
+            //     return $this->apiResponse($response, "User is logged in", 422);
+            // } else {
+            #region SendSms
 //                $SPApiClient = new ApiClient(API_USER_ID, API_SECRET, new FileStorage());
 //                $phones = [$mobile];
 //                $params = [
 //                    'sender' => 'Pchelka',
-                //     'body' => 'Your Code is: ' . $otp .'  PCHELKA Cleaning Home..'
+            //     'body' => 'Your Code is: ' . $otp .'  PCHELKA Cleaning Home..'
 //                ];
 //                $additionalParams = [
 //                    'transliterate' => 0
 //                ];
 //                $response = $SPApiClient->sendSmsByList($phones, $params, $additionalParams);
-                return $this->apiResponse($response);
-                #endregion
-            }
+            return $this->apiResponse($response);
+            #endregion
+            // }
             return $this->apiResponse('success');
         } catch (\Exception $exception) {
             return $this->generalError();
@@ -98,8 +98,8 @@ class SMSController extends Controller
                 if (!$user) {
                     return $this->notFoundMassage();
                 } else {
-                    $user['isVerified'] = 1;
-                    $user->save();
+                    // $user['isVerified'] = 1;
+                    // $user->save();
                     Auth::login($user, true);
 
                     // Creating a token without scopes...

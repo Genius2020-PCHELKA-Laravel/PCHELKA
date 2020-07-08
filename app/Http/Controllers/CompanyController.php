@@ -21,7 +21,7 @@ class CompanyController extends Controller
 
     public function index()
     {
-        $data = Company::paginate(5);
+        $data = Company::all();
         $data->count = Company::all()->count();
         return view('admin.Company.index', compact('data'));
     }

@@ -90,7 +90,7 @@
                     </div>
                     <div class="form-group">
                         <label>User Mobile</label>
-                        <input type="text" class="form-control" name="mobile" placeholder="Insert User mobile num." data-inputmask='"mask": "999-999999"' data-mask required/>
+                        <input type="text" class="form-control" name="mobile" placeholder="Insert User mobile num." data-inputmask='"mask": "999999999"' data-mask required/>
                     </div>
                     <div class="form-group">
                         <label>User Password</label>
@@ -132,7 +132,7 @@
                     <div class="form-group">
                         <label>User Mobile</label>
                         <input type="text" required class="form-control" name="mobile" id="mobile"
-                               placeholder="" data-inputmask='"mask": "999-999999"' data-mask/>
+                               placeholder="" data-inputmask='"mask": "999999999"' data-mask/>
                     </div>
                     <div class="form-group">
                         <label>New User Password</label>

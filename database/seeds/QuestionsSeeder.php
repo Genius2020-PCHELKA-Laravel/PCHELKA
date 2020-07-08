@@ -59,7 +59,12 @@ class QuestionsSeeder extends Seeder
                 'type' => 1,
                 'price' => 0
             ],
-
+            [
+                'id' => 8,
+                'name' => 'Do you require cleaning materials',
+                'type' => 1,
+                'price' => 0
+            ],
             #endregion
             #region DeepCleaning
             [
@@ -74,7 +79,12 @@ class QuestionsSeeder extends Seeder
                 'type' => 1,
                 'price' => 0
             ],
-
+            [
+                'id' => 11,
+                'name' => 'Do you require cleaning materials',
+                'type' => 1,
+                'price' => 0
+            ],
             #endregion
             #region BabysitterService
             [
@@ -89,7 +99,12 @@ class QuestionsSeeder extends Seeder
                 'type' => 1,
                 'price' => 0
             ],
-
+            [
+                'id' => 14,
+                'name' => 'Do you require cleaning materials',
+                'type' => 1,
+                'price' => 0
+            ],
             #endregion
             #region FullTimeMaid
             [
@@ -134,28 +149,57 @@ class QuestionsSeeder extends Seeder
             ],
             #endregion
             #region SofaCleaning
-
             [
-                'id' => 22,
-                'name' => 'quantity',
+                'id' => 21,
+                'name' => 'What type of sofa(s) or chairs(s) would you like to clean ',
                 'type' => 1,
                 'price' => 0
             ],
-
+            [
+                'id' => 22,
+                'name' => 'Number of chair/1-seater sofas',
+                'type' => 1,
+                'price' => 0
+            ],
+            [
+                'id' => 23,
+                'name' => 'Number of chair/2-seater sofas',
+                'type' => 1,
+                'price' => 0
+            ],
+            [
+                'id' => 24,
+                'name' => 'Number of chair/3-seater sofas',
+                'type' => 1,
+                'price' => 0
+            ],
+            [
+                'id' => 25,
+                'name' => 'Number of chair/4-seater sofas',
+                'type' => 1,
+                'price' => 0
+            ],
+            [
+                'id' => 26,
+                'name' => 'Number of chair/5-seater sofas',
+                'type' => 1,
+                'price' => 0
+            ],
             #endregion
             #region MattressCleaning
             [
                 'id' => 27,
-                'name' => 'quantity ',
+                'name' => 'Number of single bed ',
                 'type' => 1,
                 'price' => 0
             ],
 
             #endregion
+
             #region CurtainCleaning
             [
                 'id' => 28,
-                'name' => 'quantity ',
+                'name' => 'quantity',
                 'type' => 1,
                 'price' => 0
             ],
@@ -166,10 +210,11 @@ class QuestionsSeeder extends Seeder
                 'price' => 0
             ],
             #endregion
+
             #region CarpetCleaning
             [
                 'id' => 30,
-                'name' => 'quantity ',
+                'name' => 'quantity',
                 'type' => 1,
                 'price' => 0
             ],

@@ -21,6 +21,7 @@ class CreateServicesTable extends Migration
             $table->tinyInteger('type')->nullable();
             $table->bigInteger('couponId')->unsigned()->nullable();
             $table->integer('orderNumber');
+            $table->string('unit');
             $table->foreign('couponId')->references('id')->on('coupons')->onDelete('set null');
             $table->timestamps();
             $table->double('materialPrice');

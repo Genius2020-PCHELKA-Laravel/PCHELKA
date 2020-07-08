@@ -3436,7 +3436,7 @@ credit-card:
 critical-role:
   changes:
     - 5.4.0
-  label: Critical Role
+  label: Critical role
   search:
     terms:
       - Dungeons & Dragons
@@ -6561,7 +6561,7 @@ hammer:
   label: Hammer
   search:
     terms:
-      - admin
+      - ControlPanel
       - fix
       - repair
       - settings
@@ -8174,7 +8174,7 @@ lock:
   label: lock
   search:
     terms:
-      - admin
+      - ControlPanel
       - protect
       - security
   styles:
@@ -8188,7 +8188,7 @@ lock-open:
   label: Lock Open
   search:
     terms:
-      - admin
+      - ControlPanel
       - lock
       - open
       - password
@@ -11072,7 +11072,7 @@ screwdriver:
   label: Screwdriver
   search:
     terms:
-      - admin
+      - ControlPanel
       - fix
       - repair
       - settings
@@ -13233,7 +13233,7 @@ toolbox:
   label: Toolbox
   search:
     terms:
-      - admin
+      - ControlPanel
       - container
       - fix
       - repair
@@ -13715,7 +13715,7 @@ unlock:
   label: unlock
   search:
     terms:
-      - admin
+      - ControlPanel
       - lock
       - password
       - protect
@@ -13729,7 +13729,7 @@ unlock-alt:
   label: Alternate Unlock
   search:
     terms:
-      - admin
+      - ControlPanel
       - lock
       - password
       - protect
@@ -14072,7 +14072,7 @@ users:
     - 5.0.0
     - 5.0.3
     - 5.0.11
-  label: Users
+  label: User
   search:
     terms:
       - people
@@ -14084,7 +14084,7 @@ users:
 users-cog:
   changes:
     - 5.0.11
-  label: Users Cog
+  label: User Cog
   search:
     terms: []
   styles:

@@ -75,6 +75,7 @@ class UserController extends Controller
                 return $this->apiResponse('Duplicated Email');
             } else {
                 $user = Auth::user();
+                $user->isVerified = 1;
                 $user->fullName = $request->fullName;
                 $user->email = $request->email;
                 $user->language = LanguageEnum::coerce($request->language);
@@ -123,7 +124,7 @@ class UserController extends Controller
                 return $this->generalError();
             }
         } catch (\Exception $exception) {
-            return $this->generalError();
+            return $exception->getMessage();
         }
     }
 

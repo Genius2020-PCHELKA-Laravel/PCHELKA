@@ -6,11 +6,14 @@
             <h1> View Companies</h1>
         </div>
         <div class="section-body">
+
+
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header-action">
                             <div class="card-header"><h4>Companies Count<span>({{$data->count}})</span></h4>
+
                                 <div class="card-header-action">
                                     <a class="btn btn-primary" data-toggle="modal"
                                        style="color: #ffffff; background-color: #f5c500;"
@@ -24,7 +27,12 @@
                         <div class="card-body">
 
                             <div class="table-responsive">
+                                <div class="form-group">
+                                    <input type="text" name="search" id="search" class="form-control col-3"
+                                           placeholder="Input Key Word To Search">
+                                </div>
                                 <table class="table table-striped table-md">
+
                                     <thead>
                                     <tr>
                                         <th scope="col" style="display:none;">#</th>
@@ -35,6 +43,7 @@
                                     </tr>
                                     </thead>
                                     @foreach($data as $single)
+                                        <tbody id="table">
                                         <tr>
                                             <td style="display:none;">{{$single->id}}</td>
                                             <td>{{$single->name}}</td>
@@ -56,7 +65,7 @@
                             <nav class="d-inline-block">
 
                                 <ul class="pagination mb-0">
-                                    {{ $data->links() }}
+
                                 </ul>
                             </nav>
                         </div>
@@ -89,7 +98,7 @@
                     </div>
                     <div class="form-group">
                         <label>Company Mobile</label>
-                        <input type="text" class="form-control" name="mobile" required placeholder="Insert company mobile num." data-inputmask='"mask": "999-999999"' data-mask/>
+                        <input type="text" class="form-control" name="mobile" required placeholder="Insert company mobile num." data-inputmask='"mask": "999999999"' data-mask/>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -127,7 +136,7 @@
                     <div class="form-group">
                         <label>Company Mobile</label>
                         <input type="text" class="form-control" name="mobile" id="mobile"
-                               placeholder="" data-inputmask='"mask": "999-999999"' data-mask required/>
+                               placeholder="" data-inputmask='"mask": "999999999"' data-mask required/>
 
                     </div>
                 </div>
@@ -270,3 +279,18 @@
         });
     });
 </script>
+
+
+
+
+<script>
+    $(document).ready(function () {
+        $("#search").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#table tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+

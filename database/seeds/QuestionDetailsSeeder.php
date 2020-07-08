@@ -15,18 +15,21 @@ class QuestionDetailsSeeder extends Seeder
         DB::table('question_details')->insert([
             #region HomeCleaning
             [
+                //Frequency
                 'id' => 1,
                 'name' => 'One-time',
                 'price' => 0,
                 'questionId' => 1
             ],
             [
+                //Frequency
                 'id' => 2,
                 'name' => 'Bi-weekly',
                 'price' => 0,
                 'questionId' => 1
             ],
             [
+                //Frequency
                 'id' => 3,
                 'name' => 'Weekly',
                 'price' => 0,
@@ -174,6 +177,7 @@ class QuestionDetailsSeeder extends Seeder
                 'questionId' => 7
             ],
 
+
             #endregion
             #region DeepCleaning
             [
@@ -299,7 +303,6 @@ class QuestionDetailsSeeder extends Seeder
                 'price' => 200,
                 'questionId' => 13
             ],
-
             #endregion
             #region FullTimeMaid
             [
@@ -416,7 +419,6 @@ class QuestionDetailsSeeder extends Seeder
             ],
             #endregion
             #region SofaCleaning
-
             [
                 'id' => 74,
                 'name' => '2',
@@ -483,7 +485,6 @@ class QuestionDetailsSeeder extends Seeder
                 'price' => 100,
                 'questionId' => 22
             ],
-
             #endregion
             #region MattressCleaning
             [
@@ -526,7 +527,7 @@ class QuestionDetailsSeeder extends Seeder
                 'id' => 110,
                 'name' => '8',
                 'price' => 100,
-                'questionId' => 27
+                'questionId' => 28
             ],
             [
                 'id' => 111,
@@ -553,7 +554,8 @@ class QuestionDetailsSeeder extends Seeder
                 'questionId' => 27
             ],
             #endregion
-            #region Curtain
+
+            #region CurtainCleaning
             [
                 'id' => 115,
                 'name' => '2',
@@ -620,7 +622,8 @@ class QuestionDetailsSeeder extends Seeder
                 'price' => 100,
                 'questionId' => 28
             ],
-            #end region
+            #endregion
+
             #region CarpetCleaning
             [
                 'id' => 126,
@@ -689,6 +692,7 @@ class QuestionDetailsSeeder extends Seeder
                 'questionId' => 30
             ],
             #endregion
+
         ]);
     }
 }

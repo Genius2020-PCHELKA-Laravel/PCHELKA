@@ -19,6 +19,7 @@ class ServicesSeeder extends Seeder
                 'type' => 1,
                 'materialPrice' => 100,
                 'hourPrice' => 100,
+                'unit'=> 'Hour'
             ],
             [
                 'id' => 2,
@@ -29,6 +30,7 @@ class ServicesSeeder extends Seeder
                 'type' => 2,
                 'materialPrice' => 100,
                 'hourPrice' => 100,
+                'unit'=> 'Hour'
             ],
             [
                 'id' => 3,
@@ -39,6 +41,8 @@ class ServicesSeeder extends Seeder
                 'type' => 3,
                 'materialPrice' => 100,
                 'hourPrice' => 100,
+                'unit'=> 'Hour'
+
             ],
             [
                 'id' => 4,
@@ -49,6 +53,8 @@ class ServicesSeeder extends Seeder
                 'type' => 4,
                 'materialPrice' => 100,
                 'hourPrice' => 100,
+                'unit'=> 'Hour'
+
             ],
             [
                 'id' => 5,
@@ -59,6 +65,8 @@ class ServicesSeeder extends Seeder
                 'type' => 5,
                 'materialPrice' => 100,
                 'hourPrice' => 100,
+                'unit'=> 'Hour'
+
             ],
             [
                 'id' => 6,
@@ -69,6 +77,8 @@ class ServicesSeeder extends Seeder
                 'type' => 6,
                 'materialPrice' => 100,
                 'hourPrice' => 100,
+                'unit'=> 'Hour'
+
             ],
             [
                 'id' => 7,
@@ -79,6 +89,8 @@ class ServicesSeeder extends Seeder
                 'type' => 7,
                 'materialPrice' => 100,
                 'hourPrice' => 100,
+                'unit'=> 'Hour'
+
             ],
             [
                 'id' => 8,
@@ -89,6 +101,8 @@ class ServicesSeeder extends Seeder
                 'type' => 8,
                 'materialPrice' => 100,
                 'hourPrice' => 100,
+                'unit'=> 'Hour'
+
             ],
             [
                 'id' => 9,
@@ -99,6 +113,8 @@ class ServicesSeeder extends Seeder
                 'type' => 9,
                 'materialPrice' => 100,
                 'hourPrice' => 100,
+                'unit'=> 'Hour'
+
             ],
             [
                 'id' => 10,
@@ -109,6 +125,8 @@ class ServicesSeeder extends Seeder
                 'type' => 10,
                 'materialPrice' => 100,
                 'hourPrice' => 100,
+                'unit'=> 'Hour'
+
             ],
             [
                 'id' => 11,
@@ -119,6 +137,8 @@ class ServicesSeeder extends Seeder
                 'type' => 11,
                 'materialPrice' => 100,
                 'hourPrice' => 100,
+                'unit'=> 'Hour'
+
             ],
             [
                 'id' => 12,
@@ -129,6 +149,8 @@ class ServicesSeeder extends Seeder
                 'type' => 12,
                 'materialPrice' => 100,
                 'hourPrice' => 100,
+                'unit'=> 'Hour'
+
             ],
         ]);
         //   factory(App\Models\Service::class,100)->create();

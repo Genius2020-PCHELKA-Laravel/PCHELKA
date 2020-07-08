@@ -5,11 +5,11 @@ namespace App\Enums;
 use BenSampo\Enum\Enum;
 
 /**
- * @method static static Ar()
- * @method static static En()
+ * @method static static ru()
+ * @method static static en()
  */
 final class LanguageEnum extends Enum
 {
-    const Ar = 1;
-    const En = 2;
+    const ru = 1;
+    const en = 2;
 }

@@ -3,7 +3,7 @@
 <section class="section">
     <div class="main-content" style="min-height: 562px;">
         <div class="section-header">
-            <h1>Providers</h1>
+            <h1>Providers By Service</h1>
             <div class="section-header-breadcrumb">
 
             </div>
@@ -13,7 +13,7 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header-action">
-                            <div class="card-header"><h4>Providers <span>
+                            <div class="card-header"><h4>Providers By Service <span>
                                     </span></h4>
                                 <div class="card-header-action">
                                     <a class="btn btn-primary" data-toggle="modal"
@@ -28,19 +28,20 @@
                         <div class="card-body">
 
                             <div class="table-responsive">
-                                <form action="" id="searchForm">
+                                <form action="/provider/ShowBYservices" method="get"id="searchForm" >
                                     <div class="form-group">
                                         <label>Service Type</label>
                                         <select class="form-control custom-select js-example-basic"
-                                                name="serviceType">
+                                                name="serviceType" required>
                                             @foreach($services as $ser)
                                                 <option name="serviceId" id="serviceId"
                                                         value="{{$ser->id}}">{{$ser->name}}</option>
                                             @endforeach
                                         </select>
                                     </div>
+                                    <button type="submit" class="btn btn-primary " id="btnFind">Find</button>
                                 </form>
-                                <button type="submit" class="btn btn-primary " id="btnFind">Find</button>
+
                                 <table class="table table-striped table-md data-table" id="tableData">
 
                                     <thead>
@@ -128,22 +129,22 @@
                     <div class="form-group">
                         {{csrf_field()}}
                         <label>Provider Name</label>
-                        <input type="text" class="form-control" name="name" placeholder="Insert Provider name"/>
+                        <input type="text" class="form-control" name="name" placeholder="Insert Provider name" required/>
                     </div>
                     <div class="form-group">
                         <label>Provider Email</label>
-                        <input type="email" class="form-control" name="email" placeholder="Insert Provider email"/>
+                        <input type="email" class="form-control" name="email" placeholder="Insert Provider email" required/>
                     </div>
                     <div class="form-group">
                         <label>Provider Mobile</label>
                         <input type="text" class="form-control" name="mobileNumber"
-                               placeholder="Insert Provider mobile num."/>
+                               placeholder="Insert Provider mobile num." required/>
                     </div>
 
                     <div class="form-group">
                         <label>Company</label>
                         <select class="form-control custom-select js-example-basic"
-                                name="companyId">
+                                name="companyId" required>
                             @foreach($company as $com)
                                 <option name="companyId" value="{{$com->id}}">{{$com->name}}</option>
                             @endforeach
@@ -153,7 +154,7 @@
                         <label>Services</label>
                         <br>
                         <select class="form-control custom-select js-example-basic-multiple"
-                                name="services[]" multiple="multiple" style="  height: 200px; width: 100%;">
+                                name="services[]" multiple="multiple" style="  height: 200px; width: 100%;" required>
                             @foreach($services as $ser)
                                 <option value="{{$ser->id}}">{{$ser->name}}</option>
                             @endforeach
@@ -161,7 +162,7 @@
                     </div>
                     <div class="form-group">
                         <label>Image</label>
-                        <input type="file" accept="image/*" class="form-control" name="providerImage">
+                        <input type="file" accept="image/*" class="form-control" name="providerImage" required />
                     </div>
                 </div>
 
@@ -188,19 +189,19 @@
                     {{csrf_field()}}
                     <div class="form-group">
                         <label>Start Date</label>
-                        <input type="date" class="form-control" name="startDate" placeholder=""/>
+                        <input type="date" class="form-control" name="startDate" placeholder="" required/>
                     </div>
                     <div class="form-group">
                         <label>End Date</label>
-                        <input type="date" class="form-control" name="endDate" placeholder=""/>
+                        <input type="date" class="form-control" name="endDate" placeholder="" required/>
                     </div>
                     <div class="form-group">
                         <label>Start time</label>
-                        <input type="time" class="form-control" name="startDate" placeholder=""/>
+                        <input type="time" class="form-control" name="startDate" placeholder="" required/>
                     </div>
                     <div class="form-group">
                         <label>End time</label>
-                        <input type="time" class="form-control" name="startDate" placeholder=""/>
+                        <input type="time" class="form-control" name="startDate" placeholder="" required/>
                     </div>
                 </div>
 

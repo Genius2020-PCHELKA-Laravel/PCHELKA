@@ -2,10 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\EmailConfirm;
+use App\Notifications\TestNotify;
+use App\Notifications\TEstNotify2;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
+/**
+ * Class HomeController
+ * @package App\Http\Controllers
+ */
 class HomeController extends Controller
 {
+
     /**
      * Create a new controller instance.
      *
@@ -13,7 +22,6 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
     }
 
     /**
@@ -25,4 +33,13 @@ class HomeController extends Controller
     {
         return view('home');
     }
+
+    public function test()
+    {
+
+        $user=Auth::user();
+        $user->notify(new EmailConfirm());
+
+    }
 }
+

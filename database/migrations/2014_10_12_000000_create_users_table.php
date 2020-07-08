@@ -24,7 +24,7 @@ class CreateUsersTable extends Migration
             $table->string('password')->nullable();
             $table->date('dateOfBirth')->nullable();
             $table->enum('gender',['Male','Female'])->nullable();
-            $table->tinyInteger('language')->unsigned()->default(LanguageEnum::En);
+            $table->tinyInteger('language')->unsigned()->default(LanguageEnum::en);
             $table->rememberToken();
             $table->timestamps();
         });

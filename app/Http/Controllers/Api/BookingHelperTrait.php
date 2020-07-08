@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Enums\BookingStatusEnum;
 use App\Enums\ServicesEnum;
 use App\Models\Booking;
+use App\Models\Evaluation;
 use App\Models\QuestionDetails;
 use App\Models\Schedule;
 use App\Models\UserLocation;
@@ -17,9 +18,7 @@ trait BookingHelperTrait
     public function getBookingDetailes($bookingId)
     {
         $response = array();
-        $book = Booking::where('id', $bookingId)->
-        select(['id','serviceType', 'refCode', 'duoDate', 'duoTime', 'locationId', 'totalAmount', 'paymentWays', 'parentId', 'status', 'discount', 'subTotal','materialPrice'])
-            ->first();
+        $book = Booking::where('id', $bookingId)->first();
 
         if ($book->locationId == null) {
             $book->locationId = Booking::where('id', $book['parentId'])->select('locationId')->first()->locationId;
@@ -34,7 +33,8 @@ trait BookingHelperTrait
         $response['paymentWays'] = $book->paymentWays;
         $response['discount'] = $book->discount;
         $response['subTotal'] = $book->subTotal;
-        $response['materialPrice']=$book->materialPrice;
+        $response['updatedAt'] = date('Y-m-d', strtotime($book->updated_at));
+        $response['materialPrice'] = $book->materialPrice;
         $address = UserLocation::where('id', $book->locationId)
             ->select(['address', 'details', 'area', 'street', 'buildingNumber', 'apartment'])->first();
         if ($address) {
@@ -47,10 +47,11 @@ trait BookingHelperTrait
                 'buildingNumber' => $address->buildingNumber,
                 'apartment' => $address->apartment];
         } else {
-            dd('hi');
             $response['addressDetails'] = null;
         }
-
+        $bookingEvaluation = Evaluation::where('bookingId', $book->id)->first();
+        $response['bookingEvaluation'] = $bookingEvaluation == null ? 0 : $bookingEvaluation->starCount;
+        $response['providerEvaluation']=number_format(doubleval(Evaluation::where('serviceProviderId', $book->providerId)->avg('starCount')), 1, '.', '');
         $response['parentId'] = $book->parentId;
         return $response;
     }

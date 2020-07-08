@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'CompanyController@index')->name('viewCompany');
 
 Auth::routes();
+Route::get('/test', 'HomeController@test')->name('test');
 Route::post('searchProv', 'ServiceProviderController@search')->name('searchProv');
 //Route::get('/home', 'HomeController@index')->name('home');
 //
@@ -36,9 +37,24 @@ Route::prefix("/provider")->group(function () {
     Route::get('/addProvider', 'ServiceProviderController@create')->name('addProvider');
     Route::post('/addProvider', 'ServiceProviderController@create')->name('addProvider');
     Route::get('/providerByService', 'ServiceProviderController@providerByService')->name('providerByService');
+    Route::get('/providerByService', 'ServiceProviderController@providerByService')->name('providerByService');
+    Route::get('/ShowBYservices', 'ServiceProviderController@ShowBYservices')->name('ShowBYservices');
+    Route::get('/providerByCompany', 'ServiceProviderController@providerByCompany')->name('providerByCompany');
+    Route::get('/ShowBYcompany', 'ServiceProviderController@ShowBYcompany')->name('ShowBYcompany');
     Route::post('/editProvider/{id}', 'ServiceProviderController@edit')->name('editProvider');
     Route::get('/editProvider/{id}', 'ServiceProviderController@edit')->name('editProvider');
     Route::post('/deleteProvider/{id}', 'ServiceProviderController@destroy')->name('deleteProvider');
+});
+
+Route::prefix("/Booking")->group(function () {
+    Route::get('/', 'BookingController@All')->name('viewAll');
+    Route::get('/viewconfirm', 'BookingController@Confirmed')->name('viewconfirm');
+    Route::get('/viewCompleted', 'BookingController@Completed')->name('viewCompleted');
+    Route::get('/viewcanceled', 'BookingController@Canceled')->name('viewcanceled');
+    Route::get('/viewRescheduled', 'BookingController@Rescheduled')->name('viewRescheduled');
+    Route::post('/editcompleted/{id}', 'BookingController@change_to_completed')->name('editcompleted');
+    Route::post('/editcanceled/{id}', 'BookingController@change_to_canceled')->name('editcanceled');
+    Route::post('/changeProvider/{id}', 'BookingController@change_provider')->name('changeProvider');
 });
 
 Route::prefix("/user")->group(function () {
@@ -57,6 +73,7 @@ Route::prefix("/schedule")->group(function () {
     Route::get('/', 'ServiceController@index')->name('viewService');
     Route::post('/editService/{id}', 'ServiceController@edit')->name('editService');
     Route::post('/addSchedule', 'ScheduleController@create')->name('addSchedule');
+    Route::post('/deleteSchedule', 'ScheduleController@delete')->name('deleteSchedule');
 });
 
 Route::get('/clearCache', function () {

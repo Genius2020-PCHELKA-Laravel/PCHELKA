@@ -2,6 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\LanguageEnum;
+use App\Notifications\CompletedNotification;
+use App\Notifications\ConfirmedNotification;
+use App\Notifications\EmailConfirm;
+use App\Notifications\EmailRescheduled;
+use App\Notifications\RescheduledNotification;
+use App\Notifications\RuConfirmedNotification;
+use App\Notifications\RuRescheduledNotification;
+use App\User;
 use App\Enums\BookingStatusEnum;
 use App\Enums\PaymentStatusEnum;
 use App\Enums\PaymentWaysEnum;
@@ -15,18 +24,27 @@ use App\Models\Schedule;
 use App\Models\ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use Monolog\Handler\IFTTTHandler;
-use PHPUnit\Exception;
 use Validator;
 use function Safe\eio_lstat;
+
 
 class BookingController extends Controller
 {
     use ApiResponseTrait;
     use BookingHelperTrait;
 
+    public function confirmedNotify(User $user)
+    {
+        if ($user->language == 1) {
+
+            $notification = new RuConfirmedNotification();
+            $user->notify($notification);
+        } else {
+            $notification = new ConfirmedNotification();
+            $user->notify($notification);
+        }
+        $user->notify(new EmailConfirm());
+    }
 
     public function bookService(Request $request)
     {
@@ -52,6 +70,7 @@ class BookingController extends Controller
 //                return $this->apiResponse(null, $validator->errors(), 520);
 //            }
         //     #endregion
+
         global $answerHourValue;
         if (Auth::check()) {
             $answerss = $request->answers;
@@ -92,8 +111,8 @@ class BookingController extends Controller
             $booking->materialPrice = $request->materialPrice;
             $booking->save();
             $lastId = intval($booking->id);
-//            $this->deActiveSchdule($request->duoDate, $providerId, $answerHourValue, $request->duoTime);
-//            $this->removeGap($providerId, $request->duoDate);
+            $this->deActiveSchdule($request->duoDate, $providerId, $answerHourValue, $request->duoTime);
+            $this->removeGap($providerId, $request->duoDate);
             switch ($request->frequency) {
                 case "One-time":
                 {
@@ -211,6 +230,15 @@ class BookingController extends Controller
                 $bookingAnswers->save();
             }
             #endregion
+
+            $user = Auth::user();
+            $userNotify = User::where('id', $user->id)->first();
+            $userNotify->bookStatus = BookingStatusEnum::getKey(1);
+            $userNotify->bookRefCode = $booking->refCode;
+            $userNotify->bookDouDate = $booking->duoDate;
+            $userNotify->bookDouTime = $booking->duoTime;
+            $this->confirmedNotify($userNotify);
+
             return $this->createdResponse('Booking created successfully');
         } else {
             return $this->unAuthoriseResponse();
@@ -300,6 +328,16 @@ class BookingController extends Controller
                 ->orderBy('created_at', 'asc')
                 ->get();
             foreach ($data as $newdata) {
+                $providerData = ServiceProvider::where('id', $newdata['providerId'])->select('id', 'name', 'imageUrl')->first();
+                $providerData['evaluation'] = number_format(doubleval(Evaluation::where('serviceProviderId', $newdata['providerId'])->avg('starCount')), 1, '.', '');
+                $lastServiceDate =
+                    Booking::where('userId', $user)->where('providerId', $newdata->providerId)
+                        ->where('status', BookingStatusEnum::Completed)
+                        ->where('serviceType', ServicesEnum::coerce($newdata['serviceType']))
+                        ->orderBy('duoDate', 'DESC')
+                        ->select('duoDate')->first();
+                $providerData['lastServiceDate'] = $lastServiceDate['duoDate'];
+                $bookingEvaluation = Evaluation::where('bookingId', $newdata->id)->first();
                 $row = [
                     'id' => $newdata['id'],
                     'duoDate' => $newdata['duoDate'],
@@ -307,7 +345,9 @@ class BookingController extends Controller
                     'serviceType' => ServicesEnum::getKey($newdata['serviceType']),
                     'refCode' => $newdata['refCode'],
                     'status' => BookingStatusEnum::getKey($newdata['status']),
-                    'providerData' => ServiceProvider::where('id', $newdata['providerId'])->select('id', 'name', 'imageUrl')->first()
+                    'bookingEvaluation' => $bookingEvaluation == null ? 0 : $bookingEvaluation->starCount,
+                    'providerData' => $providerData,
+
                 ];
                 array_push($response, $row);
 
@@ -334,7 +374,7 @@ class BookingController extends Controller
 
             foreach ($data as $newdata) {
                 $providerData = ServiceProvider::where('id', $newdata['providerId'])->select('id', 'name', 'imageUrl')->first();
-                $providerData['evaluation'] = intval(Evaluation::where('serviceProviderId', $newdata['providerId'])->avg('starCount'));
+                $providerData['evaluation'] = number_format(doubleval(Evaluation::where('serviceProviderId', $newdata['providerId'])->avg('starCount')), 1, '.', '');
                 $lastServiceDate =
                     Booking::where('userId', $user)->where('providerId', $newdata->providerId)
                         ->where('status', BookingStatusEnum::Completed)
@@ -342,6 +382,7 @@ class BookingController extends Controller
                         ->orderBy('duoDate', 'DESC')
                         ->select('duoDate')->first();
                 $providerData['lastServiceDate'] = $lastServiceDate['duoDate'];
+                $bookingEvaluation = Evaluation::where('bookingId', $newdata->id)->first();
                 $row = [
                     'id' => $newdata['id'],
                     'duoDate' => $newdata['duoDate'],
@@ -349,8 +390,8 @@ class BookingController extends Controller
                     'serviceType' => ServicesEnum::getKey($newdata['serviceType']),
                     'refCode' => $newdata['refCode'],
                     'status' => BookingStatusEnum::getKey($newdata['status']),
+                    'bookingEvaluation' => $bookingEvaluation == null ? 0 : $bookingEvaluation->starCount,
                     'providerData' => $providerData,
-
                 ];
                 array_push($response, $row);
 
@@ -365,7 +406,6 @@ class BookingController extends Controller
         if (Auth::user()) {
             $response = array();
             $response = $this->getBookingDetailes($request->id);
-
             if ($response['parentId'] != null) {
                 $data = Booking::where('id', $response['parentId'])
                     ->select(['totalAmount', 'discount', 'subTotal', 'materialPrice', 'paymentWays'])->first();
@@ -588,6 +628,21 @@ class BookingController extends Controller
 
                     $this->deActiveSchdule($request->duoDate, $serviceProvider, $oldHourId['answerId'], $request->duoTime);
                     $this->activeSchdule($oldDate['duoDate'], $oldProviderId['providerId'], $oldHourId['answerId'], $oldTime['duoTime']);
+
+                    $user = User::where('id', $book->userId)->first();
+                    $user->bookStatus = BookingStatusEnum::getKey(3);
+
+                    $user->refCode = $book->refCode;
+                    $user->duoTime = $book->duoTime;
+                    $user->duoDate = $book->duoDate;
+                    if ($user->language == LanguageEnum::ru) {
+                        $notification = new RuRescheduledNotification();
+                        $user->notify($notification);
+                    } else {
+                        $notification = new RescheduledNotification();
+                        $user->notify($notification);
+                    }
+                    $user->notify(new EmailRescheduled());
                     return $this->apiResponse('Updated successfully');
 
                 } else {

@@ -3,7 +3,7 @@
 <section class="section">
     <div class="main-content" style="min-height: 562px;">
         <div class="section-header">
-            <h1>Providers</h1>
+            <h1>All Providers</h1>
             <div class="section-header-breadcrumb">
 
             </div>
@@ -14,7 +14,7 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header-action">
-                            <div class="card-header"><h4>Providers <span>
+                            <div class="card-header"><h4>All Providers <span>
                                     </span></h4>
                                 <div class="card-header-action">
                                     <a class="btn btn-primary" data-toggle="modal"
@@ -30,59 +30,10 @@
 
                             <div class="table-responsive">
                                 <div class="form-group">
-
-                                    <form method="post" action="/searchProv">
-                                        {{ csrf_field() }}
-                                        <input type="text" name="searchForAll" class="form-control col-3"
-                                               placeholder="Input Key Word To Search"/>
-                                    </form>
+                                    <input type="text" name="search" id="search" class="form-control col-3"
+                                           placeholder="Input Key Word To Search">
                                 </div>
-                                @if(isset($search) and $search == false)
-                                    <table class="table table-striped table-md">
 
-                                        <thead>
-                                        <tr>
-                                            <th scope="col" style="display:none;">#</th>
-                                            <th scope="col">Provider Name</th>
-                                            <th scope="col">Email</th>
-                                            <th scope="col">Mobile Num.</th>
-                                            <th scope="col">Company</th>
-                                            <th scope="col">Action</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody id="table">
-                                        @foreach($data as $single)
-                                            <tr>
-                                                <td style="display:none;">{{$single->id}}</td>
-                                                <td>{{$single->name}}</td>
-                                                <td>{{$single->email}}</td>
-                                                <td>{{$single->mobileNumber}}</td>
-                                                <td>@if(isset($single->companyId))
-                                                        {{App\Models\Company::where('id',$single->companyId)->first()->name }}
-                                                    @endif  </td>
-                                                <td>
-                                                    <a href="{{route('addProvider')}}"
-                                                       class="btn btn-outline-success editBtn ">Edit <i
-                                                            class="fas fa-edit "></i></a>
-                                                    <a class="btn btn-outline-danger  deleteBtn ">Delete <i
-                                                            class="fas fa-trash-alt"></i> </a>
-                                                    <a class="btn btn-outline-success addScheduleBtn"
-                                                       data-toggle="modal"
-                                                       data-target="#addSchedule">Schedule <i
-                                                            class="fas fa-edit "></i></a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-                                    <div class="card-footer text-right">
-                                        <nav class="d-inline-block">
-                                            <ul class="pagination mb-0">
-                                                {{  $data->links() }}
-                                            </ul>
-                                        </nav>
-                                    </div>
-                                @else
                                     <table class="table table-striped table-md">
 
                                         <thead>
@@ -120,7 +71,7 @@
                                         @endforeach
                                         </tbody>
                                     </table>
-                                @endif
+
                             </div>
                         </div>
 
@@ -177,7 +128,7 @@
                     <div class="form-group">
                         <label>Provider Mobile</label>
                         <input type="text" class="form-control" name="mobileNumber"
-                               placeholder="Insert Provider mobile num." required data-inputmask='"mask": "999-999999"'
+                               placeholder="Insert Provider mobile num." required data-inputmask='"mask": "999999999"'
                                data-mask/>
                     </div>
 
@@ -281,7 +232,7 @@
                     <div class="form-group">
                         <label>Provider Mobile</label>
                         <input type="text" class="form-control" name="mobile" id="mobile"
-                               placeholder="" data-inputmask='"mask": "999-999999"' data-mask required/>
+                               placeholder="" data-inputmask='"mask": "999999999"' data-mask required/>
 
                     </div>
                     <div class="form-group">
