@@ -24,7 +24,7 @@ class ServiceProviderController extends Controller
             $response = array();
             $providers = array();
             $user = Auth::user()->id;
-            $bookProvider = Booking::where('userId', $user)->select(['providerId', 'serviceType'])->get();
+            $bookProvider = Booking::where('userId', $user)->where('status',BookingStatusEnum::Completed)->select(['providerId', 'serviceType'])->get();
             if ($bookProvider) {
                 foreach ($bookProvider as $provider) {
                     $res = array();

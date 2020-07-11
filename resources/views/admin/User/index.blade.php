@@ -86,15 +86,17 @@
                     </div>
                     <div class="form-group">
                         <label>User Email</label>
-                        <input type="email" class="form-control"  required name="email" placeholder="Insert User email"/>
+                        <input type="email" class="form-control" required name="email" placeholder="Insert User email"/>
                     </div>
                     <div class="form-group">
                         <label>User Mobile</label>
-                        <input type="text" class="form-control" name="mobile" placeholder="Insert User mobile num." data-inputmask='"mask": "999999999"' data-mask required/>
+                        <input type="text" class="form-control" name="mobile" placeholder="Insert User mobile num."
+                               data-inputmask='"mask": "999999999"' data-mask required/>
                     </div>
                     <div class="form-group">
                         <label>User Password</label>
-                        <input type="password" class="form-control" required name="password"  placeholder="Insert User Password"/>
+                        <input type="password" class="form-control" required name="password"
+                               placeholder="Insert User Password"/>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -121,8 +123,10 @@
                         {{csrf_field()}}
                         <input type="hidden" id="id"/>
                         <label>User Name</label>
-                        <input type="text" class="form-control" name="fullName" id="name"
-                               placeholder="" required/>
+                        {{--                        <input type="text" class="form-control" name="fullName" id="name"--}}
+                        {{--                               placeholder="" required/>--}}
+                        <input type="text" class="form-control" name="fullName" required id="userName"
+                               placeholder=""/>
                     </div>
                     <div class="form-group">
                         <label>User Email</label>
@@ -189,9 +193,9 @@
             }).get();
             console.log(data);
             $('#id').val(data[0]);
-            $('#name').val(data[1]);
             $('#email').val(data[2]);
             $('#mobile').val(data[3]);
+            $('#userName').val(data[1]);
         });
 
         $('#editForm').on('submit', function (e) {

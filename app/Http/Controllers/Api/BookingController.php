@@ -388,7 +388,6 @@ class BookingController extends Controller
         return $this->unAuthoriseResponse();
     }
 
-
     public function getHCBookingById(Request $request)
     {
         if (Auth::user()) {

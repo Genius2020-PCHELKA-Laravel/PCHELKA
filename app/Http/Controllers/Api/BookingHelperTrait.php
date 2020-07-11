@@ -150,6 +150,7 @@ trait BookingHelperTrait
 
     public function switchHourAnswer($duoTime, $answare)
     {
+
         global $to;
         switch ($answare) {
             case 4 :
@@ -233,6 +234,7 @@ trait BookingHelperTrait
 
     public function deActiveSchdule($duoDate, $providerId, $answare, $duoTime)
     {
+
         $endTime = $this->switchHourAnswer($duoTime, $answare);
 
         $data = Schedule::where('availableDate', $duoDate)

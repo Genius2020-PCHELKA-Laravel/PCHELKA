@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Enums\LanguageEnum;
+use App\Http\Controllers\Api\BookingHelperTrait;
 use App\Models\Booking;
+use App\Models\BookingAnswers;
 use App\Models\Evaluation;
 use App\Models\ServiceProvider;
 use App\Notifications\CanceledNotification;
@@ -20,6 +22,8 @@ use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
+    use BookingHelperTrait;
+
     public function __construct()
     {
         $this->middleware('auth');
@@ -141,12 +145,30 @@ class BookingController extends Controller
 
     public function change_provider(Request $request, $id)
     {
+        global $oldHourId;
         $booking = Booking::find($id);
+
+        if ($booking->parentId != null) {
+            $oldHourId = BookingAnswers::where('bookingId', $booking->parentId)->where('questionId', 2)
+                ->orWhere('questionId', 6)->orWhere('questionId', 9)->orWhere('questionId', 12)
+                ->select(['answerId'])->first();
+
+        } else {
+            $oldHourId = BookingAnswers::where('bookingId', $id)->where('questionId', 2)
+                ->orWhere('questionId', 6)->orWhere('questionId', 9)->orWhere('questionId', 12)
+                ->select(['answerId'])->first();
+        }
+        $duoDate = $booking->duoDate;
+        $duoTime = $booking->duoTime;
         $newProvider = ServiceProvider::where('id', $request->input('name'))->first();
         $oldProvider = $booking->providerId;
         $booking->providerId = $newProvider->id;
-        $booking->save();
+        if ($oldHourId['answerId']!=null) {
+            $this->deActiveSchdule($duoDate, $newProvider->id, $oldHourId['answerId'], $duoTime);
+            $this->activeSchdule($duoDate, $oldProvider, $oldHourId['answerId'], $duoTime);
+        }
 
+        $booking->save();
     }
 
     /**

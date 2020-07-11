@@ -17,6 +17,7 @@ class ServiceProviderController extends Controller
     {
         $this->middleware('auth');
     }
+
     public function providerByCompany(Request $request)
     {
         $data = array();
@@ -104,7 +105,7 @@ class ServiceProviderController extends Controller
                 $imagex = $request->file('providerImage')->store('/public');
                 $nn = Storage::url($imagex);
                 $ah = asset($nn);
-                // $item->providerImage = $ah;
+                // $item->providerImage = x
                 $request['imageUrl'] = $ah;
             } else {
                 $request['imageUrl'] = 'test';
@@ -118,6 +119,46 @@ class ServiceProviderController extends Controller
             $services = Service::all();
             $company = Company::all();
             // return view('admin.Provider.addProvider', ['services' => $services, 'company' => $company]);
+        }
+    }
+
+    public function edit(Request $request, $id)
+    {
+        $provider = ServiceProvider::find($id);
+        if ($request->isMethod('post')) {
+            if ($request->has('providerImage')) {
+                $TheImage = $request->file('providerImage')->store('/public');
+                //$move = Storage::url($TheImage);
+                $contents = Storage::url($TheImage);
+                $ah = asset($contents);
+                $request['imageUrl'] = $ah;
+                $provider->imageUrl = $request['imageUrl'];
+            }
+            $provider->name = $request['name'];
+            $provider->email = $request['email'];
+            $provider->mobileNumber = $request['mobileNumber'];
+            $provider->companyId = $request['companyId'];
+            $provider->save();
+
+            DB::table('providerservices')->where('provider_id', '=', $id)->delete();
+
+            $newServices = $request['services'];
+            foreach ($newServices as $service) {
+                DB::table('providerservices')->insert(['service_id' => $service, 'provider_id' => $id]);
+            }
+
+            return redirect('/provider');
+        } else {
+            $ser = ServiceProvider::find($id);
+            $company = Company::all();
+            $services = DB::table('providerservices')->where('provider_id', $ser->id)->get();
+            $emptyArray = [];
+            foreach ($services as $sacoOo) {
+                $se = Service::find($sacoOo->service_id);
+                array_push($emptyArray, $se->name);
+            }
+            $AllServ = Service::all();
+            return view('admin.Provider.test', ['data' => $ser, 'company' => $company, 'services' => $emptyArray, 'AllServ' => $AllServ]);
         }
     }
 
@@ -149,24 +190,7 @@ class ServiceProviderController extends Controller
      * @param \App\Models\ServiceProvider $serviceProvider
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request, $id)
-    {
-        if ($request->isMethod('post')) {
 
-        } else {
-            $ser = ServiceProvider::find($id);
-            $company = Company::all();
-            $services = DB::table('providerservices')->where('provider_id', $ser->id)->get();
-            $emptyArray = [];
-            foreach ($services as $sacoOo) {
-                $se = Service::find($sacoOo->service_id);
-                array_push($emptyArray, $se->name);
-            }
-            $AllServ = Service::all();
-            return view('admin.Provider.editProvider', ['data' => $ser, 'company' => $company, 'services' => $emptyArray, 'AllServ' => $AllServ]);
-        }
-
-    }
 
     /**
      * Update the specified resource in storage.

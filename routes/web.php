@@ -55,6 +55,7 @@ Route::prefix("/Booking")->group(function () {
     Route::post('/editcompleted/{id}', 'BookingController@change_to_completed')->name('editcompleted');
     Route::post('/editcanceled/{id}', 'BookingController@change_to_canceled')->name('editcanceled');
     Route::post('/changeProvider/{id}', 'BookingController@change_provider')->name('changeProvider');
+
 });
 
 Route::prefix("/user")->group(function () {
