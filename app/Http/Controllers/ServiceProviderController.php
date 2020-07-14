@@ -158,7 +158,7 @@ class ServiceProviderController extends Controller
                 array_push($emptyArray, $se->name);
             }
             $AllServ = Service::all();
-            return view('admin.Provider.test', ['data' => $ser, 'company' => $company, 'services' => $emptyArray, 'AllServ' => $AllServ]);
+            return view('admin.Provider.editProvider', ['data' => $ser, 'company' => $company, 'services' => $emptyArray, 'AllServ' => $AllServ]);
         }
     }
 
