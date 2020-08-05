@@ -66,7 +66,11 @@
 
                                         <div class="form-group">
                                             <label>Image</label>
-                                            <img src="{{asset($data->imageUrl)}}" alt="Provider image"
+                                            @php
+                                            $hi = explode('/',$data->imageUrl);
+                                            $link=$hi[1].'/app/public/'.$hi[2];
+                                            @endphp
+                                            <img src="/{{$link}}"  style="width:250px; height:250px" alt="Provider image"
                                                  class="img-thumbnail">
                                         </div>
 
@@ -79,8 +83,6 @@
 
                                     <div class="modal-footer">
                                         <button type="submit" class="btn btn-primary ">Save</button>
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel
-                                        </button>
                                     </div>
                                 </form>
                             </div>

@@ -78,6 +78,7 @@
         });
     });
 </script>
+{{--dataTable--}}
 
 </body>
 </html>

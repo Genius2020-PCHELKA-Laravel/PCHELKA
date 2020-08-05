@@ -5,76 +5,160 @@
         <div class="section-header">
             <h1> View All Booking</h1>
         </div>
-
-
         <div class="section-body">
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
-
                         <div class="card-body">
-
                             <div class="table-responsive">
                                 <div class="form-group">
                                     <input type="text" name="search" id="search" class="form-control col-3"
                                            placeholder="Input Key Word To Search">
                                 </div>
-                                <table class="table table-striped table-md">
+                                {{--                                <table class="table table-striped table-md">--}}
+                                <table style="text-align:center;" id="dtBasicExample"
+                                       class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
                                     <thead>
-                                        <tr>
-                                            <th scope="col" style="display:none;">#</th>
-                                            <th scope="col">Duo Date </th>
-                                            <th scope="col">Duo Time </th>
-                                            <th scope="col">Provider Name </th>
-                                            <th scope="col">Provider Mobile  </th>
-                                            <th scope="col">Client Name </th>
-                                            <th scope="col">REFCODE </th>
-                                            <th scope="col">status </th>
-                                            <th scope="col">Action </th>
+                                    <tr align="center">
+                                        <th scope="col" style="display:none;">#</th>
+                                        <th scope="col">Duo Date</th>
+                                        <th scope="col">Duo Time</th>
+                                        <th scope="col">Location</th>
+                                        <th scope="col">Service</th>
+                                        <th scope="col">Provider Name</th>
+                                        <th scope="col">Provider Mobile</th>
+                                        <th scope="col">Client Name</th>
+                                        <th scope="col">REFCODE</th>
+                                        <th scope="col">Booking Date</th>
+                                        <th scope="col">status</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="table">
+                                    @foreach($bookings as $single)
+                                        <tr align="center">
+                                            <td style="display:none;">{{$single->id}}</td>
+                                            <td>{{$single->duoDate}}</td>
+                                            <td>{{$single->duoTime}}</td>
+                                            <td>{{$single->location}}</td>
+                                            <td>{{$single->serviceType}}</td>
+                                            <td>
+                                                @if($single->providerId==$autoAssignId)
+                                                    {{$single->name}}
+                                                @else
+                                                <a class="stretched-link" href="{{url('provider/getSchedules',$single->providerId)}}">{{$single->name}}</a>
+                                                @endif
+                                            </td>
+                                            <td>{{$single->mobileNumber}}</td>
+                                            <td>{{$single->fullName}}</td>
+                                            <td>{{$single->refCode}}</td>
+                                            <td>{{$single->BookedDate}}</td>
+                                            @if($single->status ==1)
+                                                <td>
+                                                    <div
+                                                        class="badge badge-primary">{{\App\Enums\BookingStatusEnum::getKey( $single->status)}}</div>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group mb-2">
+                                                        <button class="btn btn-sm btn-warning dropdown-toggle"
+                                                                type="button"
+                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                            Select Action
+                                                        </button>
+                                                        <div class="dropdown-menu" x-placement="bottom-start"
+                                                             style="position: absolute; transform: translate3d(0px, 43px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                            <a class="dropdown-item"
+                                                               href="{{url('Booking/getBooking',$single->id)}}">View
+                                                                More</a>
+                                                            <a class="dropdown-item editBtn">Complete </a>
+                                                            <a class="dropdown-item  edit1Btn ">Cancel</a>
+                                                            <a class="dropdown-item"
+                                                               href="{{url('provider/changeProvider',$single->id)}}">Change
+                                                                Provider </a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            @endif
+
+                                            @if($single->status ==2)
+                                                <td>
+                                                    <div
+                                                        class="badge badge-success">{{\App\Enums\BookingStatusEnum::getKey( $single->status)}}</div>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group mb-2">
+                                                        <button class="btn btn-sm btn-warning dropdown-toggle"
+                                                                type="button"
+                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                            Select Action
+                                                        </button>
+                                                        <div class="dropdown-menu" x-placement="bottom-start"
+                                                             style="position: absolute; transform: translate3d(0px, 43px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                            <a class="dropdown-item"
+                                                               href="{{url('Booking/getBooking',$single->id)}}">View
+                                                                More</a></div>
+                                                    </div>
+                                                </td>
+                                            @endif
+
+                                            @if($single->status ==3)
+                                                <td>
+                                                    <div
+                                                        class="badge badge-warning">{{\App\Enums\BookingStatusEnum::getKey( $single->status)}}</div>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group mb-2">
+                                                        <button class="btn btn-sm btn-warning dropdown-toggle"
+                                                                type="button"
+                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                            Select Action
+                                                        </button>
+                                                        <div class="dropdown-menu" x-placement="bottom-start"
+                                                             style="position: absolute; transform: translate3d(0px, 43px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                            <a class="dropdown-item"
+                                                               href="{{url('Booking/getBooking',$single->id)}}">View
+                                                                More</a>
+                                                            <a class="dropdown-item editBtn">Complete </a>
+                                                            <a class="dropdown-item  edit1Btn ">Cancel</a>
+                                                            <a class="dropdown-item"
+                                                               href="{{url('provider/changeProvider',$single->id)}}">Change
+                                                                Provider </a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            @endif
+
+                                            @if($single->status ==4)
+                                                <td>
+                                                    <div
+                                                        class="badge badge-danger">{{\App\Enums\BookingStatusEnum::getKey( $single->status)}}</div>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group mb-2">
+                                                        <button class="btn btn-sm btn-warning dropdown-toggle"
+                                                                type="button"
+                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                            Select Action
+                                                        </button>
+                                                        <div class="dropdown-menu" x-placement="bottom-start"
+                                                             style="position: absolute; transform: translate3d(0px, 43px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                            <a class="dropdown-item"
+                                                               href="{{url('Booking/getBooking',$single->id)}}">View
+                                                                More</a></div>
+                                                    </div>
+                                                </td>
+                                            @endif
                                         </tr>
-                                        </thead>
-                                        <tbody id="table">
-                                        @foreach($bookings as $single)
-                                            <tr>
-                                                <td style="display:none;">{{$single->id}}</td>
-                                                <td>{{$single->duoDate}}</td>
-                                                <td>{{$single->duoTime}}</td>
-                                                <td>{{$single->name}}</td>
-                                                <td>{{$single->mobileNumber}}</td>
-                                                <td>{{$single->fullName}}</td>
-                                                <td>{{$single->refCode}}</td>
-                                                @if($single->status ==1)
-                                                <td><div class="badge badge-primary">{{\App\Enums\BookingStatusEnum::getKey( $single->status)}}</div></td>
-                                                    <td>
-                                                        <a  class="btn btn-outline-success editBtn">Complete</a>
-                                                        <a class="btn btn-outline-danger  edit1Btn ">Cancel</a>
-                                                    </td>
-                                                @endif
 
-                                                @if($single->status ==2)
-                                                    <td><div class="badge badge-success" >{{\App\Enums\BookingStatusEnum::getKey( $single->status)}}</div></td>
-                                                    <td><div class="badge badge-light" > The booking has been completed</div></td>
-                                                @endif
-
-                                                @if($single->status ==3)
-                                                    <td ><div class="badge badge-warning">{{\App\Enums\BookingStatusEnum::getKey( $single->status)}}</div></td>
-                                                    <td>
-                                                        <a  class="btn btn-outline-success editBtn">Complete</a>
-                                                        <a class="btn btn-outline-danger  edit1Btn ">Cancel</a>
-                                                    </td>
-                                                @endif
-
-                                                @if($single->status ==4)
-                                                    <td ><div  class="badge badge-danger">{{\App\Enums\BookingStatusEnum::getKey( $single->status)}}</div></td>
-                                                    <td><div class="badge badge-light" > The booking has been Canceled</div></td>
-                                                @endif
-
-                                            </tr>
-
-                                        @endforeach
-                                        </tbody>
+                                    @endforeach
+                                    </tbody>
                                 </table>
                             </div>
+
                         </div>
                         <div class="card-footer text-right">
                             <nav class="d-inline-block">
@@ -88,6 +172,7 @@
         </div>
     </div>
 </section>
+
 <div class="modal fade" id="editcompleted" role="dialog" aria-labelledby="editcompleted" aria-hidden="true">
     <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
@@ -108,9 +193,6 @@
         </div>
     </div>
 </div>
-
-
-
 <div class="modal fade" id="editcanceled" role="dialog" aria-labelledby="editcanceled" aria-hidden="true">
     <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
@@ -133,7 +215,6 @@
 </div>
 
 
-
 @include('admin.static.footer')
 <script>
     $(document).ready(function () {
@@ -145,7 +226,6 @@
         });
     });
 </script>
-
 <script>
     $(document).ready(function () {
         $.ajaxSetup({
@@ -181,8 +261,6 @@
         });
     });
 </script>
-
-
 <script>
     $(document).ready(function () {
         $.ajaxSetup({

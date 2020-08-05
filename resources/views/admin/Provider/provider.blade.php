@@ -42,7 +42,7 @@
                                     <button type="submit" class="btn btn-primary " id="btnFind">Find</button>
                                 </form>
 
-                                <table class="table table-striped table-md data-table" id="tableData">
+                                <table  style="text-align:center;" id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
 
                                     <thead>
                                     <tr>
@@ -56,25 +56,47 @@
                                     </thead>
                                     <tbody id="table">
                                     @foreach($data as $single)
-                                        <tr>
-                                            <td style="display:none;">{{$single->id}}</td>
-                                            <td>{{$single->name}}</td>
-                                            <td>{{$single->email}}</td>
-                                            <td>{{$single->mobileNumber}}</td>
-                                            <td>@if(isset($single->companyId))
-                                                    {{App\Models\Company::where('id',$single->companyId)->first()->name }}
-                                                @endif  </td>
-                                            <td>
-                                                <a href="{{route('addProvider')}}"
-                                                   class="btn btn-outline-success editBtn ">Edit <i
-                                                        class="fas fa-edit "></i></a>
-                                                <a class="btn btn-outline-danger  deleteBtn ">Delete <i
-                                                        class="fas fa-trash-alt"></i> </a>
-                                                <a class="btn btn-outline-success addScheduleBtn " data-toggle="modal"
-                                                   data-target="#addSchedule">Schedule <i
-                                                        class="fas fa-edit "></i></a>
-                                            </td>
-                                        </tr>
+                                        @if($single->email=='auto@auto.auto')
+                                            <tr>
+                                                <td style="display:none;">{{$single->id}}</td>
+                                                <td>{{$single->name}}</td>
+                                                <td>{{$single->email}}</td>
+                                                <td>{{$single->name}}</td>
+                                                <td>{{$single->name}}</td>
+                                                <td>No Action</td>
+                                            </tr>
+                                        @else
+                                            <tr>
+                                                <td style="display:none;">{{$single->id}}</td>
+                                                <td>{{$single->name}}</td>
+                                                <td>{{$single->email}}</td>
+                                                <td>{{$single->mobileNumber}}</td>
+                                                <td>@if(isset($single->companyId))
+                                                        {{App\Models\Company::where('id',$single->companyId)->first()->name }}
+                                                    @endif  </td>
+                                                <td>
+                                                    <div class="btn-group mb-2">
+                                                        <button class="btn btn-sm btn-warning dropdown-toggle"
+                                                                type="button"
+                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                            Select Action
+                                                        </button>
+                                                        <div class="dropdown-menu" x-placement="bottom-start"
+                                                             style="position: absolute; transform: translate3d(0px, 43px, 0px); top: 0px; left: 0px; will-change: transform;">
+
+                                                            <a href="{{url('provider/editProvider',$single->id)}}"
+                                                               class="dropdown-item ">Edit </a>
+                                                            <a class="dropdown-item   deleteBtn ">Delete </a>
+                                                            <a class="dropdown-item addScheduleBtn " data-toggle="modal"
+                                                               data-target="#addSchedule">Add Schedule</a>
+                                                            <a href="{{url('provider/getSchedules',$single->id)}}"
+                                                               class="dropdown-item ">Show Schedules </a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endif
                                     @endforeach
                                     </tbody>
                                 </table>
@@ -184,9 +206,10 @@
                 <h5 class="modal-title" id="exampleModalLabel">Add Schedule</h5>
 
             </div>
-            <form action="" id="addScheduleForm" enctype="multipart/form-data">
+            <form action="" id="addScheduleForm">
                 <div class="modal-body">
                     {{csrf_field()}}
+                    <input type="hidden" id="providerId"/>
                     <div class="form-group">
                         <label>Start Date</label>
                         <input type="date" class="form-control" name="startDate" placeholder="" required/>
@@ -197,17 +220,18 @@
                     </div>
                     <div class="form-group">
                         <label>Start time</label>
-                        <input type="time" class="form-control" name="startDate" placeholder="" required/>
+                        <input type="time" class="form-control" name="startTime" placeholder="" required/>
                     </div>
                     <div class="form-group">
                         <label>End time</label>
-                        <input type="time" class="form-control" name="startDate" placeholder="" required/>
+                        <input type="time" class="form-control" name="endTime" placeholder="" required/>
                     </div>
                 </div>
 
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary ">Save</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <input type="hidden" class="hiId"/>
                 </div>
             </form>
         </div>
@@ -244,7 +268,7 @@
             });
             $.ajax({
                 type: "POST",
-                url: "provider/addProvider",
+                url: "addProvider",
                 // data: $('#addForm').serialize(),
                 data: new FormData(this),
                 contentType: false,
@@ -310,36 +334,46 @@
 </script>
 {{--Add Schdule Script--}}
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function (e) {
+        // $('#addSchedule').on('click', function ( e ) {
+        //         $('.modal-backdrop').fadeOut(700);
+        // });
+
+        $('.closeSec').on('click', function () {
+            //$('#addScheduleForm').removeClass('show');
+            //$('#addScheduleForm').removeClass('show');
+            $('#addSchedule').modal('hide');
+
+        });
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $('.addScheduleBtn').on('click', function () {
+            $('#addSchedule').modal('show');
+            $tr = $(this).closest('tr');
+            var data = $tr.children("td").map(function () {
+                return $(this).text();
+            }).get();
+            $('.hiId').val(data[0]);
+        });
         $('#addScheduleForm').on('submit', function (e) {
             e.preventDefault();
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
+            var id = $('.hiId').val();
             $.ajax({
                 type: "POST",
-                url: "provider/addProvider",
-                // data: $('#addForm').serialize(),
-                data: new FormData(this),
-                contentType: false,
-                cache: false,
-                processData: false,
+                url: "/test/" + id,
+                data: $('#addScheduleForm').serialize(),
                 success: function (response) {
-                    console.log(response)
-                    $('#addSchedule').modal('hide')
-                    console.log(this.data);
-                    location.reload()
-                    // alert("Data Saved");
+                    $('#addScheduleForm').modal('hide');
+                    location.reload();
                 },
                 error: function (error) {
-                    console.log(error)
-                    // alert("Data Not Saved");
+                    console.log(error);
                 }
-
             });
-
         });
     });
 </script>

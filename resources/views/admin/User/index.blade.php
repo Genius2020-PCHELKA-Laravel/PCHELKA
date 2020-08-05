@@ -24,7 +24,7 @@
                         <div class="card-body">
 
                             <div class="table-responsive">
-                                <table class="table table-striped table-md">
+                                <table  style="text-align:center;" id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
                                         <th scope="col" style="display:none;">#</th>

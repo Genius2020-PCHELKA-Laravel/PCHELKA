@@ -44,16 +44,26 @@ Route::prefix("/provider")->group(function () {
     Route::post('/editProvider/{id}', 'ServiceProviderController@edit')->name('editProvider');
     Route::get('/editProvider/{id}', 'ServiceProviderController@edit')->name('editProvider');
     Route::post('/deleteProvider/{id}', 'ServiceProviderController@destroy')->name('deleteProvider');
+    Route::get('/changeProvider/{id}', 'ServiceProviderController@changeProvider')->name('changeProvider');
+    Route::post('/changeProvider/{id}', 'ServiceProviderController@changeProvider')->name('changeProvider');
+    Route::get('/getSchedules/{id}', 'ServiceProviderController@getSchedules')->name('getSchedules');
+    Route::post('/deleteSchedules/{id}', 'ServiceProviderController@deleteSchedules')->name('deleteSche');
+
+
 });
 
 Route::prefix("/Booking")->group(function () {
     Route::get('/', 'BookingController@All')->name('viewAll');
+    Route::get('/autoAssignBooking', 'BookingController@showAutoAssign')->name('showAutoAssign');
+    Route::get('/upComingBooking', 'BookingController@upComingBooking')->name('upComing');
+    Route::get('/pastBooking', 'BookingController@pastBooking')->name('pastBooking');
     Route::get('/viewconfirm', 'BookingController@Confirmed')->name('viewconfirm');
     Route::get('/viewCompleted', 'BookingController@Completed')->name('viewCompleted');
     Route::get('/viewcanceled', 'BookingController@Canceled')->name('viewcanceled');
     Route::get('/viewRescheduled', 'BookingController@Rescheduled')->name('viewRescheduled');
     Route::post('/editcompleted/{id}', 'BookingController@change_to_completed')->name('editcompleted');
     Route::post('/editcanceled/{id}', 'BookingController@change_to_canceled')->name('editcanceled');
+    Route::get('/getBooking/{id}', 'BookingController@getBookingById')->name('getBooking');
     Route::post('/changeProvider/{id}', 'BookingController@change_provider')->name('changeProvider');
 
 });

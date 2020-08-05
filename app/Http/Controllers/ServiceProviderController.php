@@ -2,16 +2,40 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BookingStatusEnum;
 use App\Enums\ServicesEnum;
+use App\Http\Controllers\Api\BookingHelperTrait;
+use App\Models\Booking;
+use App\Models\BookingAnswers;
 use App\Models\Company;
+use App\Models\Schedule;
 use App\Models\Service;
 use App\Models\ServiceProvider;
+use App\Models\UserLocation;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use NunoMaduro\Collision\Provider;
 
 class ServiceProviderController extends Controller
 {
+    use BookingHelperTrait;
+
+    public function canDeleteProvider($id)
+    {
+        $temp = Booking::where('providerId', $id)
+            ->where(function ($q) {
+                $q->where('status', '=', BookingStatusEnum::Confirmed)
+                    ->orWhere('status', '=', BookingStatusEnum::Rescheduled)
+                    ->orWhere('status', '=', BookingStatusEnum::Completed)
+                    ->orWhere('status', '=', BookingStatusEnum::Canceled);
+            })
+            ->first();
+
+        if ($temp) return false;
+        else  return true;
+    }
 
     public function __construct()
     {
@@ -37,16 +61,22 @@ class ServiceProviderController extends Controller
     public function providerByService(Request $request)
     {
         $data = array();
-        $data = ServiceProvider::all();
+
         $services = Service::all();
         $company = Company::all();
 
         $serviceId = $request->serviceId;
-        if ($serviceId != "") {
+        if ($serviceId != null) {
             $data = DB::table('providers')->join('providerservices', 'providers.id', '=', 'providerservices.provider_id')
-                ->where('providerservices.service_id', '=', $serviceId)->get();
-        }
+                ->where('providerservices.service_id', '=', $serviceId)->distinct()->get();
+        } else {
+            $data = DB::table('providers')
+                ->join('providerservices', 'providers.id', '=', 'providerservices.provider_id')
+                ->where('providerservices.service_id', '=', 1)
+                ->distinct()
+                ->get();
 
+        }
         return view('admin.Provider.provider', ['data' => $data, 'services' => $services, 'company' => $company]);
     }
 
@@ -57,7 +87,7 @@ class ServiceProviderController extends Controller
         $company = Company::all();
         $data = DB::table('providers')->select(['providers.mobileNumber', 'providers.name', 'providers.id', 'providers.email'])
             ->join('companies', 'providers.companyId', '=', 'companies.id')
-            ->where('companies.name', '=', $FindProvider)
+            ->where('companies.name', '=', $FindProvider)->distinct()
             ->get();
         return view('admin.Provider.showBycompany', compact('data', 'company', 'services'));
         //
@@ -104,7 +134,7 @@ class ServiceProviderController extends Controller
             if ($request->has('providerImage')) {
                 $imagex = $request->file('providerImage')->store('/public');
                 $nn = Storage::url($imagex);
-                $ah = asset($nn);
+                $ah = $nn;
                 // $item->providerImage = x
                 $request['imageUrl'] = $ah;
             } else {
@@ -130,7 +160,7 @@ class ServiceProviderController extends Controller
                 $TheImage = $request->file('providerImage')->store('/public');
                 //$move = Storage::url($TheImage);
                 $contents = Storage::url($TheImage);
-                $ah = asset($contents);
+                $ah = $contents;
                 $request['imageUrl'] = $ah;
                 $provider->imageUrl = $request['imageUrl'];
             }
@@ -158,80 +188,93 @@ class ServiceProviderController extends Controller
                 array_push($emptyArray, $se->name);
             }
             $AllServ = Service::all();
-            return view('admin.Provider.test', ['data' => $ser, 'company' => $company, 'services' => $emptyArray, 'AllServ' => $AllServ]);
+            return view('admin.Provider.editProvider', ['data' => $ser, 'company' => $company, 'services' => $emptyArray, 'AllServ' => $AllServ]);
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function changeProvider($id, Request $request)
     {
-        //
+
+        $response = array();
+        if ($request->isMethod('POST')) {
+
+            global $oldHourId;
+            $booking = Booking::find($id);
+
+            if ($booking->parentId != null) {
+                $oldHourId = BookingAnswers::where('bookingId', $booking->parentId)->where('questionId', 2)
+                    ->orWhere('questionId', 6)->orWhere('questionId', 9)->orWhere('questionId', 12)
+                    ->select(['answerId'])->first();
+
+            } else {
+                $oldHourId = BookingAnswers::where('bookingId', $id)->where('questionId', 2)
+                    ->orWhere('questionId', 6)->orWhere('questionId', 9)->orWhere('questionId', 12)
+                    ->select(['answerId'])->first();
+            }
+            $duoDate = $booking->duoDate;
+            $duoTime = $booking->duoTime;
+            $newProvider = ServiceProvider::where('id', $request->providerId)->first();
+            $oldProvider = $booking->providerId;
+            $booking->providerId = $newProvider->id;
+            if ($oldHourId['answerId'] != null) {
+                $this->deActiveSchdule($duoDate, $newProvider->id, $oldHourId['answerId'], $duoTime);
+                $this->activeSchdule($duoDate, $oldProvider, $oldHourId['answerId'], $duoTime);
+            }
+            $booking->save();
+            $this->removeGap($oldProvider,$duoDate);
+            $this->removeGap($newProvider->id,$duoDate);
+            return redirect('Booking/upComingBooking');
+        } else {
+
+            global $oldHourId;
+            $availableProvider = array();
+            $booking = Booking::where('id', $id)->first();
+            $provider = ServiceProvider::where('id', $booking->providerId)->first();
+            $client = User::where('id', $booking->userId)->first();
+            $response["refCode"] = $booking->refCode;
+            $response["duoDate"] = $booking->duoDate;
+            $response["duoTime"] = $booking->duoTime;
+            if ($booking->parentId == null) {
+                $response ['userLocation'] = UserLocation::where('id', '=', $booking->locationId)->select('address')->first()->address;
+            } else {
+                $locationId = Booking::where('id', $booking->parentId)->select('locationId')->first();
+                $response ['userLocation'] = UserLocation::where('id', '=', $locationId->locationId)->select('address')->first()->address;
+            }
+            $response["providerName"] = $provider->name;
+            $response["providerMobileNumber"] = $provider->mobileNumber;
+            $response["clientName"] = $client->fullName;
+            $response["clientMobileNumber"] = $client->mobile;
+            $response["serviceType"] = ServicesEnum::getKey($booking->serviceType);
+
+            $autoId = ServiceProvider::where('email', '=', 'auto@auto.auto')->first();
+            $providersByService = DB::table('providerservices')->where('provider_id', '!=', $autoId->id)
+                ->where('service_id', '=', $booking->serviceType)->get();
+
+            if ($booking->parentId != null) {
+                $oldHourId = BookingAnswers::where('bookingId', $booking->parentId)->where('questionId', 2)
+                    ->orWhere('questionId', 6)->orWhere('questionId', 9)->orWhere('questionId', 12)
+                    ->select(['answerId'])->first();
+
+            } else {
+                $oldHourId = BookingAnswers::where('bookingId', $id)->where('questionId', 2)
+                    ->orWhere('questionId', 6)->orWhere('questionId', 9)->orWhere('questionId', 12)
+                    ->select(['answerId'])->first();
+
+            }
+
+            foreach ($providersByService as $provider) {
+                $row = ServiceProvider::where('id', $provider->provider_id)->first();
+                if ($row) {
+                    $active = $this->testIfActive($booking->duoDate, $booking->duoTime, $row->id, $oldHourId->answerId);
+                    if ($active) {
+                        array_push($availableProvider, $row);
+                    }
+                }
+            }
+            $availableProvider = array_unique($availableProvider);
+            return view('admin.Provider.changeProvider', compact('response', 'availableProvider'));
+        }
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param \App\Models\ServiceProvider $serviceProvider
-     * @return \Illuminate\Http\Response
-     */
-    public function show(ServiceProvider $serviceProvider)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param \App\Models\ServiceProvider $serviceProvider
-     * @return \Illuminate\Http\Response
-     */
-
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\ServiceProvider $serviceProvider
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, ServiceProvider $serviceProvider)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param \App\Models\ServiceProvider $serviceProvider
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        $provider = ServiceProvider::find($id);
-        $provider->delete();
-        return $provider;
-    }
-
-//    public function providerByService(Request $request)
-//    {
-//        $data = array();
-//        $data = ServiceProvider::paginate(5);
-//        $services = Service::all();
-//        $company = Company::all();
-//
-//        $serviceId = $request->serviceId;
-//        if ($serviceId != "") {
-//            $data = DB::table('providers')->join('providerservices', 'providers.id', '=', 'providerservices.provider_id')
-//                ->where('providerservices.service_id', '=', $serviceId)->get();
-//        }
-//
-//        return view('admin.Provider.provider', ['data' => $data, 'services' => $services, 'company' => $company]);
-//    }
 
     public function search(Request $request)
     {
@@ -247,5 +290,47 @@ class ServiceProviderController extends Controller
             }
         }
 
+    }
+
+    public function destroy($id)
+    {
+        $canDelete = $this->canDeleteProvider($id);
+        if ($canDelete) {
+            $provider = ServiceProvider::find($id);
+            $provider->delete();
+        } else return false;
+
+    }
+
+    public function getSchedules($id)
+    {
+        $response = array();
+        $providerSchedules = Schedule::where('serviceProviderId', $id)->orderBy('availableDate', 'asc')->get();
+        if ($providerSchedules) {
+            foreach ($providerSchedules as $single) {
+                $response[$single->availableDate] = Schedule::where('availableDate', $single->availableDate)
+                    ->where('serviceProviderId', $id)
+                    ->select(['timeStart', 'isActive', 'isGap'])
+                    ->orderBy('timeStart', 'asc')
+                    ->get();
+
+            }
+        }
+        $providerName = ServiceProvider::where('id', $id)->select('name')->first()->name;
+
+        return view('admin.Provider.showSchedules', compact('response', 'providerName', 'id'));
+    }
+
+    public function deleteSchedules(Request $request, $id)
+    {
+        if ($request->isMethod('post')) {
+            DB::table('schedules')
+                ->where('availableDate', $request->availableDate)
+                ->where('serviceProviderId', $request->id)
+                ->delete();
+            return redirect()->back();
+        } else {
+            return redirect()->back();
+        }
     }
 }

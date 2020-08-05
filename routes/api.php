@@ -88,4 +88,6 @@ Route::post('schedulesTime', 'ScheduleController@getSchedulesTime');
 Route::post('materialPrice', 'ServiceController@getMaterialPrice');
 Route::post('hourPrice', 'ServiceController@getHourPrice');
 
-Route::post('t', 'BookingController@autoAssignId');
+
+Route::post('deleteSchedules', 'ScheduleController@deleteSchedules');
+Route::post('testtt', 'ScheduleController@testss');

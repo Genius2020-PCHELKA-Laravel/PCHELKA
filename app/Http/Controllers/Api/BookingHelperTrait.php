@@ -4,14 +4,18 @@ namespace App\Http\Controllers\Api;
 
 use App\Enums\BookingStatusEnum;
 use App\Enums\ServicesEnum;
+use App\Http\Controllers\ItemSizeController;
 use App\Models\Booking;
+use App\Models\BookingAnswers;
 use App\Models\Evaluation;
 use App\Models\QuestionDetails;
 use App\Models\Schedule;
+use App\Models\ServiceProvider;
 use App\Models\UserLocation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use phpDocumentor\Reflection\DocBlockFactory;
 
 trait BookingHelperTrait
 {
@@ -51,15 +55,19 @@ trait BookingHelperTrait
         }
         $bookingEvaluation = Evaluation::where('bookingId', $book->id)->first();
         $response['bookingEvaluation'] = $bookingEvaluation == null ? 0 : $bookingEvaluation->starCount;
-        $response['providerEvaluation']=number_format(doubleval(Evaluation::where('serviceProviderId', $book->providerId)->avg('starCount')), 1, '.', '');
+        $response['providerEvaluation'] = number_format(doubleval(Evaluation::where('serviceProviderId', $book->providerId)->avg('starCount')), 1, '.', '');
         $response['parentId'] = $book->parentId;
         return $response;
     }
 
     public function getAnswer($id)
     {
-        $temp = QuestionDetails::where('id', $id)->first()->name;
-        return $temp;
+        $temp = QuestionDetails::where('id', $id)->first();
+        if ($temp)
+            return $temp->name;
+        else {
+            return null;
+        }
     }
 
     public function frequencyConvert($id)
@@ -110,6 +118,7 @@ trait BookingHelperTrait
 
     public function removeGap($serviceProviderId, $availableDate)
     {
+
         $times = Schedule::where('serviceProviderId', $serviceProviderId)->where('availableDate', $availableDate)
             ->select(['id', 'timeStart', 'isActive'])
             ->get();
@@ -208,7 +217,7 @@ trait BookingHelperTrait
             }
             default:
             {
-                return $this->apiResponse('Please select available time value', null, 404);
+                return null;
             }
         }
         $timestamp = strtotime($duoTime) + intval($to);
@@ -239,8 +248,10 @@ trait BookingHelperTrait
 
         $data = Schedule::where('availableDate', $duoDate)
             ->where('serviceProviderId', $providerId)
+//            ->whereBetween('timeStart', ["17:00:00", "19:00:00"])
             ->whereBetween('timeStart', [$duoTime, $endTime])
             ->get();
+
         foreach ($data as $singleData) {
             $schedule = Schedule::where('id', $singleData['id'])->first();
             $schedule['isActive'] = 0;
@@ -276,38 +287,169 @@ trait BookingHelperTrait
         $this->removeGap($providerId, $duoDate);
     }
 
-    public function autoAssignId($duoDate, $serviceType)
+    public function autoAssignId($duoDate, $duoTime = null, $serviceType, $answare = null)
     {
+
         $response = array();
-        $res = DB::table('providers')->select(['providers.id'])
+        $res = DB::table('providers')->where('email', '!=', 'auto@auto.auto')->select(['providers.id'])
             ->join('providerservices', 'providers.id', '=', 'providerservices.provider_id')
-            ->where('providerservices.service_id', '=', ServicesEnum::coerce($serviceType))
+            ->where('providerservices.service_id', '=', ServicesEnum::coerce($serviceType))->distinct()
             ->get();
-        if ($res == null) return null;
         $result = json_decode($res, true);
-        foreach ($result as $newData) {
-            $this->removeGap($newData['id'], $duoDate);
-            $row = DB::table('schedules')->where('serviceProviderId', $newData['id'])
-                ->where('isActive', 1)
-                ->where('availableDate', '=', $duoDate)
-                ->groupBy('serviceProviderId')->count();
-            array_push($response, $row);
-        }
-        if ($response != null) {
-            $minShift = max($response);
-
-
-            $result = DB::table('schedules')->where('isActive', 1)->where('availableDate', '=', $duoDate)
-                ->select(['serviceProviderId', DB::raw("COUNT(*) as 't' ")])
-                ->groupBy('serviceProviderId')
-                ->having('t', '=', $minShift)
-                ->first();
-            if ($result == null) {
-                return null;
+        if (empty($result)) {
+            $auto = DB::table('providers')->where('email', '=', 'auto@auto.auto')
+                ->select(['providers.id'])->first();
+            if (!$auto) {
+                $this->createAutoAssignProvider();
             }
-            return $result->serviceProviderId;
+            $auto = DB::table('providers')->where('email', '=', 'auto@auto.auto')
+                ->select(['providers.id'])->first();
+            return $auto->id;
+        }
+        foreach ($result as $newData) {
+            $active = $this->testIfActive($duoDate, $duoTime, $newData['id'], $answare);
+            if ($active) {
+                $this->removeGap($newData['id'], $duoDate);
+                $row['count'] = DB::table('schedules')->where('serviceProviderId', $newData['id'])
+                    ->where('isActive', 1)
+                    ->where('availableDate', '=', $duoDate)
+                    ->groupBy('serviceProviderId')->count();
+                $row['providerId'] = $newData['id'];
+                array_push($response, $row);
+            }
+        }
+
+        $ff = $response ? max(array_column($response, 'count')) : null;
+
+        global $providerId;
+        if ($ff > 0) {
+            $availableProvider = array();
+            foreach ($response as $key => $val) {
+                if ($val['count'] === $ff) {
+                    $active = $this->testIfActive($duoDate, $duoTime, $response[$key]['providerId'], $answare);
+                    if ($active)
+                        array_push($availableProvider, $key);
+                }
+            }
+            $randomValue = array_rand($availableProvider);
+            $providerId = $response[$availableProvider[$randomValue]]['providerId'];
+        }
+
+        if ($response != null) {
+            return $providerId;
         } else {
-            return null;
+            $auto = ServiceProvider::where('email', '=', 'auto@auto.auto')->first();
+            if ($auto)
+                return $auto->id;
+            else {
+                $this->createAutoAssignProvider();
+                $auto = ServiceProvider::where('email', '=', 'auto@auto.auto')->first();
+                return $auto->id;
+            }
         }
     }
+
+    public function autoAssignRefresh()
+    {
+        $prov = DB::table('providers')->where('email', '=', 'auto@auto.auto')->select('id')->first();
+        DB::table('schedules')->where('serviceProviderId', $prov->id)->delete();
+
+        $begin = new \DateTime("08:00");
+        $end = new \DateTime("20:30");
+        $interval = \DateInterval::createFromDateString('30 min');
+        $times = new \DatePeriod($begin, $interval, $end);
+        global $date;
+        $date = date("Y-m-d");
+        for ($i = 0; $i < 20; $i++) {
+            foreach ($times as $time) {
+                DB::table('schedules')->insert(
+                    [
+                        'availableDate' => date('Y-m-d', strtotime($date)),
+                        'timeStart' => $time->format('H:i'),
+                        'timeEnd' => $time->add($interval)->format('H:i'),
+                        'serviceProviderId' => $prov->id,
+                    ]);
+            }
+            $date = date('Y-m-d', strtotime($date . ' +1 day'));
+        }
+        return 0;
+    }
+
+    public function createAutoAssignProvider()
+    {
+        $auto = DB::table('providers')->where('email', '=', 'auto@auto.auto')
+            ->select(['providers.id'])->first();
+        if (!$auto) {
+            DB::table('providers')->insert([
+                [
+                    'name' => 'Auto Assign',
+                    'email' => "auto@auto.auto",
+                    'mobileNumber' => "",
+                    'imageUrl' => 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg'
+                ]]);
+            $autoProviderId = DB::table('providers')->where('email', '=', 'auto@auto.auto')
+                ->select(['providers.id'])->first();
+            for ($i = 1; $i < 13; $i++) {
+                DB::table('providerservices')->insert([
+                    'service_id' => $i,
+                    'provider_id' => $autoProviderId->id,
+                ]);
+            }
+        }
+    }
+
+    public function testIfActive($duoDate, $duoTime, $providerId, $answare)
+    {
+        global $counter;
+        global $endTime;
+        $counter = 0;
+        if ($answare == null) {
+            $to = 60 * 60 * 2;
+            $timestamp = strtotime($duoTime) + intval($to);
+            $endTime = date('H:i', $timestamp);
+        } else {
+            $endTime = $this->switchHourAnswer($duoTime, $answare);
+            if ($endTime == null) {
+                $to = 60 * 60 * 2;
+                $timestamp = strtotime($duoTime) + intval($to);
+                $endTime = date('H:i', $timestamp);
+            }
+        }
+        $data = Schedule::where('availableDate', $duoDate)
+            ->where('serviceProviderId', $providerId)
+            ->whereBetween('timeStart', [$duoTime, $endTime])
+            ->get();
+        foreach ($data as $signal) {
+            if ($signal->isActive == 1) {
+                $counter++;
+            }
+        }
+        if ($counter == count($data)) {
+            return true;
+        } else {
+            return false;
+        }
+
+
+    }
+
+    public function checkIfHasHour($answers)
+    {
+        global $temp;
+        $temp = false;
+        foreach ($answers as $answer) {
+            if ($answer['questionId'] == 2 || $answer['questionId'] == 6 || $answer['questionId'] == 9 || $answer['questionId'] == 12)
+                $temp = true;
+        }
+        if ($temp == false) {
+            $row = ['questionId' => 2,
+                'answerId' => 4,
+                'answerValue' => null];
+            array_push($answers, $row);
+            return $answers;
+        } else {
+            return $answers;
+        }
+    }
+
 }

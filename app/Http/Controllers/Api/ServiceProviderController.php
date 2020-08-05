@@ -24,7 +24,7 @@ class ServiceProviderController extends Controller
             $response = array();
             $providers = array();
             $user = Auth::user()->id;
-            $bookProvider = Booking::where('userId', $user)->where('status',BookingStatusEnum::Completed)->select(['providerId', 'serviceType'])->get();
+            $bookProvider = Booking::where('userId', $user)->where('status', BookingStatusEnum::Completed)->select(['providerId', 'serviceType'])->get();
             if ($bookProvider) {
                 foreach ($bookProvider as $provider) {
                     $res = array();
@@ -33,9 +33,10 @@ class ServiceProviderController extends Controller
                         ->where('providerservices.service_id', '=', ServicesEnum::coerce($request->serviceType))
                         ->where('providers.id', '=', $provider['providerId'])
                         ->first();
-                    $res->service = $provider['serviceType'];
-                    array_push($providers, $res);
-
+                    if ($res) {
+                        $res->service = $provider['serviceType'];
+                        array_push($providers, $res);
+                    }
                 }
             }
             $collection = collect($providers);
@@ -55,7 +56,7 @@ class ServiceProviderController extends Controller
                     'id' => $newData->id,
                     'name' => $newData->name,
                     'imageUrl' => $newData->imageUrl,
-                    'evaluation' => number_format(doubleval(Evaluation::where('serviceProviderId', $newData->id)->avg('starCount')),1,'.',''),
+                    'evaluation' => number_format(doubleval(Evaluation::where('serviceProviderId', $newData->id)->avg('starCount')), 1, '.', ''),
                     'desc' => Booking::where('userId', $user)->where('providerId', $newData->id)->first() ? true : false,
                     'lastServiceDate' => $lastServiceDate['duoDate']
                 ];

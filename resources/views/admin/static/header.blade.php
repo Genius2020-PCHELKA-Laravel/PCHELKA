@@ -20,7 +20,7 @@
 
 
 </head>
-<body>
+<body class="sidebar-mini" data-hasqtip="0" data-gr-c-s-loaded="true">
 <div id="app">
     <div class="main-wrapper main-wrapper-1">
 @include ('admin.static.nav')

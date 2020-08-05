@@ -24,13 +24,13 @@
         </ul>
     </nav>
 </div>
-<div class="main-sidebar sidebar-style-2">
+<div class="main-sidebar sidebar-style-2" style="overflow: hidden; outline: none;">
     <aside id="sidebar-wrapper">
         <div class="sidebar-brand">
             <a href="#">Pchelka</a>
         </div>
         <div class="sidebar-brand sidebar-brand-sm">
-            <a href="index.html">Pc</a>
+            <a href="#">Pc</a>
         </div>
         <ul class="sidebar-menu">
             <li class="menu-header">Bookings</li>
@@ -38,6 +38,9 @@
                 <a href="#" class="nav-link has-dropdown"><i class="fas fa-bookmark"></i> <span>Booking</span></a>
                 <ul class="dropdown-menu" >
                     <li><a class="nav-link" href="{{route('viewAll')}}">All</a></li>
+                    <li><a class="nav-link" href="{{route('showAutoAssign')}}">Auto Assign</a></li>
+                    <li><a class="nav-link" href="{{route('upComing')}}">Up Coming</a></li>
+                    <li><a class="nav-link" href="{{route('pastBooking')}}">Past</a></li>
                     <li><a class="nav-link" href="{{route('viewconfirm')}}">Confirmed</a></li>
                     <li><a class="nav-link" href="{{route('viewRescheduled')}}">Rescheduled</a></li>
                     <li><a class="nav-link" href="{{route('viewCompleted')}}">Completed</a></li>

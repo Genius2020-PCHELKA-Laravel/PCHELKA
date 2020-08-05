@@ -24,6 +24,7 @@ use App\Models\Schedule;
 use App\Models\ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Validator;
 use function Safe\eio_lstat;
 
@@ -48,32 +49,10 @@ class BookingController extends Controller
 
     public function bookService(Request $request)
     {
-
-//        try {
-//            #region UserInputValidate
-//            $validator = Validator::make($request->all(), [
-//                'serviceType' => ['required', new EnumKey(ServicesEnum::class)],
-//                'duoDate' => ['required', 'date_format:Y-m-d'],
-//                'duoTime' => ['required', 'date_format:H:i:s'],
-//                'subTotal' => ['required', 'regex:/^\d+(\.\d{1,2})?$/'],
-//                'discount' => ['required', 'regex:/^\d+(\.\d{1,2})?$/'],
-//                'totalAmount' => ['required', 'regex:/^\d+(\.\d{1,2})?$/'],
-//                'locationId' => ['required', 'integer'],
-//                'providerId' => ['required', 'integer'],
-//                'scheduleId' => ['required', 'integer'],
-//                'paymentWays' => ['required', new EnumKey(PaymentWaysEnum::class)],
-//                'answers' => [
-//                    'questionId' => ['required', 'integer'],
-//                ],
-//            ]);
-//            if ($validator->fails()) {
-//                return $this->apiResponse(null, $validator->errors(), 520);
-//            }
-        //     #endregion
-
         global $answerHourValue;
         if (Auth::check()) {
-            $answerss = $request->answers;
+
+            $answerss = $this->checkIfHasHour($request->answers);
             foreach ($answerss as $answer) {
                 switch (intval($answer['questionId'])) {
                     case 2:
@@ -83,10 +62,16 @@ class BookingController extends Controller
                         $answerHourValue = $answer['answerId'];
                 }
             }
-            $providerId = $request->providerId == null ? $providerId = $this->autoAssignId($request->duoDate, $request->serviceType) : $request->providerId;
+            $providerId = $request->providerId == null ? $providerId = $this->autoAssignId($request->duoDate, $request->duoTime, $request->serviceType, $answerHourValue) : $request->providerId;
             if ($providerId == null) {
-                return $this->apiResponse('The time is not available please select another time');
+                $autoId = ServiceProvider::where('email', 'auto@auto.auto')->first();
+                if (!$autoId) {
+                    $this->createAutoAssignProvider();
+                }
+                $autoId = ServiceProvider::where('email', 'auto@auto.auto')->first();
+                $providerId = $autoId->id;
             }
+
             $userId = Auth::user()->id;
             #region AddBooking
             $bookingUserId = $userId;
@@ -188,6 +173,7 @@ class BookingController extends Controller
 
                     $schdule = Schedule::where('serviceProviderId', $providerId)->where('availableDate', $endDate)->get();
                     if (count($schdule) < 1) {
+
                         $begin = new  \DateTime($request->duoTime);
                         $endTime = $this->switchHourAnswer($request->duoTime, $answerHourValue);
                         $endFormat = date('H:i', strtotime($endTime . '+30 minutes'));
@@ -215,7 +201,7 @@ class BookingController extends Controller
             }
             #endregion
             #region AddBookingAnswers
-            $answers = $request->answers;
+            $answers = $this->checkIfHasHour($request->answers);
             foreach ($answers as $answer) {
                 $bookingAnswers = new BookingAnswers();
                 $bookingAnswers->bookingId = $lastId;
@@ -231,13 +217,17 @@ class BookingController extends Controller
             }
             #endregion
 
-            $user = Auth::user();
-            $userNotify = User::where('id', $user->id)->first();
-            $userNotify->bookStatus = BookingStatusEnum::getKey(1);
-            $userNotify->bookRefCode = $booking->refCode;
-            $userNotify->bookDouDate = $booking->duoDate;
-            $userNotify->bookDouTime = $booking->duoTime;
-            $this->confirmedNotify($userNotify);
+//            $user = Auth::user();
+//            $userNotify = User::where('id', $user->id)->first();
+//            $userNotify->bookStatus = BookingStatusEnum::getKey(1);
+//            $userNotify->bookRefCode = $booking->refCode;
+//            $userNotify->bookDouDate = $booking->duoDate;
+//            $userNotify->bookDouTime = $booking->duoTime;
+//            $this->confirmedNotify($userNotify);
+
+            $autoId = ServiceProvider::where('email', 'auto@auto.auto')->first();
+            if (!$autoId) $this->createAutoAssignProvider();
+            else $this->autoAssignRefresh();
 
             return $this->createdResponse('Booking created successfully');
         } else {
@@ -325,9 +315,12 @@ class BookingController extends Controller
                 $q->where('status', '=', BookingStatusEnum::Completed)
                     ->orWhere('status', '=', BookingStatusEnum::Canceled());
             })
-                ->orderBy('created_at', 'asc')
-                ->get();
+                ->orderBy('id', 'desc')
+                ->simplePaginate();
+
             foreach ($data as $newdata) {
+                $providerData = ServiceProvider::where('id', $newdata['providerId'])->select('id', 'name', 'imageUrl')->first();
+                $providerData['evaluation'] = intval(Evaluation::where('serviceProviderId', $newdata['providerId'])->avg('starCount'));
                 $row = [
                     'id' => $newdata['id'],
                     'duoDate' => $newdata['duoDate'],
@@ -335,7 +328,7 @@ class BookingController extends Controller
                     'serviceType' => ServicesEnum::getKey($newdata['serviceType']),
                     'refCode' => $newdata['refCode'],
                     'status' => BookingStatusEnum::getKey($newdata['status']),
-                    'providerData' => ServiceProvider::where('id', $newdata['providerId'])->select('id', 'name', 'imageUrl')->first()
+                    'providerData' => $providerData
                 ];
                 array_push($response, $row);
 
@@ -357,8 +350,8 @@ class BookingController extends Controller
                     ->orWhere('status', '=', BookingStatusEnum::Rescheduled());
             })
                 ->where('duoDate', '>', date('Y-m-d', strtotime("-1 days")))
-                ->orderBy('created_at', 'asc')
-                ->get();
+                ->orderBy('id', 'desc')
+                ->simplePaginate();
 
             foreach ($data as $newdata) {
                 $providerData = ServiceProvider::where('id', $newdata['providerId'])->select('id', 'name', 'imageUrl')->first();
@@ -563,7 +556,7 @@ class BookingController extends Controller
             $response = $this->getBookingDetailes($request->id);
             $answers = null;
             if ($response['parentId'] != null) {
-                $answers = BookingAnswers::where('bookingId', $book->parentId)->select(['answerValue', 'answerId', 'questionId'])->get();
+                $answers = BookingAnswers::where('bookingId', $response->parentId)->select(['answerValue', 'answerId', 'questionId'])->get();
             } else {
                 $answers = BookingAnswers::where('bookingId', $request->id)->select(['answerValue', 'answerId', 'questionId'])->get();
             }
@@ -587,6 +580,7 @@ class BookingController extends Controller
     {
         try {
             if (Auth::user()) {
+
                 $book = Booking::where('id', $request->id)->first();
                 global $oldHourId;
                 if ($book) {
@@ -606,7 +600,7 @@ class BookingController extends Controller
 
                     $oldDate = Booking::where('id', $request->id)->select(['duoDate'])->first();
                     $oldTime = Booking::where('id', $request->id)->select(['duoTime'])->first();
-                    $serviceProvider = $request->providerId == null ? $this->autoAssignId($request->duoDate, $book->serviceType) : $request->providerId;
+                    $serviceProvider = $request->providerId == null ? $this->autoAssignId($request->duoDate, $request->duoTime, $book->serviceType, $oldHourId) : $request->providerId;
                     $book->duoDate = $request->duoDate;
                     $book->duoTime = $request->duoTime;
                     $book->providerId = $serviceProvider;

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\ServiceProvider;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
@@ -94,6 +95,11 @@ class CompanyController extends Controller
     public function destroy($id)
     {
         $company = Company::find($id);
+        $providers = ServiceProvider::where('companyId', $id)->get();
+        foreach ($providers as $provider) {
+            $provider->companyId = null;
+            $provider->save();
+        }
         $company->delete();
         return $company;
     }

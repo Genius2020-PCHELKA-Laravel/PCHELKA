@@ -34,20 +34,30 @@
                                            placeholder="Input Key Word To Search">
                                 </div>
 
-                                    <table class="table table-striped table-md">
+                                <table  style="text-align:center;" id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
 
-                                        <thead>
-                                        <tr>
-                                            <th scope="col" style="display:none;">#</th>
-                                            <th scope="col">Provider Name</th>
-                                            <th scope="col">Email</th>
-                                            <th scope="col">Mobile Num.</th>
-                                            <th scope="col">Company</th>
-                                            <th scope="col">Action</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody id="table">
-                                        @foreach($data as $single)
+                                    <thead>
+                                    <tr>
+                                        <th scope="col" style="display:none;">#</th>
+                                        <th scope="col">Provider Name</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Mobile Num.</th>
+                                        <th scope="col">Company</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="table">
+                                    @foreach($data as $single)
+                                        @if($single->email=='auto@auto.auto')
+                                            <tr>
+                                                <td style="display:none;">{{$single->id}}</td>
+                                                <td>{{$single->name}}</td>
+                                                <td>{{$single->email}}</td>
+                                                <td>{{$single->name}}</td>
+                                                <td>{{$single->name}}</td>
+                                                <td>No Action</td>
+                                            </tr>
+                                        @else
                                             <tr>
                                                 <td style="display:none;">{{$single->id}}</td>
                                                 <td>{{$single->name}}</td>
@@ -57,20 +67,31 @@
                                                         {{App\Models\Company::where('id',$single->companyId)->first()->name }}
                                                     @endif  </td>
                                                 <td>
-                                                    <a href="provider/editProvider/{{$single->id}}"
-                                                        class="btn btn-outline-success  ">Edit <i
-                                                            class="fas fa-edit "></i></a>
-                                                    <a class="btn btn-outline-danger  deleteBtn ">Delete <i
-                                                            class="fas fa-trash-alt"></i> </a>
-                                                    <a class="btn btn-outline-success addScheduleBtn"
-                                                       data-toggle="modal"
-                                                       data-target="#addSchedule">Schedule <i
-                                                            class="fas fa-edit "></i></a>
+                                                    <div class="btn-group mb-2">
+                                                        <button class="btn btn-sm btn-warning dropdown-toggle"
+                                                                type="button"
+                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                            Select Action
+                                                        </button>
+                                                        <div class="dropdown-menu" x-placement="bottom-start"
+                                                             style="position: absolute; transform: translate3d(0px, 43px, 0px); top: 0px; left: 0px; will-change: transform;">
+
+                                                            <a href="{{url('provider/editProvider',$single->id)}}"
+                                                               class="dropdown-item ">Edit </a>
+                                                            <a class="dropdown-item   deleteBtn ">Delete </a>
+                                                            <a class="dropdown-item addScheduleBtn " data-toggle="modal"
+                                                               data-target="#addSchedule">Add Schedule</a>
+                                                            <a href="{{url('provider/getSchedules',$single->id)}}"
+                                                               class="dropdown-item ">Show Schedules </a>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                             </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
+                                        @endif
+                                    @endforeach
+                                    </tbody>
+                                </table>
 
                             </div>
                         </div>
@@ -206,117 +227,9 @@
         </div>
     </div>
 </div>
-{{--Update Provider Modal--}}
-<div class="modal fade" id="editProvider" role="dialog" aria-labelledby="editProvider"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Edit Company</h5>
-
-            </div>
-            <form action="" id="editProviderForm">
-                <div class="modal-body">
-                    <div class="form-group">
-                        {{csrf_field()}}
-                        <input type="hidden" id="id"/>
-                        <label>Provider Name</label>
-                        <input type="text" class="form-control" name="name" required id="name"
-                               placeholder=""/>
-                    </div>
-                    <div class="form-group">
-                        <label>Provider Email</label>
-                        <input type="email" class="form-control" name="email" required id="email"
-                               placeholder=""/>
-                    </div>
-                    <div class="form-group">
-                        <label>Provider Mobile</label>
-                        <input type="text" class="form-control" name="mobile" id="mobile"
-                               placeholder="" data-inputmask='"mask": "999999999"' data-mask required/>
-
-                    </div>
-                    <div class="form-group">
-                        <label>Company</label>
-                        <select class="form-control custom-select js-example-basic"
-                                name="companyId">
-                            @foreach($company as $com)
-                                <option name="companyId" value="{{$com->id}}">{{$com->name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group col-12 ">
-                        <label>Services</label>
-                        <br>
-                        @php
-                            $ser=  \Illuminate\Support\Facades\DB::table('providerservices')->where('provider_id',1)->get()
-
-                        @endphp
-                        <select class="form-control custom-select js-example-basic-multiple"
-                                name="services[]" multiple="multiple" required style="  height: 200px; width: 100%;">
-                            @foreach($services as $ser)
-                                <option value="{{$ser->id}}">{{$ser->name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Image</label>
-                        <input type="file" accept="image/*" class="form-control" name="providerImage" required/>
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 @include('admin.static.footer')
 
-{{--Update Provider Script--}}
-<script>
-    $(document).ready(function () {
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $('.editBtn').on('click', function () {
-            $('#editProvider').modal('show');
-
-            $tr = $(this).closest('tr');
-            var data = $tr.children("td").map(function () {
-                return $(this).text();
-            }).get();
-            console.log(data);
-            $('#id').val(data[0]);
-            $('#name').val(data[1]);
-            $('#email').val(data[2]);
-            $('#mobile').val(data[3]);
-        });
-
-        $('#editProviderForm').on('submit', function (e) {
-            e.preventDefault();
-            var id = $('#id').val();
-
-            $.ajax({
-                type: "POST",
-                url: "company/editCompany/" + id,
-                data: $('#editProviderForm').serialize(),
-                success: function (response) {
-                    console.log(response);
-                    $('#editProvider').modal('hide');
-                    location.reload();
-                },
-                error: function (error) {
-                    console.log(error);
-                }
-            });
-        });
-    });
-</script>
 
 <script>
     $(document).ready(function () {

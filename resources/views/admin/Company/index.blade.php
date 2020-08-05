@@ -31,7 +31,7 @@
                                     <input type="text" name="search" id="search" class="form-control col-3"
                                            placeholder="Input Key Word To Search">
                                 </div>
-                                <table class="table table-striped table-md">
+                                <table  style="text-align:center;" id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
 
                                     <thead>
                                     <tr>

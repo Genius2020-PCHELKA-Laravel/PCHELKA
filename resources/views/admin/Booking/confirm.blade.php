@@ -21,42 +21,64 @@
                                     <input type="text" name="search" id="search" class="form-control col-3"
                                            placeholder="Input Key Word To Search">
                                 </div>
-                                <table class="table table-striped table-md">
+                                <table style="text-align:center;" id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
                                     <thead>
-                                    <tr>
+                                    <tr align="center">
                                         <th scope="col" style="display:none;">#</th>
-                                        <th scope="col">Duo Date </th>
-                                        <th scope="col">Duo Time </th>
-                                        <th scope="col">Provider Name </th>
-                                        <th scope="col">Provider Mobile  </th>
-                                        <th scope="col">Client Name </th>
-                                        <th scope="col">REFCODE </th>
-                                        <th scope="col">Action </th>
+                                        <th scope="col">Duo Date</th>
+                                        <th scope="col">Duo Time</th>
+                                        <th scope="col">Location</th>
+                                        <th scope="col">Service</th>
+                                        <th scope="col">Provider Name</th>
+                                        <th scope="col">Provider Mobile</th>
+                                        <th scope="col">Client Name</th>
+                                        <th scope="col">REFCODE</th>
+                                        <th scope="col">Booking Date</th>
+                                        <th scope="col">Action</th>
 
                                     </tr>
                                     </thead>
                                     <tbody id="table">
                                     @foreach($bookings as $single)
-
-
-
-                                        <tr>
+                                        <tr align="center">
                                             <td style="display:none;">{{$single->id}}</td>
                                             <td>{{$single->duoDate}}</td>
                                             <td>{{$single->duoTime}}</td>
-                                            <td>{{$single->name}}</td>
+                                            <td>{{$single->location}}</td>
+                                            <td>{{$single->serviceType}}</td>
+                                            <td>
+                                                @if($single->providerId==$autoAssignId)
+                                                    {{$single->name}}
+                                                @else
+                                                    <a class="stretched-link"
+                                                       href="{{url('provider/getSchedules',$single->providerId)}}">{{$single->name}}</a>
+                                                @endif
+                                            </td>
                                             <td>{{$single->mobileNumber}}</td>
                                             <td>{{$single->fullName}}</td>
                                             <td>{{$single->refCode}}</td>
+                                            <td>{{$single->BookedDate}}</td>
                                             <td width="20%">
-                                                <a class="btn btn-outline-success editBtn">Completed </a>
-
-                                                <a class="btn btn-outline-danger  edit1Btn ">Canceled</a>
-
-                                                <a class="btn btn-outline-success  edit2Btn ">Change Provider </a>
+                                                <div class="btn-group mb-2">
+                                                    <button class="btn btn-sm btn-warning dropdown-toggle" type="button"
+                                                            data-toggle="dropdown" aria-haspopup="true"
+                                                            aria-expanded="false">
+                                                        Select Action
+                                                    </button>
+                                                    <div class="dropdown-menu" x-placement="bottom-start"
+                                                         style="position: absolute; transform: translate3d(0px, 43px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                        <a class="dropdown-item"
+                                                           href="{{url('Booking/getBooking',$single->id)}}">View
+                                                            More</a>
+                                                        <a class="dropdown-item editBtn">Complete </a>
+                                                        <a class="dropdown-item  edit1Btn " >Cancel</a>
+                                                        <a class="dropdown-item"
+                                                           href="{{url('provider/changeProvider',$single->id)}}">Change
+                                                            Provider </a>
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
-
                                     @endforeach
                                     </tbody>
                                 </table>
@@ -95,8 +117,6 @@
         </div>
     </div>
 </div>
-
-
 <div class="modal fade" id="editcanceled" role="dialog" aria-labelledby="editcanceled" aria-hidden="true">
     <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
@@ -126,13 +146,14 @@
             </div>
             <form id="edit2Form">
                 {{csrf_field()}}
-                <div class="modal-body">  <label> Select Provider</label>
+                <div class="modal-body"><label> Select Provider</label>
                     <input type="hidden" name="id" id="delId">
-                    <select name="name" id="name" class="form-control js-example-basic-multiple js-states form-control" required>
-                    @foreach($providers as $singlee)
-                        <option value="{{$singlee->id}}">{{$singlee->name}}</option>
+                    <select name="name" id="name" class="form-control js-example-basic-multiple js-states form-control"
+                            required>
+                        @foreach($providers as $singlee)
+                            <option value="{{$singlee->id}}">{{$singlee->name}}</option>
                         @endforeach
-                        </select>
+                    </select>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Send</button>

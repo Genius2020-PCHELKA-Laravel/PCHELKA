@@ -17,7 +17,8 @@
                         <div class="card-body">
 
                             <div class="table-responsive">
-                                <table class="table table-striped table-md">
+                                <table style="text-align:center;" id="dtBasicExample"
+                                       class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
                                         <th scope="col" style="display:none;">#</th>
@@ -29,7 +30,7 @@
                                     </tr>
                                     </thead>
                                     @foreach($data as $single)
-                                        <tr>
+                                        <tr >
                                             <td style="display:none;">{{$single->id}}</td>
                                             <td>{{$single->name}}</td>
                                             <td>{{$single->hourPrice}}</td>
@@ -49,7 +50,7 @@
                             <nav class="d-inline-block">
 
                                 <ul class="pagination mb-0">
-{{--                                    {{ $data->links() }}--}}
+                                    {{--                                    {{ $data->links() }}--}}
                                 </ul>
                             </nav>
                         </div>
@@ -59,7 +60,6 @@
         </div>
     </div>
 </section>
-
 
 
 {{--Update Service Modal--}}
@@ -83,7 +83,7 @@
                     <div class="form-group">
                         <label>Service Price</label>
                         <input type="number" min="0" class="form-control" name="hourPrice" id="hourPrice"
-                               placeholder="" required />
+                               placeholder="" required/>
                     </div>
                     <div class="form-group">
                         <label>Material Price</label>
@@ -92,7 +92,7 @@
                     </div>
                     <div class="form-group">
                         <label>Unit</label>
-                        <input type="text"  class="form-control" name="unit" id="unit"
+                        <input type="text" class="form-control" name="unit" id="unit"
                                placeholder="" required/>
                     </div>
                 </div>
